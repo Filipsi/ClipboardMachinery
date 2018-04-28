@@ -1,0 +1,3 @@
+[submodule "Bibliotheque"]
+	path = Bibliotheque
+	url = https://github.com/Filipsi/Bibliotheque

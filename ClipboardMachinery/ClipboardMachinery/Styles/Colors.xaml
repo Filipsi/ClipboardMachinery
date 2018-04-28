@@ -1,0 +1,25 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="PanelBackgroundColor">#2C2C2C</Color>
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{StaticResource PanelBackgroundColor}" />
+
+    <Color x:Key="PanelControlColor">#A8A8A8</Color>
+    <SolidColorBrush x:Key="PanelControlBrush" Color="{StaticResource PanelControlColor}" />
+
+    <Color x:Key="PanelSelectedColor">#FFFFFF</Color>
+    <SolidColorBrush x:Key="PanelSelectedBrush" Color="{StaticResource PanelSelectedColor}" />
+
+    <Color x:Key="BodyBackgroundColor">#FFFFFF</Color>
+    <SolidColorBrush x:Key="BodyBackgroundBrush" Color="{StaticResource BodyBackgroundColor}" />
+
+    <Color x:Key="BodyControlColor">#A8A8A8</Color>
+    <SolidColorBrush x:Key="BodyControlBrush" Color="{StaticResource BodyControlColor}" />
+
+    <Color x:Key="ElementFavoriteColor">#F1C40F</Color>
+    <SolidColorBrush x:Key="ElementFavoriteBrush" Color="{StaticResource ElementFavoriteColor}" />
+
+    <Color x:Key="ElementSelectColor">#ECF0F1</Color>
+    <SolidColorBrush x:Key="ElementSelectBrush" Color="{StaticResource ElementSelectColor}" />
+
+</ResourceDictionary>
