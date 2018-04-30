@@ -12,12 +12,12 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="0.05*" />
+            <ColumnDefinition Width="24" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0" cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Select()]" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.1*" />
+                <ColumnDefinition Width="48" />
                 <ColumnDefinition Width="0.9*" />
             </Grid.ColumnDefinitions>
 

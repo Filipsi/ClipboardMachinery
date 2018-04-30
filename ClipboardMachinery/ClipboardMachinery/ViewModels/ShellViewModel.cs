@@ -22,9 +22,15 @@ namespace ClipboardMachinery.ViewModels {
 
         public ICollectionView ClipboardItemsView { get; }
 
+        public double AppWidth { get; } = SystemParameters.PrimaryScreenWidth / 3;
+
+        public double MaxContentHeight { get; } = SystemParameters.PrimaryScreenHeight / 1.5;
+
         public BindableCollection<SelectableActionModel> MenuItems { get; }
 
         public SelectableActionModel SelectedMenuItem => MenuItems.FirstOrDefault(model => model.IsSelected);
+
+        public string Title => SelectedMenuItem.Name;
 
         [ImportingConstructor]
         public ShellViewModel(IEventAggregator eventAggregator) {
@@ -90,6 +96,7 @@ namespace ClipboardMachinery.ViewModels {
             option.IsSelected = true;
             option.Action?.Invoke();
             NotifyOfPropertyChange(() => SelectedMenuItem);
+            NotifyOfPropertyChange(() => Title);
         }
 
         #region Event Handlers

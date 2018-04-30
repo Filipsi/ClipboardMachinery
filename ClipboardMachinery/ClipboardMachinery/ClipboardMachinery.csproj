@@ -75,6 +75,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\RotatingGear.xaml.cs">
+      <DependentUpon>RotatingGear.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Events\ChangeAppVisiblity.cs" />
     <Compile Include="Events\Collection\ItemBase.cs" />
     <Compile Include="Events\Collection\ItemRemoved.cs" />
@@ -151,6 +154,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\RotatingGear.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
