@@ -31,10 +31,10 @@
 
         <StackPanel Grid.Column="1">
             <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ToggleFavorite()]" Background="Transparent" Cursor="Hand" Margin="5">
-                <Path Data="{StaticResource IconFavorite}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
+                <Path Data="{Binding FavoriteIcon, FallbackValue={StaticResource IconStarEmpty}}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
             </Grid>
             <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Remove()]" Background="Transparent" Cursor="Hand" Margin="5">
-                <Path Data="{StaticResource IconTrashcan}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" />
+                <Path Data="{StaticResource IconRemove}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" />
             </Grid>
         </StackPanel>
     </Grid>

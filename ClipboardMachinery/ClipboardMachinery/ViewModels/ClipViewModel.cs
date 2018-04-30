@@ -28,6 +28,9 @@ namespace ClipboardMachinery.ViewModels {
 
         public EntryType Type { get; }
 
+        public Geometry FavoriteIcon
+            => Application.Current.FindResource(IsFavorite ? "IconStarFull" : "IconStarEmpty") as Geometry;
+
         public SolidColorBrush FavoriteIconColor
             => Application.Current.FindResource(IsFavorite ? "ElementFavoriteBrush" : "PanelControlBrush") as SolidColorBrush;
 
@@ -37,6 +40,7 @@ namespace ClipboardMachinery.ViewModels {
                 if (value == _isFavorite) return;
                 _isFavorite = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => FavoriteIcon);
                 NotifyOfPropertyChange(() => FavoriteIconColor);
             }
         }

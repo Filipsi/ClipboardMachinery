@@ -41,7 +41,7 @@ namespace ClipboardMachinery.ViewModels {
                 ),
                 new SelectableActionModel(
                     name: "Favorite",
-                    iconName: "IconFavorite",
+                    iconName: "IconStarFull",
                     action: () => ActivateItem(new FavoritesViewModel(Events) {
                         Items = ClipboardItems
                     })
