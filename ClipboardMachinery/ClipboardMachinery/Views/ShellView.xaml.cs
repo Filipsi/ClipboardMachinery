@@ -2,9 +2,9 @@
 
 namespace ClipboardMachinery.Views {
 
-    public partial class AppView : Window {
+    public partial class ShellView : Window {
 
-        public AppView() {
+        public ShellView() {
             InitializeComponent();
         }
 

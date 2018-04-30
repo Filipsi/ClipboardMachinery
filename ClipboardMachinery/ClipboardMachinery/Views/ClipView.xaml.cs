@@ -2,9 +2,9 @@
 
 namespace ClipboardMachinery.Views {
 
-    public partial class HistoryEntryView : UserControl {
+    public partial class ClipView : UserControl {
 
-        public HistoryEntryView() {
+        public ClipView() {
             InitializeComponent();
         }
 

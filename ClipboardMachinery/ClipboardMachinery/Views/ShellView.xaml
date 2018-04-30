@@ -1,4 +1,4 @@
-﻿<Window x:Class="ClipboardMachinery.Views.AppView"
+﻿<Window x:Class="ClipboardMachinery.Views.ShellView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -39,7 +39,7 @@
             <Border Height="32" BorderBrush="{StaticResource PanelBackgroundBrush}" Background="{StaticResource PanelBackgroundBrush}" CornerRadius="10,10,0,0">
                 <Grid Margin="4">
                     <Viewbox HorizontalAlignment="Left" >
-                        <ItemsControl x:Name="ActionItems">
+                        <ItemsControl x:Name="MenuItems">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel MinHeight="16" Orientation="Horizontal"/>
@@ -47,7 +47,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid cal:Bind.Model="{Binding}" cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Select($dataContext)]" MaxWidth="32" Margin="8" Cursor="Hand" Background="Transparent">
+                                    <Grid cal:Bind.Model="{Binding}" cal:Message.Attach="[Event MouseLeftButtonUp] = [Action SelectMenuItem($dataContext)]" MaxWidth="32" Margin="8" Cursor="Hand" Background="Transparent">
                                         <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
                                     </Grid>
                                 </DataTemplate>

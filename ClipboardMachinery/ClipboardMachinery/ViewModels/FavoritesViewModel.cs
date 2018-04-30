@@ -2,62 +2,39 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Caliburn.Micro;
+using ClipboardMachinery.Events;
+using ClipboardMachinery.Events.Collection;
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class FavoritesViewModel : HistoryViewModel {
+    internal class FavoritesViewModel : HistoryViewModel, IHandle<ItemFavoriteChanged<ClipViewModel>> {
 
-        public bool FavoritesEmptyErrorMessageIsVisible => !Items.Any(model => model.IsFavorite);
+        public new bool ErrorMessageIsVisible => !Items.Any(model => model.IsFavorite);
 
-        public ICollectionView ItemsView {
-            get => _itemsView;
-            internal set {
-                if (Equals(value, _itemsView)) return;
-                _itemsView = value;
-                ApplyItemFilter();
-                NotifyOfPropertyChange(() => ItemsView);
-            }
-        }
-
-        private ICollectionView _itemsView;
+        public FavoritesViewModel(IEventAggregator events) : base(events)
+            => ApplyItemFilter();
 
         private void ApplyItemFilter() {
-            ItemsView.Filter = model => ((HistoryEntryViewModel)model).IsFavorite;
+            Events.PublishOnUIThread(new SetViewFilter(
+                model => ((ClipViewModel)model).IsFavorite
+            ));
         }
 
-        protected override void ItemsInCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            base.ItemsInCollectionChanged(sender, e);
+        #region Event Handlers
 
-            switch (e.Action) {
-                case NotifyCollectionChangedAction.Add:
-                    if (e.NewItems.Cast<HistoryEntryViewModel>().Any(model => model.IsFavorite)) {
-                        NotifyOfPropertyChange(() => FavoritesEmptyErrorMessageIsVisible);
-                    }
-                    foreach (HistoryEntryViewModel model in e.NewItems) {
-                        model.PropertyChanged += OnItemPropertyChanged;
-                    }
-                    return;
-
-                case NotifyCollectionChangedAction.Remove:
-                    if (FavoritesEmptyErrorMessageIsVisible) {
-                        NotifyOfPropertyChange(() => FavoritesEmptyErrorMessageIsVisible);
-                    }
-                    foreach (HistoryEntryViewModel model in e.NewItems) {
-                        model.PropertyChanged -= OnItemPropertyChanged;
-                    }
-                    return;
-            }
-        }
-
-        private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs args) {
-            if (args.PropertyName != nameof(HistoryEntryViewModel.IsFavorite)) return;
-            if (((HistoryEntryViewModel) sender).IsFavorite) return;
+        public void Handle(ItemFavoriteChanged<ClipViewModel> message) {
+            if (message.Item.IsFavorite) return;
 
             ApplyItemFilter();
-            if (FavoritesEmptyErrorMessageIsVisible) {
-                NotifyOfPropertyChange(() => FavoritesEmptyErrorMessageIsVisible);
+            if (Items.Count > 0) {
+                NotifyOfPropertyChange(() => ErrorMessageIsVisible);
             }
         }
+
+        #endregion
+
+
     }
 
 }

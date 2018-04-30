@@ -10,10 +10,10 @@
              Background="{StaticResource BodyBackgroundBrush}"
              d:DataContext="{d:DesignInstance Type=viewModels:FavoritesViewModel, IsDesignTimeCreatable=True}">
     <Grid MinHeight="128">
-        <Border x:Name="FavoritesEmptyErrorMessageIsVisible">
+        <Border x:Name="ErrorMessageIsVisible">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
-                    Sky is dark and cloudy, the stars are nowhere to be seen.
+                    The stars are nowhere to be seen.
                 </TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
                     Favorite one of your pastes to begin stargazing.

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ClipboardMachinery.Views.HistoryEntryView"
+﻿<UserControl x:Class="ClipboardMachinery.Views.ClipView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -33,7 +33,7 @@
             <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ToggleFavorite()]" Background="Transparent" Cursor="Hand" Margin="5">
                 <Path Data="{StaticResource IconFavorite}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
             </Grid>
-            <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Destroy()]" Background="Transparent" Cursor="Hand" Margin="5">
+            <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Remove()]" Background="Transparent" Cursor="Hand" Margin="5">
                 <Path Data="{StaticResource IconTrashcan}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" />
             </Grid>
         </StackPanel>

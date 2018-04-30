@@ -5,23 +5,16 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Bibliotheque.Machine;
 using Caliburn.Micro;
-using Action = System.Action;
+using ClipboardMachinery.Events;
+using ClipboardMachinery.Events.Collection;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class HistoryViewModel : Screen {
+    internal class HistoryViewModel : Screen,
+        IHandle<ItemRemoved<ClipViewModel>>, IHandle<ItemSelected<ClipViewModel>> {
 
-        public Action HideAppHandler {
-            get => _hideAppHandler;
-            set {
-                if (Equals(value, _hideAppHandler)) return;
-                _hideAppHandler = value;
-                NotifyOfPropertyChange(() => HideAppHandler);
-            }
-        }
-
-        public BindableCollection<HistoryEntryViewModel> Items {
+        public BindableCollection<ClipViewModel> Items {
             get => _items;
             set {
                 if (Equals(value, _items)) return;
@@ -38,55 +31,54 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public bool HistoryEmptyErrorMessageIsVisible => Items?.Count == 0;
+        public bool ErrorMessageIsVisible => Items?.Count == 0;
 
-        private BindableCollection<HistoryEntryViewModel> _items;
-        private Action _hideAppHandler;
+        protected readonly IEventAggregator Events;
+        private BindableCollection<ClipViewModel> _items;
+
+        public HistoryViewModel(IEventAggregator events) {
+            Events = events;
+            Events.Subscribe(this);
+        }
 
         protected virtual void ItemsInCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    NotifyOfPropertyChange(() => HistoryEmptyErrorMessageIsVisible);
-                    foreach (HistoryEntryViewModel model in e.NewItems) {
-                        model.Selected += HistoryItemSelected;
-                        model.Destroyed += HistoryItemDestroyed;
-                    }
-                    return;
-
                 case NotifyCollectionChangedAction.Remove:
-                    NotifyOfPropertyChange(() => HistoryEmptyErrorMessageIsVisible);
-                    foreach (HistoryEntryViewModel model in e.OldItems) {
-                        model.Selected -= HistoryItemSelected;
-                        model.Selected -= HistoryItemDestroyed;
+                    if (((BindableCollection<ClipViewModel>) sender).Count < 2) {
+                        NotifyOfPropertyChange(() => ErrorMessageIsVisible);
                     }
                     return;
             }
         }
 
-        private void HistoryItemSelected(object sender, EventArgs e) {
-            HistoryEntryViewModel eventSender = (HistoryEntryViewModel) sender;
-            ClipboardObserver.IgnoreNextChange(eventSender.RawContent);
+        #region Event Handlers
+
+        public void Handle(ItemRemoved<ClipViewModel> message) {
+            Items.Remove(message.Item);
+        }
+
+        public void Handle(ItemSelected<ClipViewModel> message) {
+            ClipboardObserver.IgnoreNextChange(message.Item.RawContent);
 
             try {
-                switch (eventSender.Type) {
-                    case HistoryEntryViewModel.EntryType.Image:
-                        Clipboard.SetImage(((Image)eventSender.Content).Source as BitmapImage ?? throw new InvalidOperationException());
+                switch (message.Item.Type) {
+                    case ClipViewModel.EntryType.Image:
+                        Clipboard.SetImage(((Image)message.Item.Content).Source as BitmapImage ?? throw new InvalidOperationException());
                         break;
 
                     default:
-                        Clipboard.SetText(eventSender.RawContent);
+                        Clipboard.SetText(message.Item.RawContent);
                         break;
                 }
             } catch (Exception) {
                 // ignored
             }
 
-            HideAppHandler?.Invoke();
+            Events.PublishOnUIThread(new ChangeAppVisiblity(VisiblityChangeType.Hide));
         }
 
-        private void HistoryItemDestroyed(object sender, EventArgs e) {
-            Items.Remove((HistoryEntryViewModel)sender);
-        }
+        #endregion
 
     }
 

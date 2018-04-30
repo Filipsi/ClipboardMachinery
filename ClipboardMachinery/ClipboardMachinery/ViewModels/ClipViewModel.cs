@@ -9,12 +9,14 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Bibliotheque.Machine;
+using Caliburn.Micro;
+using ClipboardMachinery.Events.Collection;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class HistoryEntryViewModel : Screen {
+    internal class ClipViewModel : Screen {
 
         public object Content { get; }
 
@@ -52,17 +54,16 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public event EventHandler Selected;
-        public event EventHandler Destroyed;
-
+        private readonly IEventAggregator _events;
         private bool _isFavorite;
         private bool _isFocused;
 
         private static readonly Regex ImageDataPattern =
-            new Regex(@"^data\:(?<type>image\/(png|tiff|jpg|gif));base64,(?<data>[A-Z0-9\+\/\=]+)$",
+            new Regex(@"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif));base64,(?<data>[A-Z0-9\+\/\=]+)$",
                 RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
 
-        public HistoryEntryViewModel(string content, DateTime timestamp) {
+        public ClipViewModel(IEventAggregator events, string content, DateTime timestamp) {
+            _events = events;
             RawContent = content;
             Timestamp = $"{timestamp.ToLongTimeString()} {timestamp.ToLongDateString()}";
             Type = DeterminateType(content);
@@ -138,12 +139,19 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public void Destroy() {
-            Destroyed?.Invoke(this, EventArgs.Empty);
+        #region Actions
+
+        public void Remove() {
+            _events.PublishOnCurrentThread(new ItemRemoved<ClipViewModel>(this));
+        }
+
+        public void Select() {
+            _events.PublishOnCurrentThread(new ItemSelected<ClipViewModel>(this));
         }
 
         public void ToggleFavorite() {
             IsFavorite = !IsFavorite;
+            _events.PublishOnCurrentThread(new ItemFavoriteChanged<ClipViewModel>(this));
         }
 
         public void Focus() {
@@ -154,9 +162,7 @@ namespace ClipboardMachinery.ViewModels {
             IsFocused = false;
         }
 
-        public void Select() {
-            Selected?.Invoke(this, EventArgs.Empty);
-        }
+        #endregion
 
     }
 
