@@ -55,10 +55,12 @@ namespace ClipboardMachinery.ViewModels {
         #region Event Handlers
 
         public void Handle(ItemRemoved<ClipViewModel> message) {
+            if (!IsActive) return;
             Items.Remove(message.Item);
         }
 
         public void Handle(ItemSelected<ClipViewModel> message) {
+            if (!IsActive) return;
             ClipboardObserver.IgnoreNextChange(message.Item.RawContent);
 
             try {

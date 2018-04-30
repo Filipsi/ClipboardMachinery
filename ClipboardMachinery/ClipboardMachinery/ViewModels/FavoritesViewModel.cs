@@ -24,6 +24,7 @@ namespace ClipboardMachinery.ViewModels {
         #region Event Handlers
 
         public void Handle(ItemFavoriteChanged<ClipViewModel> message) {
+            if (!IsActive) return;
             if (message.Item.IsFavorite) return;
 
             ApplyItemFilter();

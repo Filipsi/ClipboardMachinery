@@ -55,7 +55,7 @@
                         </ItemsControl>
                     </Viewbox>
 
-                    <Label Content="{Binding SelectedActionItem.Name}" Foreground="{StaticResource PanelControlBrush}" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontSize="16" Padding="0"/>
+                    <Label Content="{Binding SelectedMenuItem.Name}" Foreground="{StaticResource PanelControlBrush}" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontSize="16" Padding="0"/>
                 </Grid>
             </Border>
 
