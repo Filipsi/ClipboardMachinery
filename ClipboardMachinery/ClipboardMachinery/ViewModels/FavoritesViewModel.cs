@@ -5,15 +5,18 @@ using System.Linq;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Events.Collection;
+using Ninject;
 
 namespace ClipboardMachinery.ViewModels {
 
     internal class FavoritesViewModel : HistoryViewModel, IHandle<ItemFavoriteChanged<ClipViewModel>> {
 
-        public new bool ErrorMessageIsVisible => !Items.Any(model => model.IsFavorite);
+        public new bool ErrorMessageIsVisible => !ClipboardItemsProvider.Items.Any(model => model.IsFavorite);
 
-        public FavoritesViewModel(IEventAggregator events) : base(events)
-            => ApplyItemFilter();
+        protected override void OnInitialize() {
+            base.OnInitialize();
+            ApplyItemFilter();
+        }
 
         private void ApplyItemFilter() {
             Events.PublishOnUIThread(new SetViewFilter(
@@ -28,7 +31,7 @@ namespace ClipboardMachinery.ViewModels {
             if (message.Item.IsFavorite) return;
 
             ApplyItemFilter();
-            if (Items.Count > 0) {
+            if (ClipboardItemsProvider.Items.Count > 0) {
                 NotifyOfPropertyChange(() => ErrorMessageIsVisible);
             }
         }

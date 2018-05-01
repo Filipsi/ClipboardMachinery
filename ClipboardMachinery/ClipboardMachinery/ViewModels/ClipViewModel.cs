@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using Bibliotheque.Machine;
 using Caliburn.Micro;
 using ClipboardMachinery.Events.Collection;
+using Ninject;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
@@ -18,21 +19,34 @@ namespace ClipboardMachinery.ViewModels {
 
     internal class ClipViewModel : Screen {
 
-        public object Content { get; }
+        [Inject]
+        public IEventAggregator Events { set; get; }
 
-        public string RawContent { get; }
+        public string RawContent {
+            get => _rawContent;
+            set {
+                if (value == _rawContent) return;
 
-        public string Timestamp { get; }
+                _rawContent = value;
+                Type = DeterminateType(_rawContent);
+                Content = WrapContentForType(Type, _rawContent);
+                Icon = Application.Current.FindResource(GetIconFromType(Type)) as Geometry;
 
-        public Geometry Icon { get; }
+                NotifyOfPropertyChange(() => RawContent);
+                NotifyOfPropertyChange(() => Content);
+                NotifyOfPropertyChange(() => Type);
+                NotifyOfPropertyChange(() => Icon);
+            }
+        }
 
-        public EntryType Type { get; }
-
-        public Geometry FavoriteIcon
-            => Application.Current.FindResource(IsFavorite ? "IconStarFull" : "IconStarEmpty") as Geometry;
-
-        public SolidColorBrush FavoriteIconColor
-            => Application.Current.FindResource(IsFavorite ? "ElementFavoriteBrush" : "PanelControlBrush") as SolidColorBrush;
+        public string Timestamp {
+            get => _timestamp;
+            set {
+                if (value == _timestamp) return;
+                _timestamp = value;
+                NotifyOfPropertyChange(() => Timestamp);
+            }
+        }
 
         public bool IsFavorite {
             get => _isFavorite;
@@ -45,9 +59,6 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public SolidColorBrush BackgroundColor
-            => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "BodyBackgroundBrush") as SolidColorBrush;
-
         public bool IsFocused {
             get => _isFocused;
             set {
@@ -58,22 +69,29 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        private readonly IEventAggregator _events;
+        public object Content { private set; get; }
+
+        public Geometry Icon { private set; get; }
+
+        public EntryType Type { private set; get; }
+
+        public Geometry FavoriteIcon
+            => Application.Current.FindResource(IsFavorite ? "IconStarFull" : "IconStarEmpty") as Geometry;
+
+        public SolidColorBrush FavoriteIconColor
+            => Application.Current.FindResource(IsFavorite ? "ElementFavoriteBrush" : "PanelControlBrush") as SolidColorBrush;
+
+        public SolidColorBrush BackgroundColor
+            => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "BodyBackgroundBrush") as SolidColorBrush;
+
         private bool _isFavorite;
         private bool _isFocused;
+        private string _timestamp;
+        private string _rawContent;
 
         private static readonly Regex ImageDataPattern =
             new Regex(@"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif));base64,(?<data>[A-Z0-9\+\/\=]+)$",
                 RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
-
-        public ClipViewModel(IEventAggregator events, string content, DateTime timestamp) {
-            _events = events;
-            RawContent = content;
-            Timestamp = $"{timestamp.ToLongTimeString()} {timestamp.ToLongDateString()}";
-            Type = DeterminateType(content);
-            Icon = Application.Current.FindResource(GetIconFromType(Type)) as Geometry;
-            Content = WrapContentForType(Type, content);
-        }
 
         public enum EntryType {
             Text,
@@ -146,16 +164,16 @@ namespace ClipboardMachinery.ViewModels {
         #region Actions
 
         public void Remove() {
-            _events.PublishOnCurrentThread(new ItemRemoved<ClipViewModel>(this));
+            Events.PublishOnCurrentThread(new ItemRemoved<ClipViewModel>(this));
         }
 
         public void Select() {
-            _events.PublishOnCurrentThread(new ItemSelected<ClipViewModel>(this));
+            Events.PublishOnCurrentThread(new ItemSelected<ClipViewModel>(this));
         }
 
         public void ToggleFavorite() {
             IsFavorite = !IsFavorite;
-            _events.PublishOnCurrentThread(new ItemFavoriteChanged<ClipViewModel>(this));
+            Events.PublishOnCurrentThread(new ItemFavoriteChanged<ClipViewModel>(this));
         }
 
         public void Focus() {

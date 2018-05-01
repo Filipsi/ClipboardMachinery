@@ -20,7 +20,7 @@
             </StackPanel>
         </Border>
         <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-            <ItemsControl x:Name="Items" >
+            <ItemsControl ItemsSource="{Binding ClipboardItemsProvider.Items}" >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />

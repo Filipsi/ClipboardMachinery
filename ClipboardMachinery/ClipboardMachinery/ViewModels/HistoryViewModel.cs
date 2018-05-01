@@ -7,6 +7,8 @@ using Bibliotheque.Machine;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.Logic.ClipboardItemsProvider;
+using Ninject;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
@@ -14,31 +16,21 @@ namespace ClipboardMachinery.ViewModels {
     internal class HistoryViewModel : Screen,
         IHandle<ItemRemoved<ClipViewModel>>, IHandle<ItemSelected<ClipViewModel>> {
 
-        public BindableCollection<ClipViewModel> Items {
-            get => _items;
-            set {
-                if (Equals(value, _items)) return;
+        [Inject]
+        public IEventAggregator Events { set; get; }
 
-                if (Items != null) {
-                    Items.CollectionChanged -= ItemsInCollectionChanged;
-                    ItemsInCollectionChanged(_items, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, _items));
-                }
+        [Inject]
+        public IClipboardItemsProvider ClipboardItemsProvider { set; get; }
 
-                _items = value;
-                _items.CollectionChanged += ItemsInCollectionChanged;
-                ItemsInCollectionChanged(_items, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, _items));
-                NotifyOfPropertyChange(() => Items);
-            }
-        }
+        public bool ErrorMessageIsVisible => ClipboardItemsProvider.Items?.Count == 0;
 
-        public bool ErrorMessageIsVisible => Items?.Count == 0;
+        protected override void OnInitialize() {
+            base.OnInitialize();
 
-        protected readonly IEventAggregator Events;
-        private BindableCollection<ClipViewModel> _items;
-
-        public HistoryViewModel(IEventAggregator events) {
-            Events = events;
             Events.Subscribe(this);
+
+            ClipboardItemsProvider.Items.CollectionChanged += ItemsInCollectionChanged;
+            ItemsInCollectionChanged(ClipboardItemsProvider.Items, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, ClipboardItemsProvider.Items));
         }
 
         protected virtual void ItemsInCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
@@ -56,7 +48,7 @@ namespace ClipboardMachinery.ViewModels {
 
         public void Handle(ItemRemoved<ClipViewModel> message) {
             if (!IsActive) return;
-            Items.Remove(message.Item);
+            ClipboardItemsProvider.Items.Remove(message.Item);
         }
 
         public void Handle(ItemSelected<ClipViewModel> message) {

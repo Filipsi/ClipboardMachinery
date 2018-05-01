@@ -9,78 +9,65 @@ using Bibliotheque.Machine;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.Logic;
+using ClipboardMachinery.Logic.ClipboardItemsProvider;
+using ClipboardMachinery.Logic.HotKeyHandler;
+using ClipboardMachinery.Logic.ViewModelFactory;
 using ClipboardMachinery.Models;
+using Ninject;
 
 namespace ClipboardMachinery.ViewModels {
 
     internal class ShellViewModel : Conductor<object>, IShell,
         IHandle<ChangeAppVisiblity>, IHandle<SetViewFilter> {
 
-        public IEventAggregator Events { get; }
+        [Inject]
+        public IEventAggregator Events { set; get; }
 
-        public BindableCollection<ClipViewModel> ClipboardItems { get; }
+        [Inject]
+        public IViewModelFactory ViewModelFactory { set; get; }
 
-        public ICollectionView ClipboardItemsView { get; }
+        [Inject]
+        public IClipboardItemsProvider ClipboardItemsProvider { set; get; }
 
-        public double AppWidth { get; } = SystemParameters.PrimaryScreenWidth / 3;
+        [Inject]
+        public IHotKeyHandler HotKeyHandler { set; get; }
 
-        public double MaxContentHeight { get; } = SystemParameters.PrimaryScreenHeight / 1.5;
+        public double                                    AppWidth           { get; } = SystemParameters.PrimaryScreenWidth / 3;
+        public double                                    MaxContentHeight   { get; } = SystemParameters.PrimaryScreenHeight / 1.5;
+        public BindableCollection<SelectableActionModel> MenuItems          { get; }
 
-        public BindableCollection<SelectableActionModel> MenuItems { get; }
+        public SelectableActionModel                     SelectedMenuItem   => MenuItems?.FirstOrDefault(model => model.IsSelected);
+        public string                                    Title              => SelectedMenuItem?.Name;
 
-        public SelectableActionModel SelectedMenuItem => MenuItems.FirstOrDefault(model => model.IsSelected);
-
-        public string Title => SelectedMenuItem.Name;
-
-        [ImportingConstructor]
-        public ShellViewModel(IEventAggregator eventAggregator) {
-            Events = eventAggregator;
-            Events.Subscribe(this);
-
+        public ShellViewModel() {
             MenuItems = new BindableCollection<SelectableActionModel> {
                 new SelectableActionModel(
                     name: "History",
                     iconName: "IconHistory",
-                    action: () => ActivateItem(new HistoryViewModel(Events) {
-                        Items = ClipboardItems
-                    })
+                    action: () => ActivateItem(ViewModelFactory.Create<HistoryViewModel>())
                 ),
                 new SelectableActionModel(
                     name: "Favorite",
                     iconName: "IconStarFull",
-                    action: () => ActivateItem(new FavoritesViewModel(Events) {
-                        Items = ClipboardItems
-                    })
+                    action: () => ActivateItem(ViewModelFactory.Create<FavoritesViewModel>())
                 ),
                 new SelectableActionModel(
                     name: "Search",
                     iconName: "IconSearch",
-                    action: () => ActivateItem(new SearchViewModel())
+                    action: () => ActivateItem(ViewModelFactory.Create<SearchViewModel>())
                 )
             };
+        }
 
-            ClipboardItems = new BindableCollection<ClipViewModel>();
-            ClipboardItemsView = CollectionViewSource.GetDefaultView(ClipboardItems);
+        protected override void OnInitialize() {
+            base.OnInitialize();
+
+            Events.Subscribe(this);
 
             if (!MenuItems.Any(m => m.IsSelected)) {
                 SelectMenuItem(MenuItems.First());
             }
-
-            ClipboardObserver.ClipboardChanged += (sender, args) => {
-                if (args.Payload == string.Empty || args.Payload == ClipboardItems.FirstOrDefault()?.RawContent) {
-                    return;
-                }
-
-                ClipboardItems.Insert(0, new ClipViewModel(
-                    events: Events,
-                    content: args.Payload,
-                    timestamp: DateTime.UtcNow
-                ));
-            };
-
-            new HotKey(Key.H, HotKey.KeyModifier.Ctrl, (hotKey) =>
-                Events.PublishOnUIThread(new ChangeAppVisiblity(VisiblityChangeType.Toggle))
-            );
         }
 
         public void SelectMenuItem(SelectableActionModel option) {
@@ -92,7 +79,7 @@ namespace ClipboardMachinery.ViewModels {
                 barItemModel.IsSelected = false;
             }
 
-            ClipboardItemsView.Filter = null;
+            ClipboardItemsProvider.SetFilter(null);
             option.IsSelected = true;
             option.Action?.Invoke();
             NotifyOfPropertyChange(() => SelectedMenuItem);
@@ -125,7 +112,7 @@ namespace ClipboardMachinery.ViewModels {
         }
 
         public void Handle(SetViewFilter message) {
-            ClipboardItemsView.Filter = message.Filter;
+            ClipboardItemsProvider.SetFilter(message.Filter);
         }
 
         #endregion
