@@ -20,28 +20,7 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" BorderBrush="{StaticResource PanelBackgroundBrush}" Background="{StaticResource PanelBackgroundBrush}" CornerRadius="10,10,0,0">
-                <!-- Top border with menu -->
-                <Grid Margin="4">
-                    <Viewbox HorizontalAlignment="Left" >
-                        <ItemsControl x:Name="MenuItems">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel MinHeight="16" Orientation="Horizontal"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid cal:Bind.Model="{Binding}" cal:Message.Attach="[Event MouseLeftButtonUp] = [Action SelectMenuItem($dataContext)]" MaxWidth="32" Margin="8" Cursor="Hand" Background="Transparent">
-                                        <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Viewbox>
-
-                    <!-- Current page title -->
-                    <Label x:Name="Title" Foreground="{StaticResource PanelControlBrush}" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontSize="16" Padding="0"/>
-                </Grid>
+                <ContentControl x:Name="TopPanelMenu" />
             </Border>
 
             <!-- Center content -->

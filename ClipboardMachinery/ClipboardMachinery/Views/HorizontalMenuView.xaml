@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="ClipboardMachinery.Views.HorizontalMenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ClipboardMachinery.Views"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d"
+             d:DesignHeight="32" d:DesignWidth="384">
+    <Grid>
+        <ItemsControl x:Name="Pages">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel MinHeight="16" Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid cal:Bind.Model="{Binding}" cal:Message.Attach="[Event MouseLeftButtonUp] = [Action SelectPage($dataContext)]" MaxWidth="32" Margin="8" Cursor="Hand" Background="Transparent">
+                        <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Current page title -->
+        <Label x:Name="SelectedPageTitle" Foreground="{StaticResource PanelControlBrush}" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontSize="16" Padding="0"/>
+    </Grid>
+</UserControl>

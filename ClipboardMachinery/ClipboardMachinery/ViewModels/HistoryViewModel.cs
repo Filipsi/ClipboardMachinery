@@ -37,9 +37,7 @@ namespace ClipboardMachinery.ViewModels {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                 case NotifyCollectionChangedAction.Remove:
-                    if (((BindableCollection<ClipViewModel>) sender).Count < 2) {
-                        NotifyOfPropertyChange(() => ErrorMessageIsVisible);
-                    }
+                    NotifyOfPropertyChange(() => ErrorMessageIsVisible);
                     return;
             }
         }

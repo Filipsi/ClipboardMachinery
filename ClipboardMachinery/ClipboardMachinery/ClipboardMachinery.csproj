@@ -46,6 +46,10 @@
     <Reference Include="Caliburn.Micro.Platform.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Bibliotheque\Bibliotheque\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -53,6 +57,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -86,6 +91,7 @@
     <Compile Include="Events\Collection\ItemRemoved.cs" />
     <Compile Include="Events\Collection\ItemSelected.cs" />
     <Compile Include="Events\Collection\ItemFavoriteChanged.cs" />
+    <Compile Include="Events\PageSelected.cs" />
     <Compile Include="Events\SetViewFilter.cs" />
     <Compile Include="Logic\ClipboardItemsProvider\ClipboardItemsProviderImpl.cs" />
     <Compile Include="Logic\ClipboardItemsProvider\IClipboardItemsProvider.cs" />
@@ -94,12 +100,16 @@
     <Compile Include="Logic\IShell.cs" />
     <Compile Include="Logic\ViewModelFactory\IViewModelFactory.cs" />
     <Compile Include="Logic\ViewModelFactory\NinjectViewModelFactory.cs" />
-    <Compile Include="Models\SelectableActionModel.cs" />
+    <Compile Include="Models\PageNavigatorModel.cs" />
+    <Compile Include="ViewModels\HorizontalMenuViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\FavoritesViewModel.cs" />
     <Compile Include="ViewModels\HistoryViewModel.cs" />
     <Compile Include="ViewModels\ClipViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="Views\HorizontalMenuView.xaml.cs">
+      <DependentUpon>HorizontalMenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
@@ -176,6 +186,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Fonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HorizontalMenuView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
 using Ninject;
 
 namespace ClipboardMachinery.Logic.ViewModelFactory {
@@ -15,6 +16,13 @@ namespace ClipboardMachinery.Logic.ViewModelFactory {
             return _kernel.Get<T>();
         }
 
+        public IScreen Create(Type type) {
+            if (!typeof(IScreen).IsAssignableFrom(type)) {
+                throw new InvalidOperationException();
+            }
+
+            return _kernel.Get(type) as IScreen;
+        }
     }
 
 }
