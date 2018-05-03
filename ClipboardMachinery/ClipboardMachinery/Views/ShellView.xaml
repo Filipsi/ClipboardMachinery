@@ -4,10 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClipboardMachinery.Views"
-        xmlns:cal="http://www.caliburnproject.org"
         xmlns:controls="clr-namespace:ClipboardMachinery.Controls"
         mc:Ignorable="d"
-        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         Background="{x:Null}" AllowsTransparency="True" WindowStyle="None"
         ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterScreen">
     <Grid Width="{Binding AppWidth, FallbackValue='384'}" MinWidth="384">
@@ -19,6 +17,7 @@
                 <RowDefinition Height="16" />
             </Grid.RowDefinitions>
 
+            <!-- Top navigation panel -->
             <Border Grid.Row="0" BorderBrush="{StaticResource PanelBackgroundBrush}" Background="{StaticResource PanelBackgroundBrush}" CornerRadius="10,10,0,0">
                 <ContentControl x:Name="TopPanelMenu" />
             </Border>
@@ -27,8 +26,15 @@
             <ContentControl Grid.Row="1" x:Name="ActiveItem" MaxHeight="{Binding MaxContentHeight, FallbackValue='640'}"/>
 
             <!-- Bottom border -->
-            <Border Grid.Row="2" BorderBrush="{StaticResource PanelBackgroundBrush}" Background="{StaticResource PanelBackgroundBrush}" CornerRadius="0,0,10,10" />
+            <Border Grid.Row="2" BorderBrush="{StaticResource PanelBackgroundBrush}" Background="{StaticResource PanelBackgroundBrush}" CornerRadius="0,0,10,10">
+                <Grid>
+                    <!--<Label x:Name="Notification" Foreground="{StaticResource PanelControlBrush}" HorizontalAlignment="Left"  Padding="0" Margin="8,0,0,0">A new version is available!</Label>-->
+                    <Label x:Name="AppVersion" Foreground="{StaticResource PanelControlBrush}" HorizontalAlignment="Right" Padding="0" Margin="0,0,8,0">1.0.0.0</Label>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </Window>
+
+
 

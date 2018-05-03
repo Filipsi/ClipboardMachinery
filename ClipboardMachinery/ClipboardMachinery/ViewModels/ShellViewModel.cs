@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Windows;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Logic;
@@ -35,8 +37,13 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
+        public string AppVersion { get; } = (Debugger.IsAttached ? "dev" : string.Empty) +
+                                            Assembly.GetEntryAssembly().GetName().Version;
+
         public double AppWidth { get; } = SystemParameters.PrimaryScreenWidth / 3;
+
         public double MaxContentHeight { get; } = SystemParameters.PrimaryScreenHeight / 1.5;
+
         private HorizontalMenuViewModel _topPanelMenu;
 
         protected override void OnInitialize() {
