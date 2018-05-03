@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
-using Caliburn.Micro;
 
 namespace ClipboardMachinery.Models {
 
-    public class PageNavigatorModel : PropertyChangedBase {
+    internal class PageNavigatorModel : ControlModel {
 
         public string Name { get; }
 
-        public Geometry Icon { get; }
-
         public Type ViewModelType { get; }
 
-        public SolidColorBrush Color =>
+        public new SolidColorBrush Color =>
             Application.Current.FindResource(IsSelected ? "PanelSelectedBrush" : "PanelControlBrush") as SolidColorBrush;
 
         public bool IsSelected {
@@ -28,10 +25,9 @@ namespace ClipboardMachinery.Models {
 
         private bool _isSelected;
 
-        public PageNavigatorModel(string name, string iconName, Type viewModelType) {
+        public PageNavigatorModel(string name, string iconName, Type viewModelType) : base(iconName) {
             Name = name;
             ViewModelType = viewModelType;
-            Icon = Application.Current.FindResource(iconName) as Geometry;
         }
 
     }

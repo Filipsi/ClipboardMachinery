@@ -100,6 +100,8 @@
     <Compile Include="Logic\IShell.cs" />
     <Compile Include="Logic\ViewModelFactory\IViewModelFactory.cs" />
     <Compile Include="Logic\ViewModelFactory\NinjectViewModelFactory.cs" />
+    <Compile Include="Models\ActionButtonModel.cs" />
+    <Compile Include="Models\ControlModel.cs" />
     <Compile Include="Models\PageNavigatorModel.cs" />
     <Compile Include="ViewModels\HorizontalMenuViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />

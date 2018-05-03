@@ -25,10 +25,20 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
+        public BindableCollection<ActionButtonModel> Controls {
+            get => _controls;
+            set {
+                if (Equals(value, _controls)) return;
+                _controls = value;
+                NotifyOfPropertyChange(() => Controls);
+            }
+        }
+
         public PageNavigatorModel SelectedPage => Pages?.FirstOrDefault(model => model.IsSelected);
         public string SelectedPageTitle => SelectedPage?.Name;
 
         private BindableCollection<PageNavigatorModel> _pages;
+        private BindableCollection<ActionButtonModel> _controls;
 
         protected override void OnInitialize() {
             if (!Pages.Any(m => m.IsSelected)) {
@@ -52,6 +62,9 @@ namespace ClipboardMachinery.ViewModels {
             NotifyOfPropertyChange(() => SelectedPageTitle);
             Events.PublishOnUIThread(new PageSelected(this, page));
         }
+
+        public void HandleControlClick(ActionButtonModel control)
+            => control?.InvokeClickAction();
     }
 
 }

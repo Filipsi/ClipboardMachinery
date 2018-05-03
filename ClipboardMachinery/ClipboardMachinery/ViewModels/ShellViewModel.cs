@@ -68,6 +68,12 @@ namespace ClipboardMachinery.ViewModels {
                     viewModelType: typeof(SearchViewModel)
                 )
             };
+            TopPanelMenu.Controls = new BindableCollection<ActionButtonModel> {
+                new ActionButtonModel(
+                    iconName: "IconExit",
+                    clickAction: () => TryClose()
+                )
+            };
         }
 
         #region Event Handlers
