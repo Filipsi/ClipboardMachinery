@@ -1,31 +1,37 @@
-branches:
-  only:
-    - master
-
 os: Visual Studio 2017
 configuration: Release
 platform: Any CPU
+
+version: '1.0.{build}'
+skip_tags: true
 
 build:
   project: ClipboardMachinery\ClipboardMachinery.sln
   verbosity: minimal
 
-artifacts:
-  path: ClipboardMachinery\ClipboardMachinery\bin\Release
-
 install:
   cmd: git submodule -q update --init  
 
 before_build:
-  - cmd: nuget restore Bibliotheque\Bibliotheque.sln
-  - cmd: nuget restore ClipboardMachinery\ClipboardMachinery.sln
+  cmd: nuget restore Bibliotheque\Bibliotheque.sln & nuget restore ClipboardMachinery\ClipboardMachinery.sln
+
+assembly_info:
+  patch: true
+  file: ClipboardMachinery\ClipboardMachinery\Properties\AssemblyInfo.cs
+  assembly_version: '{version}'
+
+artifacts:
+  path: ClipboardMachinery\ClipboardMachinery\bin\Release
+  name: $(APPVEYOR_PROJECT_NAME)-$(APPVEYOR_BUILD_VERSION)
+  type: zip
 
 deploy:
   provider: GitHub
   auth_token:
     secure: wzztgAMUTfmbyw7/xz9gB5X8L4QvW8Mzaq006r8RmTS5YnbZ7VUvNtH4MTcc4s0O
+  release: $(APPVEYOR_PROJECT_NAME) $(APPVEYOR_BUILD_VERSION)
+  tag: $(APPVEYOR_BUILD_VERSION)
   draft: false
   prerelease: false
   on:
-    branch: master                 # release from master branch only
-    appveyor_repo_tag: true        # deploy on tag push only
+    branch: master
