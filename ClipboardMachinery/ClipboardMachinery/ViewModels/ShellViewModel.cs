@@ -38,7 +38,7 @@ namespace ClipboardMachinery.ViewModels {
         }
 
         public string AppVersion { get; } = (Debugger.IsAttached ? "dev" : string.Empty) +
-                                            Assembly.GetEntryAssembly().GetName().Version;
+                                            Assembly.GetEntryAssembly().GetName().Version.ToString(3);
 
         public double AppWidth { get; } = SystemParameters.PrimaryScreenWidth / 3;
 
