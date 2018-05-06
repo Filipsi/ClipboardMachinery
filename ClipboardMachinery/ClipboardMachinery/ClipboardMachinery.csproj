@@ -101,7 +101,7 @@
     <Compile Include="Logic\ViewModelFactory\IViewModelFactory.cs" />
     <Compile Include="Logic\ViewModelFactory\NinjectViewModelFactory.cs" />
     <Compile Include="Models\ActionButtonModel.cs" />
-    <Compile Include="Models\ControlModel.cs" />
+    <Compile Include="Models\BaseControlModel.cs" />
     <Compile Include="Models\PageNavigatorModel.cs" />
     <Compile Include="ViewModels\HorizontalMenuViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
@@ -109,6 +109,7 @@
     <Compile Include="ViewModels\HistoryViewModel.cs" />
     <Compile Include="ViewModels\ClipViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="ViewModels\UpdateViewModel.cs" />
     <Compile Include="Views\HorizontalMenuView.xaml.cs">
       <DependentUpon>HorizontalMenuView.xaml</DependentUpon>
     </Compile>
@@ -126,6 +127,9 @@
     </Compile>
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UpdateView.xaml.cs">
+      <DependentUpon>UpdateView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +216,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UpdateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

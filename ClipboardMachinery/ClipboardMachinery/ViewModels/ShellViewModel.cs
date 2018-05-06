@@ -51,6 +51,7 @@ namespace ClipboardMachinery.ViewModels {
 
             Events.Subscribe(this);
             TopPanelMenu = ViewModelFactory.Create<HorizontalMenuViewModel>();
+
             TopPanelMenu.Pages = new BindableCollection<PageNavigatorModel> {
                 new PageNavigatorModel(
                     name: "History",
@@ -66,8 +67,14 @@ namespace ClipboardMachinery.ViewModels {
                     name: "Search",
                     iconName: "IconSearch",
                     viewModelType: typeof(SearchViewModel)
+                ),
+                new PageNavigatorModel(
+                    name: "Updater",
+                    iconName: "IconUpdater",
+                    viewModelType: typeof(UpdateViewModel)
                 )
             };
+
             TopPanelMenu.Controls = new BindableCollection<ActionButtonModel> {
                 new ActionButtonModel(
                     iconName: "IconExit",
