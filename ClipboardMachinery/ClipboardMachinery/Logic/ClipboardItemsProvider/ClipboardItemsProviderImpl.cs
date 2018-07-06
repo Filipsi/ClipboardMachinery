@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Data;
 using Bibliotheque.Machine;
 using Caliburn.Micro;
+using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.FileSystem;
 using ClipboardMachinery.Logic.ViewModelFactory;
 using ClipboardMachinery.ViewModels;
 using Ninject;
@@ -19,7 +21,8 @@ namespace ClipboardMachinery.Logic.ClipboardItemsProvider {
 
         public ClipboardItemsProviderImpl(IViewModelFactory viewModelFactory) {
             _viewModelFactory = viewModelFactory;
-            Items = new BindableCollection<ClipViewModel>();
+
+            Items = new BindableCollection<ClipViewModel>(ClipFile.Instance.Favorites);
             ItemsView = CollectionViewSource.GetDefaultView(Items);
 
             ClipboardObserver.ClipboardChanged += OnClipboardChanged;
@@ -32,8 +35,7 @@ namespace ClipboardMachinery.Logic.ClipboardItemsProvider {
 
             ClipViewModel model = _viewModelFactory.Create<ClipViewModel>();
 
-            DateTime timestamp = DateTime.UtcNow;
-            model.Timestamp = $"{timestamp.ToLongTimeString()} {timestamp.ToLongDateString()}";
+            model.Created = DateTime.UtcNow;
             model.RawContent = e.Payload;
 
             Items.Insert(0, model);

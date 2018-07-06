@@ -93,6 +93,7 @@
     <Compile Include="Events\Collection\ItemFavoriteChanged.cs" />
     <Compile Include="Events\PageSelected.cs" />
     <Compile Include="Events\SetViewFilter.cs" />
+    <Compile Include="FileSystem\ClipFile.cs" />
     <Compile Include="Logic\ClipboardItemsProvider\ClipboardItemsProviderImpl.cs" />
     <Compile Include="Logic\ClipboardItemsProvider\IClipboardItemsProvider.cs" />
     <Compile Include="Logic\HotKeyHandler\HotKeyHandlerImpl.cs" />

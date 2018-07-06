@@ -9,17 +9,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using ClipboardMachinery.Events.Collection;
+using Newtonsoft.Json;
 using Ninject;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
 
+    [JsonObject(MemberSerialization.OptIn)]
     internal class ClipViewModel : Screen {
 
         [Inject]
         public IEventAggregator Events { set; get; }
 
+        [JsonProperty("content")]
         public string RawContent {
             get => _rawContent;
             set {
@@ -37,18 +40,19 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public string Timestamp {
-            get => _timestamp;
+        [JsonProperty("timestamp")]
+        public DateTime Created {
+            get => _created;
             set {
-                if (value == _timestamp) return;
-                _timestamp = value;
-                NotifyOfPropertyChange(() => Timestamp);
+                if (value == _created) return;
+                _created = value;
+                NotifyOfPropertyChange(() => Created);
             }
         }
 
         public bool IsFavorite {
             get => _isFavorite;
-            private set {
+            set {
                 if (value == _isFavorite) return;
                 _isFavorite = value;
                 NotifyOfPropertyChange();
@@ -84,7 +88,7 @@ namespace ClipboardMachinery.ViewModels {
 
         private bool _isFavorite;
         private bool _isFocused;
-        private string _timestamp;
+        private DateTime _created;
         private string _rawContent;
 
         private static readonly Regex ImageDataPattern =

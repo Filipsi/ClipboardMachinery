@@ -3,6 +3,8 @@ using System.Reflection;
 using System.Windows;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
+using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.FileSystem;
 using ClipboardMachinery.Logic;
 using ClipboardMachinery.Logic.ClipboardItemsProvider;
 using ClipboardMachinery.Logic.HotKeyHandler;
@@ -13,7 +15,7 @@ using Ninject;
 namespace ClipboardMachinery.ViewModels {
 
     internal class ShellViewModel : Conductor<object>, IShell,
-        IHandle<ChangeAppVisiblity>, IHandle<SetViewFilter>, IHandle<PageSelected> {
+        IHandle<ChangeAppVisiblity>, IHandle<SetViewFilter>, IHandle<PageSelected>, IHandle<ItemFavoriteChanged<ClipViewModel>> {
 
         [Inject]
         public IEventAggregator Events { set; get; }
@@ -111,6 +113,16 @@ namespace ClipboardMachinery.ViewModels {
 
         public void Handle(SetViewFilter message) {
             ClipboardItemsProvider.SetFilter(message.Filter);
+        }
+
+        public void Handle(ItemFavoriteChanged<ClipViewModel> message) {
+            if (message.Item.IsFavorite) {
+                ClipFile.Instance.Favorites.Add(message.Item);
+            } else {
+                ClipFile.Instance.Favorites.Remove(message.Item);
+            }
+
+            ClipFile.Instance.Save();
         }
 
         #endregion

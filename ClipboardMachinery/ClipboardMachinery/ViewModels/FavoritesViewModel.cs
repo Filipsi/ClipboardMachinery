@@ -5,6 +5,7 @@ using System.Linq;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.FileSystem;
 using Ninject;
 
 namespace ClipboardMachinery.ViewModels {
