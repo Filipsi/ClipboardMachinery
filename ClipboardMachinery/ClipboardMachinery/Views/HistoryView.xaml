@@ -14,9 +14,12 @@
                     There is nothing here yet.
                 </TextBlock>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
-                    Use your clipbord to change that.
+                    Use your clipboard to change that.
                 </TextBlock>
                 <Path Width="32" Data="{StaticResource IconBox}" Fill="{StaticResource PanelControlBrush}" Stretch="Uniform" Margin="0,16,0,0" />
+                <TextBlock  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}" Margin="0,10,0,0" FontSize="10">
+                    Tip: Hotkey CTRL+H hides the app.
+                </TextBlock>
             </StackPanel>
          </Border>
         <ScrollViewer x:Name="ItemsScrollView" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
