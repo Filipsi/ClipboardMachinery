@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ClipboardMachinery.Models {
 
-    internal class PageNavigatorModel : BaseControlModel {
+    internal class PageNavigatorModel : ControlModel {
 
         public string Name { get; }
 

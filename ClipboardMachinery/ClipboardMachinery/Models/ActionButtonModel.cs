@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ClipboardMachinery.Models {
 
-    internal class ActionButtonModel : BaseControlModel {
+    internal class ActionButtonModel : ControlModel {
 
         public bool IsFocused {
             get => _isFocused;

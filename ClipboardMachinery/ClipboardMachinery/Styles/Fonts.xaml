@@ -10,16 +10,13 @@
         <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
     </Style>
 
-    <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" />
-    <Style TargetType="Label" BasedOn="{StaticResource BaseStyle}" />
-    <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
-    <Style TargetType="ListView" BasedOn="{StaticResource BaseStyle}" />
-    <Style TargetType="GroupBox" BasedOn="{StaticResource BaseStyle}" />
-    <Style TargetType="CheckBox" BasedOn="{StaticResource BaseStyle}" />
-
     <Style TargetType="TextBlock" x:Key="BaseTextBlockStyle">
         <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
     </Style>
 
+    <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" />
+    <Style TargetType="Label" BasedOn="{StaticResource BaseStyle}" />
+    <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
+    <Style TargetType="ListView" BasedOn="{StaticResource BaseStyle}" />
     <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
 </ResourceDictionary>
