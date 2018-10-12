@@ -2,57 +2,69 @@
 using System.Reflection;
 using System.Windows;
 using Caliburn.Micro;
+using Castle.Windsor;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Events.Collection;
 using ClipboardMachinery.FileSystem;
 using ClipboardMachinery.Logic;
 using ClipboardMachinery.Logic.ClipboardItemsProvider;
 using ClipboardMachinery.Logic.HotKeyHandler;
-using ClipboardMachinery.Logic.ViewModelFactory;
 using ClipboardMachinery.Models;
-using Ninject;
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class ShellViewModel : Conductor<object>, IShell,
-        IHandle<ChangeAppVisiblity>, IHandle<SetViewFilter>, IHandle<PageSelected>, IHandle<ItemFavoriteChanged<ClipViewModel>> {
+    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell {
 
-        [Inject]
-        public IEventAggregator Events { set; get; }
+        #region Properties
 
-        [Inject]
-        public IViewModelFactory ViewModelFactory { set; get; }
-
-        [Inject]
-        public IClipboardItemsProvider ClipboardItemsProvider { set; get; }
-
-        [Inject]
-        public IHotKeyHandler HotKeyHandler { set; get; }
+        public IClipboardItemsProvider ClipboardItemsProvider {
+            get;
+        }
 
         public HorizontalMenuViewModel TopPanelMenu {
-            get => _topPanelMenu;
+            get => topPanelMenu;
             private set {
-                if (Equals(value, _topPanelMenu)) return;
-                _topPanelMenu = value;
+                if (Equals(value, topPanelMenu))
+                    return;
+
+                topPanelMenu = value;
                 TopPanelMenu.ConductWith(this);
                 NotifyOfPropertyChange(() => TopPanelMenu);
             }
         }
 
-        public string AppVersion { get; } = (Debugger.IsAttached ? "dev" : string.Empty) +
-                                            Assembly.GetEntryAssembly().GetName().Version.ToString(3);
+        public string AppVersion
+            => (Debugger.IsAttached ? "dev" : string.Empty) + Assembly.GetEntryAssembly().GetName().Version.ToString(3);
 
-        public double AppWidth { get; } = SystemParameters.PrimaryScreenWidth / 3;
+        public double AppWidth
+            => SystemParameters.PrimaryScreenWidth / 3;
 
-        public double MaxContentHeight { get; } = SystemParameters.PrimaryScreenHeight / 1.5;
+        public double MaxContentHeight
+            => SystemParameters.PrimaryScreenHeight / 1.5;
 
-        private HorizontalMenuViewModel _topPanelMenu;
+        #endregion
+
+        #region Fields
+
+        private HorizontalMenuViewModel topPanelMenu;
+        private readonly IWindsorContainer container;
+        private readonly IHotKeyHandler hotKeys;
+
+        #endregion
+
+        public ShellViewModel(
+            IClipboardItemsProvider clipboardItemsProvider, HorizontalMenuViewModel topPanelMenu,
+            IWindsorContainer windsorContainer, IHotKeyHandler hotKeyHandler)  {
+
+            ClipboardItemsProvider = clipboardItemsProvider;
+            TopPanelMenu = topPanelMenu;
+            container = windsorContainer;
+            hotKeys = hotKeyHandler;
+        }
 
         protected override void OnInitialize() {
             base.OnInitialize();
 
-            Events.Subscribe(this);
-            TopPanelMenu = ViewModelFactory.Create<HorizontalMenuViewModel>();
             TopPanelMenu.Pages = new BindableCollection<PageNavigatorModel> {
                 new PageNavigatorModel(
                     name: "History",
@@ -70,6 +82,7 @@ namespace ClipboardMachinery.ViewModels {
                     viewModelType: typeof(SearchViewModel)
                 )
             };
+
             TopPanelMenu.Controls = new BindableCollection<ActionButtonModel> {
                 new ActionButtonModel(
                     iconName: "IconExit",
@@ -83,7 +96,7 @@ namespace ClipboardMachinery.ViewModels {
         public void Handle(ChangeAppVisiblity message) {
             Window win = (Window)GetView();
 
-            switch (message.EventVisiblityChangeType) {
+            switch (message.ChangeType) {
                 case VisiblityChangeType.Hide:
                     win.Hide();
                     return;
@@ -104,25 +117,16 @@ namespace ClipboardMachinery.ViewModels {
         }
 
         public void Handle(PageSelected message) {
-            if (message.Source != TopPanelMenu) return;
-            ClipboardItemsProvider.SetFilter(null);
-            IScreen viewModel = ViewModelFactory.Create(message.Navigator.ViewModelType);
-            viewModel.ConductWith(this);
-            ActivateItem(viewModel);
-        }
-
-        public void Handle(SetViewFilter message) {
-            ClipboardItemsProvider.SetFilter(message.Filter);
-        }
-
-        public void Handle(ItemFavoriteChanged<ClipViewModel> message) {
-            if (message.Item.IsFavorite) {
-                ClipFile.Instance.Favorites.Add(message.Item);
-            } else {
-                ClipFile.Instance.Favorites.Remove(message.Item);
+            if (message.Source != TopPanelMenu) {
+                return;
             }
 
-            ClipFile.Instance.Save();
+            ClipboardItemsProvider.SetFilter(null);
+
+            // TODO: Create NavigationService
+            IScreen viewModel = container.Resolve(message.Navigator.ViewModelType) as IScreen;
+            viewModel.ConductWith(this);
+            ActivateItem(viewModel);
         }
 
         #endregion

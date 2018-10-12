@@ -4,9 +4,11 @@ using Caliburn.Micro;
 
 namespace ClipboardMachinery.Models {
 
-    internal class ControlModel : PropertyChangedBase {
+    public class ControlModel : PropertyChangedBase {
 
-        public Geometry Icon { get; }
+        public Geometry Icon {
+            get;
+        }
 
         public SolidColorBrush Color =>
             Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;

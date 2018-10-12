@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Events {
 
-    internal class ChangeAppVisiblity {
+    public class ChangeAppVisiblity {
 
-        public VisiblityChangeType EventVisiblityChangeType { get; }
+        public VisiblityChangeType ChangeType { get; }
 
         public ChangeAppVisiblity(VisiblityChangeType visiblityChangeType) {
-            EventVisiblityChangeType = visiblityChangeType;
+            ChangeType = visiblityChangeType;
         }
     }
 

@@ -8,26 +8,38 @@ using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Events.Collection;
 using ClipboardMachinery.Logic.ClipboardItemsProvider;
-using Ninject;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class HistoryViewModel : Screen,
-        IHandle<ItemRemoved<ClipViewModel>>, IHandle<ItemSelected<ClipViewModel>> {
+    public class HistoryViewModel : Screen, IHandle<ItemSelected<ClipViewModel>> {
 
-        [Inject]
-        public IEventAggregator Events { set; get; }
+        #region Properties
 
-        [Inject]
-        public IClipboardItemsProvider ClipboardItemsProvider { set; get; }
+        public IClipboardItemsProvider ClipboardItemsProvider {
+            get;
+        }
 
-        public bool ErrorMessageIsVisible => ClipboardItemsProvider.Items?.Count == 0;
+        public bool ErrorMessageIsVisible
+            => ClipboardItemsProvider.Items?.Count == 0;
+
+        #endregion
+
+        #region Fields
+
+        protected readonly IEventAggregator eventBus;
+
+        #endregion
+
+        public HistoryViewModel(IClipboardItemsProvider clipboardItemsProvider, IEventAggregator eventAggregator) {
+            ClipboardItemsProvider = clipboardItemsProvider;
+            eventBus = eventAggregator;
+        }
+
+        #region Handlers
 
         protected override void OnInitialize() {
             base.OnInitialize();
-
-            Events.Subscribe(this);
 
             ClipboardItemsProvider.Items.CollectionChanged += ItemsInCollectionChanged;
             ItemsInCollectionChanged(ClipboardItemsProvider.Items, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, ClipboardItemsProvider.Items));
@@ -41,17 +53,12 @@ namespace ClipboardMachinery.ViewModels {
                     return;
             }
         }
-
-        #region Event Handlers
-
-        public void Handle(ItemRemoved<ClipViewModel> message) {
-            if (!IsActive) return;
-            ClipboardItemsProvider.Items.Remove(message.Item);
-        }
-
         public void Handle(ItemSelected<ClipViewModel> message) {
-            if (!IsActive) return;
-            ClipboardObserver.IgnoreNextChange(message.Item.RawContent);
+            if (!IsActive) {
+                return;
+            }
+
+            ClipboardObserver.IgnoreNextChange(message.Item.Model.RawContent);
 
             try {
                 switch (message.Item.Type) {
@@ -60,14 +67,12 @@ namespace ClipboardMachinery.ViewModels {
                         break;
 
                     default:
-                        Clipboard.SetText(message.Item.RawContent);
+                        Clipboard.SetText(message.Item.Model.RawContent);
                         break;
                 }
-            } catch (Exception) {
-                // ignored
-            }
+            } catch {}
 
-            Events.PublishOnUIThread(new ChangeAppVisiblity(VisiblityChangeType.Hide));
+            eventBus.PublishOnUIThread(new ChangeAppVisiblity(VisiblityChangeType.Hide));
         }
 
         #endregion

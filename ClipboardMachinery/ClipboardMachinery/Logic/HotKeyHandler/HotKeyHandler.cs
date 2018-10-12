@@ -5,13 +5,13 @@ using ClipboardMachinery.Events;
 
 namespace ClipboardMachinery.Logic.HotKeyHandler {
 
-    internal class HotKeyHandlerImpl : IHotKeyHandler {
+    public class HotKeyHandler : IHotKeyHandler {
 
         public HotKey[] HotKeys { get; }
 
         private readonly IEventAggregator _eventAggregator;
 
-        public HotKeyHandlerImpl(IEventAggregator eventAggregator) {
+        public HotKeyHandler(IEventAggregator eventAggregator) {
             _eventAggregator = eventAggregator;
 
             HotKeys = new[] {

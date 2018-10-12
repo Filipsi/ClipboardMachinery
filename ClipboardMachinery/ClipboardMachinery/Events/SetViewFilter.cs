@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Events {
 
-    internal class SetViewFilter {
+    public class SetViewFilter {
 
         public Predicate<object> Filter { get; }
 

@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using ClipboardMachinery.Events;
 using ClipboardMachinery.Models;
-using Ninject;
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class HorizontalMenuViewModel : Screen {
+    public class HorizontalMenuViewModel : Screen {
 
-        [Inject]
-        public IEventAggregator Events { set; get; }
+        #region Properties
 
         public BindableCollection<PageNavigatorModel> Pages {
             get => _pages;
@@ -34,11 +32,27 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public PageNavigatorModel SelectedPage => Pages?.FirstOrDefault(model => model.IsSelected);
-        public string SelectedPageTitle => SelectedPage?.Name;
+        public PageNavigatorModel SelectedPage
+            => Pages?.FirstOrDefault(model => model.IsSelected);
+
+        public string SelectedPageTitle
+            => SelectedPage?.Name;
+
+        #endregion
+
+        #region Fields
 
         private BindableCollection<PageNavigatorModel> _pages;
         private BindableCollection<ActionButtonModel> _controls;
+        private readonly IEventAggregator eventBus;
+
+        #endregion
+
+        public HorizontalMenuViewModel(IEventAggregator eventAggregator) {
+            eventBus = eventAggregator;
+        }
+
+        #region Handlers
 
         protected override void OnInitialize() {
             if (!Pages.Any(m => m.IsSelected)) {
@@ -60,11 +74,14 @@ namespace ClipboardMachinery.ViewModels {
             page.IsSelected = true;
             NotifyOfPropertyChange(() => SelectedPage);
             NotifyOfPropertyChange(() => SelectedPageTitle);
-            Events.PublishOnUIThread(new PageSelected(this, page));
+            eventBus.PublishOnUIThread(new PageSelected(this, page));
         }
 
         public void HandleControlClick(ActionButtonModel control)
             => control?.InvokeClickAction();
+
+        #endregion
+
     }
 
 }

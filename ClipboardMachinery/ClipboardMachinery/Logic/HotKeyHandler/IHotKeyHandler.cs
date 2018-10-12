@@ -2,7 +2,7 @@
 
 namespace ClipboardMachinery.Logic.HotKeyHandler {
 
-    internal interface IHotKeyHandler {
+    public interface IHotKeyHandler {
 
         HotKey[] HotKeys { get; }
 

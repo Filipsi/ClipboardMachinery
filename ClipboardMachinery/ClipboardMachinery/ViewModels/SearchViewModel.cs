@@ -2,7 +2,7 @@
 
 namespace ClipboardMachinery.ViewModels {
 
-    internal class SearchViewModel : Screen {
+    public class SearchViewModel : Screen {
 
     }
 

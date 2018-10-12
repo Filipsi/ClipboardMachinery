@@ -1,10 +1,10 @@
 ﻿namespace ClipboardMachinery.Events.Collection {
 
-    internal abstract class ItemBase<T> {
+    public abstract class ItemHolder<T> {
 
         public T Item { get; }
 
-        protected ItemBase(T item) {
+        protected ItemHolder(T item) {
             Item = item;
         }
 

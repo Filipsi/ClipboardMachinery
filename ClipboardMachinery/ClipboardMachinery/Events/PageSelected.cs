@@ -7,7 +7,7 @@ using ClipboardMachinery.Models;
 
 namespace ClipboardMachinery.Events {
 
-    internal class PageSelected {
+    public class PageSelected {
 
         public PageNavigatorModel Navigator { get; }
 

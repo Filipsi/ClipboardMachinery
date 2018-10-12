@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Bibliotheque.FileSystem;
 using Caliburn.Micro;
+using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.Models;
 using ClipboardMachinery.ViewModels;
 using Newtonsoft.Json;
 
 namespace ClipboardMachinery.FileSystem {
 
-    internal class ClipFile : JsonFile {
+    [JsonObject(MemberSerialization.OptIn)]
+    public class ClipFile : JsonFile, IHandle<ItemFavoriteChanged<ClipViewModel>>, IHandle<ItemRemoved<ClipViewModel>> {
 
-        public static readonly ClipFile Instance = new ClipFile(
-            Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)
-        );
+        #region Properties
 
         [JsonProperty("favorites")]
-        public List<ClipViewModel> Favorites { private set; get; } = new List<ClipViewModel>();
+        public List<ClipModel> Favorites {
+            get; private set;
+        }
 
-        private ClipFile(string path) : base(Path.Combine(path, "clips.json")) {
+        #endregion
+
+        public ClipFile() : base(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "clips.json")) {
+            Favorites = new List<ClipModel>();
+
             if (Exists) {
                 Load();
             }
@@ -31,12 +34,13 @@ namespace ClipboardMachinery.FileSystem {
             }
         }
 
+        #region File
+
         public sealed override void Load() {
             base.Load();
 
-            foreach (ClipViewModel favorite in Favorites) {
-                IoC.BuildUp(favorite);
-                favorite.IsFavorite = true;
+            foreach (ClipModel clip in Favorites) {
+                clip.IsFavorite = true;
             }
 
             Favorites.Sort((x, y) => DateTime.Compare(y.Created, x.Created));
@@ -44,6 +48,29 @@ namespace ClipboardMachinery.FileSystem {
 
         public sealed override void Save()
             => base.Save();
+
+        #endregion
+
+        #region Handlers
+
+        public void Handle(ItemFavoriteChanged<ClipViewModel> message) {
+            if (message.Item.Model.IsFavorite) {
+                Favorites.Add(message.Item.Model);
+            } else {
+                Favorites.Remove(message.Item.Model);
+            }
+
+            Save();
+        }
+
+        public void Handle(ItemRemoved<ClipViewModel> message) {
+            if (message.Item.Model.IsFavorite) {
+                Favorites.Remove(message.Item.Model);
+                Save();
+            }
+        }
+
+        #endregion
 
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace ClipboardMachinery.Events.Collection {
 
-    internal class ItemSelected<T> : ItemBase<T> {
+    public class ItemSelected<T> : ItemHolder<T> {
 
         public ItemSelected(T item) : base(item) {
         }
