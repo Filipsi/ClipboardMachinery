@@ -1,10 +1,12 @@
-﻿<UserControl x:Class="ClipboardMachinery.Views.ClipView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:cal="http://www.caliburnproject.org"
-             mc:Ignorable="d" d:DesignWidth="512">
+﻿<UserControl
+    x:Class="ClipboardMachinery.Views.ClipView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cal="http://www.caliburnproject.org"
+    mc:Ignorable="d" d:DesignWidth="512"
+    Cursor="Hand">
 
     <Grid Background="{Binding BackgroundColor, FallbackValue={StaticResource BodyBackgroundBrush}}"
           cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]">

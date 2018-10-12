@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using Bibliotheque.Json;
 using Caliburn.Micro;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
-using ClipboardMachinery.Logic;
-using Newtonsoft.Json;
+using ClipboardMachinery.Plumbing;
 
 namespace ClipboardMachinery {
 

@@ -14,20 +14,24 @@ namespace ClipboardMachinery.ViewModels {
         #region Properties
 
         public BindableCollection<PageNavigatorModel> Pages {
-            get => _pages;
+            get => pages;
             set {
-                if (Equals(value, _pages)) return;
-                _pages = value;
+                if (pages == value)
+                    return;
+
+                pages = value;
                 NotifyOfPropertyChange(() => Pages);
                 NotifyOfPropertyChange(() => SelectedPage);
             }
         }
 
         public BindableCollection<ActionButtonModel> Controls {
-            get => _controls;
+            get => controls;
             set {
-                if (Equals(value, _controls)) return;
-                _controls = value;
+                if (controls == value)
+                    return;
+
+                controls = value;
                 NotifyOfPropertyChange(() => Controls);
             }
         }
@@ -42,8 +46,8 @@ namespace ClipboardMachinery.ViewModels {
 
         #region Fields
 
-        private BindableCollection<PageNavigatorModel> _pages;
-        private BindableCollection<ActionButtonModel> _controls;
+        private BindableCollection<PageNavigatorModel> pages;
+        private BindableCollection<ActionButtonModel> controls;
         private readonly IEventAggregator eventBus;
 
         #endregion
@@ -74,7 +78,6 @@ namespace ClipboardMachinery.ViewModels {
             page.IsSelected = true;
             NotifyOfPropertyChange(() => SelectedPage);
             NotifyOfPropertyChange(() => SelectedPageTitle);
-            eventBus.PublishOnUIThread(new PageSelected(this, page));
         }
 
         public void HandleControlClick(ActionButtonModel control)

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq;
 using Caliburn.Micro;
+using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Events;
-using ClipboardMachinery.Events.Collection;
-using ClipboardMachinery.FileSystem;
-using ClipboardMachinery.Logic.ClipboardItemsProvider;
+using ClipboardMachinery.Plumbing;
 
 namespace ClipboardMachinery.ViewModels {
 
     public class FavoritesViewModel : HistoryViewModel, IHandle<ItemFavoriteChanged<ClipViewModel>> {
 
         public new bool ErrorMessageIsVisible
-            => !ClipboardItemsProvider.Items.Any(vm => vm.Model.IsFavorite);
+            => !shell.ClipboardItems.Any(vm => vm.Model.IsFavorite);
 
-        public FavoritesViewModel(IEventAggregator eventAggregator, IClipboardItemsProvider clipboardItemsProvider) : base(clipboardItemsProvider, eventAggregator) {
+        public FavoritesViewModel(IEventAggregator eventAggregator, IClipboardService clipboardService, IShell shellVm) : base(eventAggregator, clipboardService, shellVm) {
         }
 
         protected override void OnInitialize() {
@@ -23,11 +19,8 @@ namespace ClipboardMachinery.ViewModels {
             ApplyItemFilter();
         }
 
-        private void ApplyItemFilter() {
-            eventBus.PublishOnUIThread(new SetViewFilter(
-                vm => ((ClipViewModel)vm).Model.IsFavorite
-            ));
-        }
+        private void ApplyItemFilter()
+            => shell.SetClipViewFiler(vm => ((ClipViewModel)vm).Model.IsFavorite);
 
         #region Event Handlers
 
@@ -36,13 +29,12 @@ namespace ClipboardMachinery.ViewModels {
             if (message.Item.Model.IsFavorite) return;
 
             ApplyItemFilter();
-            if (ClipboardItemsProvider.Items.Count > 0) {
+            if (shell.ClipboardItems.Count > 0) {
                 NotifyOfPropertyChange(() => ErrorMessageIsVisible);
             }
         }
 
         #endregion
-
 
     }
 

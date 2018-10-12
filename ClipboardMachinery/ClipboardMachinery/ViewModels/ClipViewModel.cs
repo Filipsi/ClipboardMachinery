@@ -9,9 +9,8 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using ClipboardMachinery.Events.Collection;
+using ClipboardMachinery.Events;
 using ClipboardMachinery.Models;
-using Newtonsoft.Json;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 

@@ -3,7 +3,6 @@ using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using ClipboardMachinery.Logic;
 using ClipboardMachinery.Plumbing.Facilities;
 using ClipboardMachinery.ViewModels;
 

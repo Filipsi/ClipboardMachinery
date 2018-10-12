@@ -1,13 +1,23 @@
-﻿<Window x:Class="ClipboardMachinery.Views.ShellView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClipboardMachinery.Views"
-        xmlns:controls="clr-namespace:ClipboardMachinery.Controls"
-        mc:Ignorable="d"
-        Background="{x:Null}" AllowsTransparency="True" WindowStyle="None"
-        ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterScreen">
+﻿<Window
+    x:Class="ClipboardMachinery.Views.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:ClipboardMachinery.Controls"
+    mc:Ignorable="d"
+    WindowStartupLocation="CenterScreen"
+    Background="{x:Null}" AllowsTransparency="True" WindowStyle="None"
+    ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Window.Visibility>
+        <Binding Converter="{StaticResource BooleanToVisibilityConverter}" Path="IsVisible" Mode="TwoWay" />
+    </Window.Visibility>
+
     <Grid Width="{Binding AppWidth, FallbackValue='384'}" MinWidth="384">
         <controls:RotatingGear Height="64" VerticalAlignment="Top" />
         <Grid Margin="0,32,0,0" VerticalAlignment="Top">

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using Bibliotheque.Machine;
+﻿using System.Collections.Specialized;
 using Caliburn.Micro;
+using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Events;
-using ClipboardMachinery.Events.Collection;
-using ClipboardMachinery.Logic.ClipboardItemsProvider;
+using ClipboardMachinery.Plumbing;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
@@ -16,24 +11,26 @@ namespace ClipboardMachinery.ViewModels {
 
         #region Properties
 
-        public IClipboardItemsProvider ClipboardItemsProvider {
-            get;
-        }
-
         public bool ErrorMessageIsVisible
-            => ClipboardItemsProvider.Items?.Count == 0;
+            => shell.ClipboardItems?.Count == 0;
+
+        public IObservableCollection<ClipViewModel> ClipboardItems
+            => shell.ClipboardItems;
 
         #endregion
 
         #region Fields
 
         protected readonly IEventAggregator eventBus;
+        protected readonly IClipboardService clipboard;
+        protected readonly IShell shell;
 
         #endregion
 
-        public HistoryViewModel(IClipboardItemsProvider clipboardItemsProvider, IEventAggregator eventAggregator) {
-            ClipboardItemsProvider = clipboardItemsProvider;
+        public HistoryViewModel(IEventAggregator eventAggregator, IClipboardService clipboardService, IShell shellVm) {
             eventBus = eventAggregator;
+            clipboard = clipboardService;
+            shell = shellVm;
         }
 
         #region Handlers
@@ -41,38 +38,33 @@ namespace ClipboardMachinery.ViewModels {
         protected override void OnInitialize() {
             base.OnInitialize();
 
-            ClipboardItemsProvider.Items.CollectionChanged += ItemsInCollectionChanged;
-            ItemsInCollectionChanged(ClipboardItemsProvider.Items, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, ClipboardItemsProvider.Items));
+            shell.ClipboardItems.CollectionChanged += ItemsInCollectionChanged;
+            ItemsInCollectionChanged(shell.ClipboardItems, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, shell.ClipboardItems));
         }
 
         protected virtual void ItemsInCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            switch (e.Action) {
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Remove:
-                    NotifyOfPropertyChange(() => ErrorMessageIsVisible);
-                    return;
-            }
+            NotifyOfPropertyChange(() => ErrorMessageIsVisible);
         }
         public void Handle(ItemSelected<ClipViewModel> message) {
             if (!IsActive) {
                 return;
             }
 
-            ClipboardObserver.IgnoreNextChange(message.Item.Model.RawContent);
+            clipboard.IgnoreNextChange(message.Item.Model.RawContent);
 
             try {
                 switch (message.Item.Type) {
                     case ClipViewModel.EntryType.Image:
-                        Clipboard.SetImage(((Image)message.Item.Content).Source as BitmapImage ?? throw new InvalidOperationException());
+                        clipboard.SetClipboardContent(message.Item.Content);
                         break;
 
                     default:
-                        Clipboard.SetText(message.Item.Model.RawContent);
+                        clipboard.SetClipboardContent(message.Item.Model.RawContent);
                         break;
                 }
             } catch {}
 
-            eventBus.PublishOnUIThread(new ChangeAppVisiblity(VisiblityChangeType.Hide));
+            shell.IsVisible = false;
         }
 
         #endregion

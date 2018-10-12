@@ -1,4 +1,4 @@
-﻿namespace ClipboardMachinery.Events.Collection {
+﻿namespace ClipboardMachinery.Events {
 
     public class ItemSelected<T> : ItemHolder<T> {
 

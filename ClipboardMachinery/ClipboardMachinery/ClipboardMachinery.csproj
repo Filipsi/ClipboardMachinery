@@ -92,19 +92,11 @@
     <Compile Include="Controls\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Events\ChangeAppVisiblity.cs" />
-    <Compile Include="Events\Collection\ItemHolder.cs" />
-    <Compile Include="Events\Collection\ItemRemoved.cs" />
-    <Compile Include="Events\Collection\ItemSelected.cs" />
-    <Compile Include="Events\Collection\ItemFavoriteChanged.cs" />
-    <Compile Include="Events\PageSelected.cs" />
-    <Compile Include="Events\SetViewFilter.cs" />
-    <Compile Include="FileSystem\ClipFile.cs" />
-    <Compile Include="Logic\ClipboardItemsProvider\ClipboardItemsProvider.cs" />
-    <Compile Include="Logic\ClipboardItemsProvider\IClipboardItemsProvider.cs" />
-    <Compile Include="Logic\HotKeyHandler\HotKeyHandler.cs" />
-    <Compile Include="Logic\HotKeyHandler\IHotKeyHandler.cs" />
-    <Compile Include="Logic\IShell.cs" />
+    <Compile Include="Events\ItemFavoriteChanged.cs" />
+    <Compile Include="Events\ItemHolder.cs" />
+    <Compile Include="Events\ItemRemoved.cs" />
+    <Compile Include="Events\ItemSelected.cs" />
+    <Compile Include="Plumbing\IShell.cs" />
     <Compile Include="Models\ActionButtonModel.cs" />
     <Compile Include="Models\ClipModel.cs" />
     <Compile Include="Models\ControlModel.cs" />
@@ -193,11 +185,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Colors.xaml">
+    <Page Include="Resources\Styles\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Fonts.xaml">
+    <Page Include="Resources\Styles\Fonts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -230,9 +222,9 @@
     <Resource Include="Resources\gear.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Bibliotheque\Bibliotheque\Bibliotheque.csproj">
-      <Project>{4E4B2CF7-9B7D-446C-8F12-AFB4544B9D81}</Project>
-      <Name>Bibliotheque</Name>
+    <ProjectReference Include="..\ClipboardMachinery.Core\ClipboardMachinery.Core.csproj">
+      <Project>{DFB6D5D3-2DCF-44BC-9EAC-40C56B1D2190}</Project>
+      <Name>ClipboardMachinery.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
