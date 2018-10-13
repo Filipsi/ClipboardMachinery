@@ -5,6 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:cal="http://www.caliburnproject.org"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
     mc:Ignorable="d" d:DesignWidth="512"
     Background="{StaticResource BodyBackgroundBrush}">
 
@@ -23,7 +25,15 @@
                 </TextBlock>
             </StackPanel>
          </Border>
-        <ScrollViewer x:Name="ItemsScrollView" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            CanContentScroll="True">
+
+            <i:Interaction.Behaviors>
+                <behaviors:RemainingScrollableHeightBehavior RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}" />
+            </i:Interaction.Behaviors>
+
             <ItemsControl ItemsSource="{Binding ClipboardItems}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using ClipboardMachinery.Core.Repositories.Lazy;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 
@@ -10,7 +11,8 @@ namespace ClipboardMachinery.Plumbing.Installers {
             container.Register(
                 Classes
                     .FromAssemblyNamed("ClipboardMachinery.Core")
-                    .InNamespace("ClipboardMachinery.Core.Services", includeSubnamespaces: true)
+                    .InNamespace("ClipboardMachinery.Core", includeSubnamespaces: true)
+                    .Unless(type => type is ILazyDataProvider)
                     .WithServiceDefaultInterfaces()
                     .LifestyleSingleton()
             );
