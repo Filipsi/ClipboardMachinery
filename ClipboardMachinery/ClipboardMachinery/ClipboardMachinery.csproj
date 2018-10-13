@@ -89,45 +89,41 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\RotatingGear.xaml.cs">
+    <Compile Include="Components\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Events\ItemFavoriteChanged.cs" />
-    <Compile Include="Events\ItemHolder.cs" />
-    <Compile Include="Events\ItemRemoved.cs" />
-    <Compile Include="Events\ItemSelected.cs" />
     <Compile Include="Plumbing\IPage.cs" />
-    <Compile Include="Plumbing\IShell.cs" />
-    <Compile Include="Models\ActionButtonModel.cs" />
-    <Compile Include="Models\ClipModel.cs" />
-    <Compile Include="Models\ControlModel.cs" />
-    <Compile Include="Models\PageButtonModel.cs" />
+    <Compile Include="Components\Shell\IShell.cs" />
+    <Compile Include="Common\Models\ActionButtonModel.cs" />
+    <Compile Include="Components\Clip\ClipModel.cs" />
+    <Compile Include="Common\Models\ControlModel.cs" />
+    <Compile Include="Components\Navigator\NavigatorModel.cs" />
     <Compile Include="Plumbing\Facilities\EventAggregatorFacility.cs" />
     <Compile Include="Plumbing\Installers\ComponentInstaller.cs" />
     <Compile Include="Plumbing\Installers\ServiceInstaller.cs" />
     <Compile Include="Plumbing\Installers\ShellInstaller.cs" />
-    <Compile Include="ViewModels\NavigatorViewModel.cs" />
-    <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="ViewModels\FavoritesViewModel.cs" />
-    <Compile Include="ViewModels\HistoryViewModel.cs" />
-    <Compile Include="ViewModels\ClipViewModel.cs" />
-    <Compile Include="ViewModels\SearchViewModel.cs" />
-    <Compile Include="Views\NavigatorView.xaml.cs">
+    <Compile Include="Components\Navigator\NavigatorViewModel.cs" />
+    <Compile Include="Components\Shell\ShellViewModel.cs" />
+    <Compile Include="Components\Pages\Favorites\FavoritesViewModel.cs" />
+    <Compile Include="Components\Pages\History\HistoryViewModel.cs" />
+    <Compile Include="Components\Clip\ClipViewModel.cs" />
+    <Compile Include="Components\Pages\Search\SearchViewModel.cs" />
+    <Compile Include="Components\Navigator\NavigatorView.xaml.cs">
       <DependentUpon>NavigatorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ShellView.xaml.cs">
+    <Compile Include="Components\Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FavoritesView.xaml.cs">
+    <Compile Include="Components\Pages\Favorites\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HistoryView.xaml.cs">
+    <Compile Include="Components\Pages\History\HistoryView.xaml.cs">
       <DependentUpon>HistoryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ClipView.xaml.cs">
+    <Compile Include="Components\Clip\ClipView.xaml.cs">
       <DependentUpon>ClipView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SearchView.xaml.cs">
+    <Compile Include="Components\Pages\Search\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -178,7 +174,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\RotatingGear.xaml">
+    <Page Include="Components\Shell\RotatingGear.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -194,27 +190,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NavigatorView.xaml">
+    <Page Include="Components\Navigator\NavigatorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ShellView.xaml">
+    <Page Include="Components\Shell\ShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FavoritesView.xaml">
+    <Page Include="Components\Pages\Favorites\FavoritesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HistoryView.xaml">
+    <Page Include="Components\Pages\History\HistoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ClipView.xaml">
+    <Page Include="Components\Clip\ClipView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SearchView.xaml">
+    <Page Include="Components\Pages\Search\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

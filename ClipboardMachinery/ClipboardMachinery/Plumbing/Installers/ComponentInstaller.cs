@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using ClipboardMachinery.Components.Shell;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 
@@ -10,7 +11,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
             container.Register(
                 Classes
                     .FromThisAssembly()
-                    .BasedOn<IPage>()
+                    .BasedOn<IScreenPage>()
                     .WithServiceBase()
                     .LifestyleSingleton()
             );

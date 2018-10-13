@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="ClipboardMachinery.Components.Pages.Favorites.FavoritesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d" d:DesignWidth="512"
+             Background="{StaticResource BodyBackgroundBrush}">
+    <Grid MinHeight="128">
+        <Border x:Name="ErrorMessageIsVisible">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
+                    The stars are nowhere to be seen.
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
+                    Favorite one of your pastes to begin stargazing.
+                </TextBlock>
+                <Path Width="32" Data="{StaticResource IconTelescope}" Fill="{StaticResource PanelControlBrush}" Stretch="Uniform" Margin="0,16,0,0" />
+            </StackPanel>
+        </Border>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+            <ItemsControl ItemsSource="{Binding ClipboardItems}" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl cal:View.Model="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

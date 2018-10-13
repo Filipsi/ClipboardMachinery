@@ -1,0 +1,65 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.Navigator.NavigatorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cal="http://www.caliburnproject.org"
+    mc:Ignorable="d"
+    d:DesignHeight="32" d:DesignWidth="384">
+
+    <Grid>
+        <!-- Navigation -->
+        <ItemsControl x:Name="Pages" HorizontalAlignment="Left">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel MinHeight="16" Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid
+                        cal:Bind.Model="{Binding}"
+                        cal:Message.Attach="[Event MouseLeftButtonUp] = [Action SelectPage($dataContext)]"
+                        MaxWidth="32"
+                        Margin="8"
+                        Cursor="Hand"
+                        Background="Transparent">
+
+                        <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Current page title -->
+        <Label
+            x:Name="SelectedPageTitle"
+            Foreground="{StaticResource PanelControlBrush}"
+            VerticalContentAlignment="Center"
+            HorizontalAlignment="Center"
+            FontSize="16"
+            Padding="0"/>
+
+        <!-- Control buttons -->
+        <ItemsControl x:Name="Controls">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel MinHeight="16" Orientation="Horizontal" HorizontalAlignment="Right"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid MaxWidth="32" Margin="8" Cursor="Hand" Background="Transparent"
+                          cal:Bind.Model="{Binding}"
+                          cal:Message.Attach="
+                                [Event MouseLeftButtonUp] = [Action HandleControlClick($dataContext)];
+                                [Event MouseEnter] = [Action Focus()];
+                                [Event MouseLeave] = [Action Unfocus()]">
+                        <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

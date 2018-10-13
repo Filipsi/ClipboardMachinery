@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
+using ClipboardMachinery.Components.Shell;
 using ClipboardMachinery.Plumbing;
 
 namespace ClipboardMachinery {
