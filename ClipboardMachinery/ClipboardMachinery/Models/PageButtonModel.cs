@@ -1,20 +1,19 @@
-﻿using System;
+﻿using ClipboardMachinery.Plumbing;
 using System.Windows;
 using System.Windows.Media;
 
 namespace ClipboardMachinery.Models {
 
-    public class PageNavigatorModel : ControlModel {
+    public class PageButtonModel : ControlModel {
 
         #region Properties
 
-        public string Name {
+        public IPage Page {
             get;
         }
 
-        public Type ViewModelType {
-            get;
-        }
+        public string Title
+            => Page.Title;
 
         public new SolidColorBrush Color =>
             Application.Current.FindResource(IsSelected ? "PanelSelectedBrush" : "PanelControlBrush") as SolidColorBrush;
@@ -31,7 +30,6 @@ namespace ClipboardMachinery.Models {
             }
         }
 
-
         #endregion
 
         #region Fields
@@ -40,9 +38,8 @@ namespace ClipboardMachinery.Models {
 
         #endregion
 
-        public PageNavigatorModel(string name, string iconName, Type viewModelType) : base(iconName) {
-            Name = name;
-            ViewModelType = viewModelType;
+        public PageButtonModel(IPage page) : base(page.Icon) {
+            Page = page;
         }
 
     }

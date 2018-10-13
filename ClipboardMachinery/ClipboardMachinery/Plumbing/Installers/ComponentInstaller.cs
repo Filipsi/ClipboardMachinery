@@ -10,6 +10,14 @@ namespace ClipboardMachinery.Plumbing.Installers {
             container.Register(
                 Classes
                     .FromThisAssembly()
+                    .BasedOn<IPage>()
+                    .WithServiceBase()
+                    .LifestyleSingleton()
+            );
+
+            container.Register(
+                Classes
+                    .FromThisAssembly()
                     .InNamespace("ClipboardMachinery", includeSubnamespaces: true)
                     .If(type => !string.IsNullOrEmpty(type.Name) && type.Name.EndsWith("ViewModel"))
                     .Unless(type => typeof(IShell).IsAssignableFrom(type))

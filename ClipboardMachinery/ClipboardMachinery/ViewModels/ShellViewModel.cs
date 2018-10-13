@@ -39,7 +39,7 @@ namespace ClipboardMachinery.ViewModels {
             }
         }
 
-        public HorizontalMenuViewModel TopPanelMenu {
+        public NavigatorViewModel Navigator {
             get;
         }
 
@@ -58,20 +58,18 @@ namespace ClipboardMachinery.ViewModels {
 
         private readonly IWindsorContainer container;
         private readonly Func<ClipViewModel> clipVmFactory;
-        private readonly IEventAggregator eventBus;
 
         private bool isVisible = true;
 
         #endregion
 
         public ShellViewModel(
-            HorizontalMenuViewModel topPanelMenu,
-            IWindsorContainer windsorContainer, IEventAggregator eventAggregator, IHotKeyService hotKeyService,
-            Func<ClipViewModel> clipViewModelFactory, IClipboardService clipboardService)  {
+            NavigatorViewModel navigator,
+            IWindsorContainer windsorContainer, IHotKeyService hotKeyService, IClipboardService clipboardService,
+            Func<ClipViewModel> clipViewModelFactory)  {
 
             container = windsorContainer;
             clipVmFactory = clipViewModelFactory;
-            eventBus = eventAggregator;
 
             // HotKeys
             hotKeyService.Register(System.Windows.Input.Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
@@ -82,39 +80,8 @@ namespace ClipboardMachinery.ViewModels {
             clipboardService.ClipboardChanged += OnClipboardChanged;
 
             // Navigator
-            TopPanelMenu = topPanelMenu;
-            TopPanelMenu.PropertyChanged += OnNavigatorPropertyChanged;
-        }
-
-        protected override void OnInitialize() {
-            base.OnInitialize();
-
-            TopPanelMenu.Pages = new BindableCollection<PageNavigatorModel> {
-                new PageNavigatorModel(
-                    name: "History",
-                    iconName: "IconHistory",
-                    viewModelType: typeof(HistoryViewModel)
-                ) {
-                    IsSelected = true
-                },
-                new PageNavigatorModel(
-                    name: "Favorite",
-                    iconName: "IconStarFull",
-                    viewModelType: typeof(FavoritesViewModel)
-                ),
-                new PageNavigatorModel(
-                    name: "Search",
-                    iconName: "IconSearch",
-                    viewModelType: typeof(SearchViewModel)
-                )
-            };
-
-            TopPanelMenu.Controls = new BindableCollection<ActionButtonModel> {
-                new ActionButtonModel(
-                    iconName: "IconExit",
-                    clickAction: () => TryClose()
-                )
-            };
+            Navigator = navigator;
+            Navigator.PropertyChanged += OnNavigatorPropertyChanged;
         }
 
         #region IShell
@@ -128,31 +95,22 @@ namespace ClipboardMachinery.ViewModels {
 
         private void OnAppVisiblityToggle(HotKey key) {
             IsVisible = !IsVisible;
-
-            /*
-            if (IsVisible) {
-                window.Hide();
-            } else {
-                TopPanelMenu.SelectPage(TopPanelMenu.SelectedPage);
-                window.Show();
-            }
-            */
         }
 
         private void OnNavigatorPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName != nameof(TopPanelMenu.SelectedPage)) {
+            if (e.PropertyName != nameof(Navigator.SelectedPage)) {
                 return;
             }
 
-            HorizontalMenuViewModel navigator = sender as HorizontalMenuViewModel;
+            NavigatorViewModel navigator = sender as NavigatorViewModel;
             SetClipViewFiler(null);
 
             if(navigator.SelectedPage == null) {
                 ActivateItem(null);
             } else {
-                IScreen viewModel = container.Resolve(navigator.SelectedPage.ViewModelType) as IScreen;
-                viewModel.ConductWith(this);
-                ActivateItem(viewModel);
+                // FIXME
+                // viewModel.ConductWith(this);
+                ActivateItem(navigator.SelectedPage.Page as IScreen);
             }
         }
 

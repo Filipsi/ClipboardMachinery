@@ -7,7 +7,7 @@ using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.ViewModels {
 
-    public class HistoryViewModel : Screen, IHandle<ItemSelected<ClipViewModel>> {
+    public class HistoryViewModel : Screen, IPage, IHandle<ItemSelected<ClipViewModel>> {
 
         #region Properties
 
@@ -19,18 +19,23 @@ namespace ClipboardMachinery.ViewModels {
 
         #endregion
 
+        #region IPage
+
+        public string Title => "History";
+
+        public string Icon => "IconHistory";
+
+        #endregion
+
         #region Fields
 
-        protected readonly IEventAggregator eventBus;
         protected readonly IClipboardService clipboard;
         protected readonly IShell shell;
 
         #endregion
 
-        public HistoryViewModel(IEventAggregator eventAggregator, IClipboardService clipboardService, IShell shellVm) {
-            eventBus = eventAggregator;
+        public HistoryViewModel(IClipboardService clipboardService) {
             clipboard = clipboardService;
-            shell = shellVm;
         }
 
         #region Handlers
@@ -45,6 +50,7 @@ namespace ClipboardMachinery.ViewModels {
         protected virtual void ItemsInCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             NotifyOfPropertyChange(() => ErrorMessageIsVisible);
         }
+
         public void Handle(ItemSelected<ClipViewModel> message) {
             if (!IsActive) {
                 return;

@@ -6,12 +6,24 @@ using ClipboardMachinery.Plumbing;
 
 namespace ClipboardMachinery.ViewModels {
 
-    public class FavoritesViewModel : HistoryViewModel, IHandle<ItemFavoriteChanged<ClipViewModel>> {
+    public class FavoritesViewModel : HistoryViewModel, IPage, IHandle<ItemFavoriteChanged<ClipViewModel>> {
+
+        #region Properties
 
         public new bool ErrorMessageIsVisible
-            => !shell.ClipboardItems.Any(vm => vm.Model.IsFavorite);
+           => !shell.ClipboardItems.Any(vm => vm.Model.IsFavorite);
 
-        public FavoritesViewModel(IEventAggregator eventAggregator, IClipboardService clipboardService, IShell shellVm) : base(eventAggregator, clipboardService, shellVm) {
+        #endregion
+
+        #region IPage
+
+        public new string Title { get; } = "Favorites";
+
+        public new string Icon { get; } = "IconStarFull";
+
+        #endregion
+
+        public FavoritesViewModel(IClipboardService clipboardService) : base(clipboardService) {
         }
 
         protected override void OnInitialize() {
@@ -19,10 +31,10 @@ namespace ClipboardMachinery.ViewModels {
             ApplyItemFilter();
         }
 
+        #region Handlers
+
         private void ApplyItemFilter()
             => shell.SetClipViewFiler(vm => ((ClipViewModel)vm).Model.IsFavorite);
-
-        #region Event Handlers
 
         public void Handle(ItemFavoriteChanged<ClipViewModel> message) {
             if (!IsActive) return;

@@ -29,7 +29,7 @@
 
             <!-- Top navigation panel -->
             <Border Grid.Row="0" BorderBrush="{StaticResource PanelBackgroundBrush}" Background="{StaticResource PanelBackgroundBrush}" CornerRadius="10,10,0,0">
-                <ContentControl x:Name="TopPanelMenu" />
+                <ContentControl x:Name="Navigator" />
             </Border>
 
             <!-- Center content -->
