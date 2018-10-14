@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using ClipboardMachinery.Components.Tag;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,9 @@ namespace ClipboardMachinery.Components.Clip {
         public int Id {
             get => id;
             set {
-                if (id == value)
+                if (id == value) {
                     return;
+                }
 
                 id = value;
                 NotifyOfPropertyChange();
@@ -30,8 +32,9 @@ namespace ClipboardMachinery.Components.Clip {
         public string Content {
             get => rawContent;
             set {
-                if (rawContent == value)
+                if (rawContent == value) {
                     return;
+                }
 
                 rawContent = value;
                 NotifyOfPropertyChange();
@@ -42,8 +45,9 @@ namespace ClipboardMachinery.Components.Clip {
         public DateTime Created {
             get => created;
             set {
-                if (created == value)
+                if (created == value) {
                     return;
+                }
 
                 created = value;
                 NotifyOfPropertyChange();
@@ -53,8 +57,9 @@ namespace ClipboardMachinery.Components.Clip {
         public bool IsFavorite {
             get => isFavorite;
             set {
-                if (isFavorite = value)
+                if (isFavorite == value) {
                     return;
+                }
 
                 isFavorite = value;
                 NotifyOfPropertyChange();
@@ -64,12 +69,17 @@ namespace ClipboardMachinery.Components.Clip {
         public bool IsFocused {
             get => isFocused;
             set {
-                if (isFocused = value)
+                if (isFocused == value) {
                     return;
+                }
 
                 isFocused = value;
                 NotifyOfPropertyChange();
             }
+        }
+
+        public BindableCollection<TagModel> Tags {
+            set; get;
         }
 
         #endregion
@@ -83,6 +93,10 @@ namespace ClipboardMachinery.Components.Clip {
         private bool isFocused;
 
         #endregion
+
+        public ClipModel() {
+            Tags = new BindableCollection<TagModel>();
+        }
 
     }
 

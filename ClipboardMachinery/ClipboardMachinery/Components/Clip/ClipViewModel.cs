@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using ClipboardMachinery.Components.Tag;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
@@ -26,10 +30,14 @@ namespace ClipboardMachinery.Components.Clip {
 
                 if (model != null) {
                     model.PropertyChanged -= OnModelPropertyChanged;
+                    model.Tags.CollectionChanged -= OnModelTagCollectionChanged;
+                    OnModelTagCollectionChanged(model.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
 
                 if (value != null) {
                     value.PropertyChanged += OnModelPropertyChanged;
+                    value.Tags.CollectionChanged += OnModelTagCollectionChanged;
+                    OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags));
                 }
 
                 model = value;
@@ -61,6 +69,10 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
+        public BindableCollection<TagViewModel> Tags {
+            get;
+        }
+
         public Geometry Icon
             => Application.Current.FindResource(IconMap[Type]) as Geometry;
 
@@ -71,7 +83,7 @@ namespace ClipboardMachinery.Components.Clip {
             => Application.Current.FindResource(Model.IsFavorite ? "ElementFavoriteBrush" : "PanelControlBrush") as SolidColorBrush;
 
         public SolidColorBrush BackgroundColor
-            => Application.Current.FindResource(Model.IsFocused ? "ElementSelectBrush" : "BodyBackgroundBrush") as SolidColorBrush;
+            => Application.Current.FindResource(Model.IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
 
         #endregion
 
@@ -88,6 +100,8 @@ namespace ClipboardMachinery.Components.Clip {
             { EntryType.Text,  "IconTextFile" }
         };
 
+        private readonly Func<TagViewModel> tagVmFactory;
+
         private ClipModel model;
 
         #endregion
@@ -102,9 +116,38 @@ namespace ClipboardMachinery.Components.Clip {
 
         #endregion
 
+        public ClipViewModel(Func<TagViewModel> tagVmFactory) {
+            this.tagVmFactory = tagVmFactory;
+            Tags = new BindableCollection<TagViewModel>();
+        }
+
         #region Handlers
 
-        private void OnModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+        private void OnModelTagCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            switch(e.Action) {
+                case NotifyCollectionChangedAction.Add:
+                    foreach(TagModel model in e.NewItems) {
+                        TagViewModel vm = tagVmFactory.Invoke();
+                        vm.Model = model;
+                        Tags.Add(vm);
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (TagModel model in e.OldItems) {
+                        foreach(TagViewModel vm in Tags.Where(vm => vm.Model == model)) {
+                            Tags.Remove(vm);
+                        }
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    Tags.Clear();
+                    break;
+            }
+        }
+
+        private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
             ClipModel model = sender as ClipModel;
 
             if (e.PropertyName == nameof(ClipModel.Content)) {

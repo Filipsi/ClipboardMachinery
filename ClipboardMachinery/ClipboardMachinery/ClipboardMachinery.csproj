@@ -105,6 +105,11 @@
     <Compile Include="Components\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Tag\TagModel.cs" />
+    <Compile Include="Components\Tag\TagView.xaml.cs">
+      <DependentUpon>TagView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Tag\TagViewModel.cs" />
     <Compile Include="Plumbing\Installers\MappingInstaller.cs" />
     <Compile Include="Components\Navigator\IScreenPage.cs" />
     <Compile Include="Components\Shell\IShell.cs" />
@@ -190,6 +195,9 @@
   <ItemGroup>
     <Page Include="Components\Shell\RotatingGear.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Tag\TagView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Icons.xaml">

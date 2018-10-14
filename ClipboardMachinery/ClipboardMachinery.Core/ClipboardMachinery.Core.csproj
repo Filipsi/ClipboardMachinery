@@ -91,6 +91,8 @@
     <Compile Include="Repositories\Lazy\ILazyDataProvider.cs" />
     <Compile Include="Repositories\Lazy\LazyDataProvider.cs" />
     <Compile Include="Repositories\Shema\Clip.cs" />
+    <Compile Include="Repositories\Shema\Tag.cs" />
+    <Compile Include="Repositories\Shema\TagType.cs" />
     <Compile Include="Services\Clipboard\ClipboardEventArgs.cs" />
     <Compile Include="Services\Clipboard\ClipboardService.cs" />
     <Compile Include="Services\Clipboard\IClipboardService.cs" />

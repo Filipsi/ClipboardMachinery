@@ -6,37 +6,89 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:cal="http://www.caliburnproject.org"
     mc:Ignorable="d" d:DesignWidth="512"
-    Cursor="Hand">
+    Background="{StaticResource BodyBackgroundBrush}"
+    FontFamily="Yu Gothic UI Light">
 
-    <Grid Background="{Binding BackgroundColor, FallbackValue={StaticResource BodyBackgroundBrush}}"
-          cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]">
+    <Border
+        BorderThickness="2,0,2,0"
+        BorderBrush="{Binding BackgroundColor, FallbackValue={StaticResource BodyBackgroundBrush}}">
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="24" />
-        </Grid.ColumnDefinitions>
+        <Grid cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]">
 
-        <Grid Grid.Column="0" cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Select()]" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="48" />
-                <ColumnDefinition Width="0.9*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="24" />
             </Grid.ColumnDefinitions>
 
-            <Path Grid.Column="0" Data="{Binding Icon, FallbackValue={StaticResource IconTextFile}}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Grid
+                Grid.Column="0"
+                cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Select()]" Background="Transparent">
 
-            <DockPanel Grid.Column="1" Margin="8">
-                <ContentControl DockPanel.Dock="Top" Content="{Binding Content}" Foreground="Black" FontSize="14" Padding="0" Margin="0,0,8,0" />
-                <TextBlock DockPanel.Dock="Bottom" Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" Foreground="{StaticResource BodyControlBrush}" FontSize="10" FontFamily="{StaticResource LatoThin}" Padding="0" VerticalAlignment="Bottom" Margin="0,4,0,0" />
-            </DockPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="4"/>
+                </Grid.RowDefinitions>
+
+                <Path
+                    Grid.Column="0"
+                    Data="{Binding Icon, FallbackValue={StaticResource IconTextFile}}"
+                    Fill="{StaticResource BodyControlBrush}"
+                    Stretch="Uniform"
+                    Margin="8" />
+
+                <ContentControl
+                    Grid.Column="1"
+                    Margin="0,8,8,0"
+                    Content="{Binding Content}"
+                    Foreground="Black"
+                    FontSize="14" />
+
+                <Grid
+                    Grid.Column="1"
+                    Grid.Row="1">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="0,0,8,0"
+                        Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}"
+                        Foreground="{StaticResource BodyControlBrush}"
+                        FontSize="14"
+                        VerticalAlignment="Bottom" />
+
+                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Tags}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl cal:View.Model="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Grid>
+
+            <StackPanel Grid.Column="1">
+                <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ToggleFavorite()]" Background="Transparent" Cursor="Hand" Margin="5">
+                    <Path Data="{Binding FavoriteIcon, FallbackValue={StaticResource IconStarEmpty}}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
+                </Grid>
+                <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Remove()]" Background="Transparent" Cursor="Hand" Margin="5">
+                    <Path Data="{StaticResource IconRemove}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" />
+                </Grid>
+            </StackPanel>
         </Grid>
-
-        <StackPanel Grid.Column="1">
-            <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ToggleFavorite()]" Background="Transparent" Cursor="Hand" Margin="5">
-                <Path Data="{Binding FavoriteIcon, FallbackValue={StaticResource IconStarEmpty}}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
-            </Grid>
-            <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Remove()]" Background="Transparent" Cursor="Hand" Margin="5">
-                <Path Data="{StaticResource IconRemove}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" />
-            </Grid>
-        </StackPanel>
-    </Grid>
+    </Border>
 </UserControl>

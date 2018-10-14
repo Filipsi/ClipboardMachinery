@@ -1,0 +1,37 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.Tag.TagView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d" d:DesignWidth="96"
+    FontSize="14" FontFamily="Yu Gothic UI Light">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border
+            Grid.Column="0"
+            Background="#E5E5E5"
+            CornerRadius="4,0,0,4">
+        </Border>
+
+        <Border
+            Grid.Column="1"
+            Background="#f2f1ef"
+            CornerRadius="0,4,4,0">
+
+            <TextBlock
+                Grid.Column="0"
+                Padding="4,4,8,4"
+                VerticalAlignment="Center"
+                Foreground="Black"
+                Text="{Binding Text, FallbackValue='tag'}" FontFamily="Calibri Light" />
+        </Border>
+
+    </Grid>
+
+</UserControl>

@@ -3,6 +3,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repositories.Shema;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,10 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
         public void Install(IWindsorContainer container, IConfigurationStore store) {
             MapperConfiguration config = new MapperConfiguration(cfg => {
-                cfg
-                    .CreateMap<Clip, ClipModel>()
-                    .ForMember(dest => dest.Content, opt => opt.MapFrom(source => source.Content));
+                cfg.CreateMap<Clip, ClipModel>();
+
+                cfg.CreateMap<Tag, TagModel>()
+                   .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Type.Name));
             });
 
             container.Register(

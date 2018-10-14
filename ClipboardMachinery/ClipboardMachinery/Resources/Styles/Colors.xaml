@@ -19,7 +19,7 @@
     <Color x:Key="ElementFavoriteColor">#F1C40F</Color>
     <SolidColorBrush x:Key="ElementFavoriteBrush" Color="{StaticResource ElementFavoriteColor}" />
 
-    <Color x:Key="ElementSelectColor">#ECF0F1</Color>
+    <Color x:Key="ElementSelectColor">#c0392b</Color>
     <SolidColorBrush x:Key="ElementSelectBrush" Color="{StaticResource ElementSelectColor}" />
 
 </ResourceDictionary>

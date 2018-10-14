@@ -34,7 +34,7 @@ namespace ClipboardMachinery.Core.Repositories {
         #region Fields
 
         private readonly OrmLiteConnectionFactory dbFactory = new OrmLiteConnectionFactory(
-            connectionString: "Data Source=storage.db;Version=3;",
+            connectionString: "Data Source=storage.sqlite;Version=3;",
             dialectProvider: SqliteDialect.Provider
         );
 
@@ -50,7 +50,16 @@ namespace ClipboardMachinery.Core.Repositories {
                 for (int i = 0; i < 128; i++) {
                     clips.Add(new Clip {
                         Content = $"clip number: {i}",
-                        Created = DateTime.UtcNow
+                        Created = DateTime.UtcNow,
+                        Tags = new List<Tag> {
+                            new Tag {
+                                Type = new TagType {
+                                    Name = "source",
+                                    Type = typeof(string)
+                                },
+                                Value = "test"
+                            }
+                        }
                     });
                 }
 
