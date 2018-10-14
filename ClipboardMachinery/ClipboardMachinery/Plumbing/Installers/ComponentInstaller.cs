@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.Shell;
 
 namespace ClipboardMachinery.Plumbing.Installers {

@@ -45,15 +45,15 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public object Content
-            => WrapContentForType(Type, Model.RawContent);
+            => WrapContentForType(Type, Model.Content);
 
         public EntryType Type {
             get {
-                if (ImageDataPattern.IsMatch(Model.RawContent)) {
+                if (ImageDataPattern.IsMatch(Model.Content)) {
                     return EntryType.Image;
                 }
 
-                if (Uri.IsWellFormedUriString(Model.RawContent, UriKind.Absolute)) {
+                if (Uri.IsWellFormedUriString(Model.Content, UriKind.Absolute)) {
                     return EntryType.Link;
                 }
 
@@ -107,7 +107,7 @@ namespace ClipboardMachinery.Components.Clip {
         private void OnModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
             ClipModel model = sender as ClipModel;
 
-            if (e.PropertyName == nameof(ClipModel.RawContent)) {
+            if (e.PropertyName == nameof(ClipModel.Content)) {
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
                 NotifyOfPropertyChange(() => Icon);

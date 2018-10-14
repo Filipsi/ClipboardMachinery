@@ -16,10 +16,10 @@ namespace ClipboardMachinery.Core.Repositories.Shema {
         [Required]
         public string Content { get; set; }
 
-        [Default(OrmLiteVariables.SystemUtc)]
-        private DateTime Created { get; set; }
+        [Required]
+        public DateTime Created { get; set; }
 
-        private Dictionary<string, string> Tags { get; set; }
+        public Dictionary<string, string> Tags { get; set; }
 
     }
 

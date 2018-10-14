@@ -1,5 +1,5 @@
 ﻿using Caliburn.Micro;
-using ClipboardMachinery.Plumbing;
+using ClipboardMachinery.Components.Navigator;
 
 namespace ClipboardMachinery.Components.Pages.Search {
 
@@ -7,9 +7,14 @@ namespace ClipboardMachinery.Components.Pages.Search {
 
         #region IPage
 
-        public string Title { get; } = "Search";
+        public string Title
+            => "Search";
 
-        public string Icon { get; } = "IconSearch";
+        public string Icon
+            => "IconSearch";
+
+        public byte Order
+            => 3;
 
         #endregion
 

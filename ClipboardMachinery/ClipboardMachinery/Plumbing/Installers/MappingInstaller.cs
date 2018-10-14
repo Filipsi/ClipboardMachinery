@@ -18,7 +18,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
             MapperConfiguration config = new MapperConfiguration(cfg => {
                 cfg
                     .CreateMap<Clip, ClipModel>()
-                    .ForMember(dest => dest.RawContent, opt => opt.MapFrom(source => source.Content));
+                    .ForMember(dest => dest.Content, opt => opt.MapFrom(source => source.Content));
             });
 
             container.Register(

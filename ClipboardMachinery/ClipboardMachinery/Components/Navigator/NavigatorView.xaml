@@ -13,7 +13,9 @@
         <ItemsControl x:Name="Pages" HorizontalAlignment="Left">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel MinHeight="16" Orientation="Horizontal"/>
+                    <StackPanel
+                        MinHeight="16"
+                        Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
@@ -26,7 +28,10 @@
                         Cursor="Hand"
                         Background="Transparent">
 
-                        <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
+                        <Path
+                            Data="{Binding Icon}"
+                            Fill="{Binding Color}"
+                            Stretch="Uniform" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -45,18 +50,24 @@
         <ItemsControl x:Name="Controls">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel MinHeight="16" Orientation="Horizontal" HorizontalAlignment="Right"/>
+                    <StackPanel
+                        MinHeight="16"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid MaxWidth="32" Margin="8" Cursor="Hand" Background="Transparent"
+                    <Grid MaxWidth="12" Margin="8" Cursor="Hand" Background="Transparent"
                           cal:Bind.Model="{Binding}"
                           cal:Message.Attach="
                                 [Event MouseLeftButtonUp] = [Action HandleControlClick($dataContext)];
                                 [Event MouseEnter] = [Action Focus()];
                                 [Event MouseLeave] = [Action Unfocus()]">
-                        <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
+                        <Path
+                            Data="{Binding Icon}"
+                            Fill="{Binding Color}"
+                            Stretch="Uniform" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -15,11 +15,22 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Properties
 
+        public int Id {
+            get => id;
+            set {
+                if (id == value)
+                    return;
+
+                id = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         [JsonProperty("content")]
-        public string RawContent {
+        public string Content {
             get => rawContent;
             set {
-                if (value == rawContent)
+                if (rawContent == value)
                     return;
 
                 rawContent = value;
@@ -31,7 +42,7 @@ namespace ClipboardMachinery.Components.Clip {
         public DateTime Created {
             get => created;
             set {
-                if (value == created)
+                if (created == value)
                     return;
 
                 created = value;
@@ -42,7 +53,7 @@ namespace ClipboardMachinery.Components.Clip {
         public bool IsFavorite {
             get => isFavorite;
             set {
-                if (value == isFavorite)
+                if (isFavorite = value)
                     return;
 
                 isFavorite = value;
@@ -53,7 +64,7 @@ namespace ClipboardMachinery.Components.Clip {
         public bool IsFocused {
             get => isFocused;
             set {
-                if (value == isFocused)
+                if (isFocused = value)
                     return;
 
                 isFocused = value;
@@ -65,6 +76,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Fields
 
+        private int id;
         private string rawContent;
         private DateTime created;
         private bool isFavorite;

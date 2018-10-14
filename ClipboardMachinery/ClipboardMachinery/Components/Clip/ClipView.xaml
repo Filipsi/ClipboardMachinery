@@ -26,7 +26,7 @@
 
             <DockPanel Grid.Column="1" Margin="8">
                 <ContentControl DockPanel.Dock="Top" Content="{Binding Content}" Foreground="Black" FontSize="14" Padding="0" Margin="0,0,8,0" />
-                <TextBlock Text="{Binding Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" DockPanel.Dock="Bottom" Foreground="{StaticResource BodyControlBrush}" FontSize="10" FontFamily="{StaticResource LatoThin}" Padding="0" VerticalAlignment="Bottom" Margin="0,4,0,0" />
+                <TextBlock DockPanel.Dock="Bottom" Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" Foreground="{StaticResource BodyControlBrush}" FontSize="10" FontFamily="{StaticResource LatoThin}" Padding="0" VerticalAlignment="Bottom" Margin="0,4,0,0" />
             </DockPanel>
         </Grid>
 

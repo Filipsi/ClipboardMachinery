@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
 using Castle.Windsor;
@@ -35,8 +36,11 @@ namespace ClipboardMachinery.Components.Navigator {
 
         public NavigatorViewModel(IWindsorContainer container) {
             // Automatically create pages from ViewModels that implements IScreenPage
+            List<IScreenPage> pages = container.ResolveAll<IScreenPage>().ToList();
+            pages.Sort((x, y) => x.Order.CompareTo(y.Order));
+
             Pages = new BindableCollection<NavigatorModel>(
-                container.ResolveAll<IScreenPage>().Select(page => new NavigatorModel(page))
+               pages.Select(page => new NavigatorModel(page))
             );
 
             // Create control buttons

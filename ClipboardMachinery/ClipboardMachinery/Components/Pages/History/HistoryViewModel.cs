@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Specialized;
 using Caliburn.Micro;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Repositories;
 using ClipboardMachinery.Core.Repositories.Lazy;
-using ClipboardMachinery.Core.Services.Clipboard;
-using ClipboardMachinery.Plumbing;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.Components.Pages.History {
@@ -14,9 +12,14 @@ namespace ClipboardMachinery.Components.Pages.History {
 
         #region IPage
 
-        public string Title => "History";
+        public string Title
+            => "History";
 
-        public string Icon => "IconHistory";
+        public string Icon
+            => "IconHistory";
+
+        public byte Order
+            => 1;
 
         #endregion
 
@@ -37,7 +40,7 @@ namespace ClipboardMachinery.Components.Pages.History {
                 NotifyOfPropertyChange();
 
                 if (remainingScrollableHeight < 200) {
-                    LoadNextClipBatch();
+                    LoadClipBatch();
                 }
             }
         }
@@ -52,18 +55,16 @@ namespace ClipboardMachinery.Components.Pages.History {
             this.clipVmFactory = clipVmFactory;
 
             lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize: 15);
-            LoadNextClipBatch();
+            LoadClipBatch();
         }
 
-        private void LoadNextClipBatch() {
+        private void LoadClipBatch() {
             foreach (ClipModel model in lazyClipProvider.GetNextBatch<ClipModel>()) {
                 ClipViewModel vm = clipVmFactory.Invoke();
                 vm.Model = model;
                 ClipboardItems.Add(vm);
             }
         }
-
-
 
     }
 

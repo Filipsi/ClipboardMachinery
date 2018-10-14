@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using Caliburn.Micro;
-using ClipboardMachinery.Components.Clip;
-using ClipboardMachinery.Components.Pages.History;
-using ClipboardMachinery.Core.Services.Clipboard;
-using ClipboardMachinery.Plumbing;
+﻿using Caliburn.Micro;
+using ClipboardMachinery.Components.Navigator;
 
 namespace ClipboardMachinery.Components.Pages.Favorites {
 
@@ -11,9 +7,14 @@ namespace ClipboardMachinery.Components.Pages.Favorites {
 
         #region IPage
 
-        public string Title { get; } = "Favorites";
+        public string Title
+            => "Favorites";
 
-        public string Icon { get; } = "IconStarFull";
+        public string Icon
+            => "IconStarFull";
+
+        public byte Order
+            => 2;
 
         #endregion
 

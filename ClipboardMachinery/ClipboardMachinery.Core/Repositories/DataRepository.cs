@@ -46,11 +46,15 @@ namespace ClipboardMachinery.Core.Repositories {
             Mapper = mapper;
 
             if (Connection.CreateTableIfNotExists<Clip>()) {
+                List<Clip> clips = new List<Clip>();
                 for (int i = 0; i < 128; i++) {
-                    Connection.Insert(new Clip {
-                        Content = $"clip number: {i}"
+                    clips.Add(new Clip {
+                        Content = $"clip number: {i}",
+                        Created = DateTime.UtcNow
                     });
                 }
+
+                Connection.Insert(clips.ToArray());
             }
         }
 

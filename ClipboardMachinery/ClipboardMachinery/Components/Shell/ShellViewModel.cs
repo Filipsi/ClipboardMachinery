@@ -118,14 +118,14 @@ namespace ClipboardMachinery.Components.Shell {
         }
 
         private void OnClipboardChanged(object sender, ClipboardEventArgs e) {
-            if (e.Payload == string.Empty || e.Payload == ClipboardItems.FirstOrDefault()?.Model.RawContent) {
+            if (e.Payload == string.Empty || e.Payload == ClipboardItems.FirstOrDefault()?.Model.Content) {
                 return;
             }
 
             ClipViewModel vm = clipVmFactory.Invoke();
             vm.Model = new ClipModel {
                 Created = DateTime.UtcNow,
-                RawContent = e.Payload
+                Content = e.Payload
             };
 
             ClipboardItems.Insert(0, vm);

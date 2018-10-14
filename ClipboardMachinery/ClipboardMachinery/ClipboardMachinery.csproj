@@ -106,7 +106,7 @@
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
     <Compile Include="Plumbing\Installers\MappingInstaller.cs" />
-    <Compile Include="Plumbing\IPage.cs" />
+    <Compile Include="Components\Navigator\IScreenPage.cs" />
     <Compile Include="Components\Shell\IShell.cs" />
     <Compile Include="Common\Models\ActionButtonModel.cs" />
     <Compile Include="Components\Clip\ClipModel.cs" />
