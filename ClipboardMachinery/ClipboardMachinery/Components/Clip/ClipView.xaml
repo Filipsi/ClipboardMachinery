@@ -7,81 +7,96 @@
     xmlns:cal="http://www.caliburnproject.org"
     mc:Ignorable="d" d:DesignWidth="512"
     Background="{StaticResource BodyBackgroundBrush}"
-    FontFamily="Yu Gothic UI Light">
+    UseLayoutRounding="True"
+    RenderOptions.BitmapScalingMode="NearestNeighbor"
+    SnapsToDevicePixels="True"
+    RenderOptions.ClearTypeHint="Enabled"
+    Loaded="OnLoaded"
+    cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]">
 
-    <Border
-        BorderThickness="2,0,2,0"
-        BorderBrush="{Binding BackgroundColor, FallbackValue={StaticResource BodyBackgroundBrush}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Grid cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]">
+        <Border
+            x:Name="TagPanel"
+            Grid.Row="0"
+            Height="1"
+            BorderThickness="0,1,0,0"
+            BorderBrush="#E0E0E0"
+            Background="#f3f1ef">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ItemsControl Grid.Row="0" ItemsSource="{Binding Tags}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl cal:View.Model="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Foreground="#2e3131"
+                    FontSize="14"
+                    FontFamily="Yu Gothic UI Light"
+                    Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" />
+            </Grid>
+        </Border>
+
+        <!-- Clip grid -->
+        <Grid
+            Grid.Row="1"
+            Margin="0,4,0,4">
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="24" />
             </Grid.ColumnDefinitions>
 
-            <Grid
+            <!-- Icon -->
+            <Path
                 Grid.Column="0"
-                cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Select()]" Background="Transparent">
+                Margin="8,0"
+                Data="{Binding Icon, FallbackValue={StaticResource IconTextFile}}"
+                Fill="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
+                Stretch="Uniform" />
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <!-- Main content -->
+            <Grid
+                Grid.Column="1"
+                cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Select()]"
+                Background="Transparent">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="18"/>
-                    <RowDefinition Height="4"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Path
-                    Grid.Column="0"
-                    Data="{Binding Icon, FallbackValue={StaticResource IconTextFile}}"
-                    Fill="{StaticResource BodyControlBrush}"
-                    Stretch="Uniform"
-                    Margin="8" />
-
                 <ContentControl
-                    Grid.Column="1"
-                    Margin="0,8,8,0"
+                    Grid.Row="0"
                     Content="{Binding Content}"
                     Foreground="Black"
                     FontSize="14" />
-
-                <Grid
-                    Grid.Column="1"
-                    Grid.Row="1">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock
-                        Grid.Column="0"
-                        Margin="0,0,8,0"
-                        Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}"
-                        Foreground="{StaticResource BodyControlBrush}"
-                        FontSize="14"
-                        VerticalAlignment="Bottom" />
-
-                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Tags}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <ContentControl cal:View.Model="{Binding}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Grid>
             </Grid>
 
-            <StackPanel Grid.Column="1">
+            <!-- Controls -->
+            <StackPanel Grid.Column="2">
                 <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ToggleFavorite()]" Background="Transparent" Cursor="Hand" Margin="5">
                     <Path Data="{Binding FavoriteIcon, FallbackValue={StaticResource IconStarEmpty}}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
                 </Grid>
@@ -90,5 +105,6 @@
                 </Grid>
             </StackPanel>
         </Grid>
-    </Border>
+
+    </Grid>
 </UserControl>

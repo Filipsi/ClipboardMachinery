@@ -25,8 +25,9 @@ namespace ClipboardMachinery.Components.Clip {
         public ClipModel Model {
             get => model;
             set {
-                if (model == value)
+                if (model == value) {
                     return;
+                }
 
                 if (model != null) {
                     model.PropertyChanged -= OnModelPropertyChanged;
@@ -48,7 +49,7 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => FavoriteIcon);
                 NotifyOfPropertyChange(() => FavoriteIconColor);
                 NotifyOfPropertyChange(() => FavoriteIconColor);
-                NotifyOfPropertyChange(() => BackgroundColor);
+                NotifyOfPropertyChange(() => SelectionColor);
             }
         }
 
@@ -73,6 +74,19 @@ namespace ClipboardMachinery.Components.Clip {
             get;
         }
 
+        public bool IsFocused {
+            get => isFocused;
+            set {
+                if (isFocused == value) {
+                    return;
+                }
+
+                isFocused = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => SelectionColor);
+            }
+        }
+
         public Geometry Icon
             => Application.Current.FindResource(IconMap[Type]) as Geometry;
 
@@ -82,8 +96,8 @@ namespace ClipboardMachinery.Components.Clip {
         public SolidColorBrush FavoriteIconColor
             => Application.Current.FindResource(Model.IsFavorite ? "ElementFavoriteBrush" : "PanelControlBrush") as SolidColorBrush;
 
-        public SolidColorBrush BackgroundColor
-            => Application.Current.FindResource(Model.IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
+        public SolidColorBrush SelectionColor
+            => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
 
         #endregion
 
@@ -103,6 +117,7 @@ namespace ClipboardMachinery.Components.Clip {
         private readonly Func<TagViewModel> tagVmFactory;
 
         private ClipModel model;
+        private bool isFocused;
 
         #endregion
 
@@ -154,11 +169,6 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
                 NotifyOfPropertyChange(() => Icon);
-                return;
-            }
-
-            if (e.PropertyName == nameof(ClipModel.IsFocused)) {
-                NotifyOfPropertyChange(() => BackgroundColor);
                 return;
             }
 
@@ -226,11 +236,11 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public void Focus() {
-            Model.IsFocused = true;
+            IsFocused = true;
         }
 
         public void Unfocus() {
-            Model.IsFocused = false;
+            IsFocused = false;
         }
 
         #endregion

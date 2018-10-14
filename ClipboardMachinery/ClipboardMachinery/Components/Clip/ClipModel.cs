@@ -66,18 +66,6 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public bool IsFocused {
-            get => isFocused;
-            set {
-                if (isFocused == value) {
-                    return;
-                }
-
-                isFocused = value;
-                NotifyOfPropertyChange();
-            }
-        }
-
         public BindableCollection<TagModel> Tags {
             set; get;
         }
@@ -90,7 +78,6 @@ namespace ClipboardMachinery.Components.Clip {
         private string rawContent;
         private DateTime created;
         private bool isFavorite;
-        private bool isFocused;
 
         #endregion
 

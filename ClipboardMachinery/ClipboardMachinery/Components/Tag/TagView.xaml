@@ -9,27 +9,34 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Border
             Grid.Column="0"
-            Background="#E5E5E5"
-            CornerRadius="4,0,0,4">
+            Background="#E5E5E5">
+
+            <TextBlock
+                Padding="8,0"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="Black"
+                Text="{Binding Model.Name, FallbackValue='tag'}"
+                FontFamily="Calibri Light" />
         </Border>
 
         <Border
             Grid.Column="1"
-            Background="#f2f1ef"
-            CornerRadius="0,4,4,0">
+            Background="#f2f1ef">
 
             <TextBlock
-                Grid.Column="0"
-                Padding="4,4,8,4"
+                Padding="8,0"
                 VerticalAlignment="Center"
+                HorizontalAlignment="Center"
                 Foreground="Black"
-                Text="{Binding Text, FallbackValue='tag'}" FontFamily="Calibri Light" />
+                Text="{Binding Model.Value, FallbackValue='value'}"
+                FontFamily="Calibri Light" />
         </Border>
 
     </Grid>

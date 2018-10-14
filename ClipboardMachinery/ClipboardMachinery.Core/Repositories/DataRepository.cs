@@ -46,21 +46,37 @@ namespace ClipboardMachinery.Core.Repositories {
             Mapper = mapper;
 
             if (Connection.CreateTableIfNotExists<Clip>()) {
+                Random random = new Random();
+
                 List<Clip> clips = new List<Clip>();
                 for (int i = 0; i < 128; i++) {
-                    clips.Add(new Clip {
+                    Clip clip = new Clip {
                         Content = $"clip number: {i}",
                         Created = DateTime.UtcNow,
-                        Tags = new List<Tag> {
-                            new Tag {
-                                Type = new TagType {
-                                    Name = "source",
-                                    Type = typeof(string)
-                                },
-                                Value = "test"
-                            }
-                        }
-                    });
+                        Tags = new List<Tag>()
+                    };
+
+                    if (random.Next(0, 2) == 1) {
+                        clip.Tags.Add(new Tag {
+                            Type = new TagType {
+                                Name = "source",
+                                Type = typeof(string)
+                            },
+                            Value = "test"
+                        });
+                    }
+
+                    if (random.Next(0, 2) == 1) {
+                        clip.Tags.Add(new Tag {
+                            Type = new TagType {
+                                Name = "type",
+                                Type = typeof(string)
+                            },
+                            Value = "lorem ipsum"
+                        });
+                    }
+
+                    clips.Add(clip);
                 }
 
                 Connection.Insert(clips.ToArray());
