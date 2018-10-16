@@ -16,6 +16,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 .AddFacility<EventAggregatorFacility>();
 
             container
+                .Register(Component.For<IWindsorContainer>().Instance(container).LifestyleSingleton())
                 .Register(Component.For<IWindowManager>().ImplementedBy<WindowManager>().LifestyleSingleton())
                 .Register(Component.For<IEventAggregator>().ImplementedBy<EventAggregator>().LifestyleSingleton())
                 .Register(Component.For<IShell>().ImplementedBy<ShellViewModel>().LifestyleSingleton());

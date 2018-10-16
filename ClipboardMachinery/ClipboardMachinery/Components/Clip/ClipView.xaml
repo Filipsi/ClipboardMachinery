@@ -96,14 +96,29 @@
             </Grid>
 
             <!-- Controls -->
-            <StackPanel Grid.Column="2">
-                <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ToggleFavorite()]" Background="Transparent" Cursor="Hand" Margin="5">
-                    <Path Data="{Binding FavoriteIcon, FallbackValue={StaticResource IconStarEmpty}}" Fill="{Binding FavoriteIconColor, FallbackValue={StaticResource BodyControlBrush}}" Stretch="Uniform" />
-                </Grid>
-                <Grid cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Remove()]" Background="Transparent" Cursor="Hand" Margin="5">
-                    <Path Data="{StaticResource IconRemove}" Fill="{StaticResource BodyControlBrush}" Stretch="Uniform" />
-                </Grid>
-            </StackPanel>
+            <ItemsControl Grid.Column="2" x:Name="Controls">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid
+                            Background="Transparent"
+                            Cursor="Hand"
+                            Margin="5"
+                            cal:Bind.Model="{Binding}"
+                            cal:Message.Attach="
+                                [Event MouseLeftButtonUp] = [Action InvokeClickAction()];
+                                [Event MouseEnter] = [Action Focus()];
+                                [Event MouseLeave] = [Action Unfocus()]">
+
+                            <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
 
     </Grid>

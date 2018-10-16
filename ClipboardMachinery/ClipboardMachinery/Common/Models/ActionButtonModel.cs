@@ -6,28 +6,58 @@ namespace ClipboardMachinery.Common.Models {
 
     public class ActionButtonModel : ControlModel {
 
+        #region Properties
+
         public bool IsFocused {
-            get => _isFocused;
+            get => isFocused;
             private set {
-                if (value == _isFocused) return;
-                _isFocused = value;
-                NotifyOfPropertyChange(() => IsFocused);
+                if (isFocused == value) {
+                    return;
+                }
+
+                isFocused = value;
+                NotifyOfPropertyChange();
                 NotifyOfPropertyChange(() => Color);
             }
         }
 
-        public new SolidColorBrush Color =>
-            Application.Current.FindResource(IsFocused ? "PanelSelectedBrush" : "PanelControlBrush") as SolidColorBrush;
+        public SolidColorBrush SelectedColor {
+            get => selectedColor;
+            set {
+                if (selectedColor == value) {
+                    return;
+                }
 
-        private readonly Action _clickAction;
-        private bool _isFocused;
-
-        public ActionButtonModel(string iconName, Action clickAction) : base(iconName) {
-            _clickAction = clickAction;
+                selectedColor = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => Color);
+            }
         }
 
+        public new SolidColorBrush Color
+            => IsFocused ? SelectedColor : base.Color;
+
+        #endregion
+
+        #region Fields
+
+        private readonly Action clickAction;
+        private bool isFocused;
+        private SolidColorBrush selectedColor;
+
+        #endregion
+
+        public ActionButtonModel(string iconName, Action clickAction, string selectColor = null) : base(iconName) {
+            this.clickAction = clickAction;
+            SelectedColor = (SolidColorBrush) Application.Current.FindResource(
+                string.IsNullOrEmpty(selectColor) ? "PanelSelectedBrush" : selectColor
+            );
+        }
+
+        #region Logic
+
         public void InvokeClickAction() {
-            _clickAction.Invoke();
+            clickAction.Invoke();
         }
 
         public void Focus() {
@@ -37,6 +67,8 @@ namespace ClipboardMachinery.Common.Models {
         public void Unfocus() {
             IsFocused = false;
         }
+
+        #endregion
 
     }
 

@@ -23,16 +23,9 @@ namespace ClipboardMachinery {
         public Bootstrapper()
             => Initialize();
 
-        protected override void Configure() {
-            container
-                .Register(Component.For<IWindsorContainer>().Instance(container).LifestyleSingleton());
-
-            container
-                .Install(FromAssembly.This());
-
-            base.Configure();
-        }
-
+        protected override void Configure()
+            => container.Install(FromAssembly.This());
+        
         protected override object GetInstance(Type service, string key)
             => string.IsNullOrEmpty(key)
                 ? container.Resolve(service)

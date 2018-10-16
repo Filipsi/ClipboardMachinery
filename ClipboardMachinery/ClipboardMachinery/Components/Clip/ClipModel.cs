@@ -54,18 +54,6 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public bool IsFavorite {
-            get => isFavorite;
-            set {
-                if (isFavorite == value) {
-                    return;
-                }
-
-                isFavorite = value;
-                NotifyOfPropertyChange();
-            }
-        }
-
         public BindableCollection<TagModel> Tags {
             set; get;
         }
@@ -77,7 +65,6 @@ namespace ClipboardMachinery.Components.Clip {
         private int id;
         private string rawContent;
         private DateTime created;
-        private bool isFavorite;
 
         #endregion
 

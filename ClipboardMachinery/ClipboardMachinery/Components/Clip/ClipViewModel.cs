@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using ClipboardMachinery.Common.Models;
 using ClipboardMachinery.Components.Tag;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
@@ -46,9 +47,6 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
                 NotifyOfPropertyChange(() => Icon);
-                NotifyOfPropertyChange(() => FavoriteIcon);
-                NotifyOfPropertyChange(() => FavoriteIconColor);
-                NotifyOfPropertyChange(() => FavoriteIconColor);
                 NotifyOfPropertyChange(() => SelectionColor);
             }
         }
@@ -70,10 +68,6 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public BindableCollection<TagViewModel> Tags {
-            get;
-        }
-
         public bool IsFocused {
             get => isFocused;
             set {
@@ -90,14 +84,16 @@ namespace ClipboardMachinery.Components.Clip {
         public Geometry Icon
             => Application.Current.FindResource(IconMap[Type]) as Geometry;
 
-        public Geometry FavoriteIcon
-            => Application.Current.FindResource(Model.IsFavorite ? "IconStarFull" : "IconStarEmpty") as Geometry;
-
-        public SolidColorBrush FavoriteIconColor
-            => Application.Current.FindResource(Model.IsFavorite ? "ElementFavoriteBrush" : "PanelControlBrush") as SolidColorBrush;
-
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
+
+        public BindableCollection<TagViewModel> Tags {
+            get;
+        }
+
+        public BindableCollection<ActionButtonModel> Controls {
+            get;
+        }
 
         #endregion
 
@@ -134,6 +130,13 @@ namespace ClipboardMachinery.Components.Clip {
         public ClipViewModel(Func<TagViewModel> tagVmFactory) {
             this.tagVmFactory = tagVmFactory;
             Tags = new BindableCollection<TagViewModel>();
+            Controls = new BindableCollection<ActionButtonModel>(new[] {
+                new ActionButtonModel(
+                    iconName: "IconRemove",
+                    clickAction: Remove,
+                    selectColor: "DangerousActionBrush"
+                )
+            });
         }
 
         #region Handlers
@@ -170,11 +173,6 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => Type);
                 NotifyOfPropertyChange(() => Icon);
                 return;
-            }
-
-            if (e.PropertyName == nameof(ClipModel.IsFavorite)) {
-                NotifyOfPropertyChange(() => FavoriteIcon);
-                NotifyOfPropertyChange(() => FavoriteIconColor);
             }
         }
 
@@ -229,10 +227,6 @@ namespace ClipboardMachinery.Components.Clip {
 
         public void Select() {
 
-        }
-
-        public void ToggleFavorite() {
-            Model.IsFavorite = !Model.IsFavorite;
         }
 
         public void Focus() {

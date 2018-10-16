@@ -10,11 +10,13 @@ namespace ClipboardMachinery.Common.Models {
             get;
         }
 
-        public SolidColorBrush Color =>
-            Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
+        public SolidColorBrush Color {
+            get;
+        }
 
         public ControlModel(string iconName) {
             Icon = Application.Current.FindResource(iconName) as Geometry;
+            Color = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
         }
 
     }
