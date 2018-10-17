@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Models;
+using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Components.Tag;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
@@ -91,7 +92,7 @@ namespace ClipboardMachinery.Components.Clip {
             get;
         }
 
-        public BindableCollection<ActionButtonModel> Controls {
+        public BindableCollection<ActionButtonViewModel> Controls {
             get;
         }
 
@@ -127,16 +128,17 @@ namespace ClipboardMachinery.Components.Clip {
 
         #endregion
 
-        public ClipViewModel(Func<TagViewModel> tagVmFactory) {
+        public ClipViewModel(Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> buttonVmFactory) {
             this.tagVmFactory = tagVmFactory;
             Tags = new BindableCollection<TagViewModel>();
-            Controls = new BindableCollection<ActionButtonModel>(new[] {
-                new ActionButtonModel(
-                    iconName: "IconRemove",
-                    clickAction: Remove,
-                    selectColor: "DangerousActionBrush"
-                )
-            });
+            Controls = new BindableCollection<ActionButtonViewModel>();
+
+            // Create controls
+            ActionButtonViewModel removeButton = buttonVmFactory.Invoke();
+            removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
+            removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
+            removeButton.ClickAction = Remove;
+            Controls.Add(removeButton);
         }
 
         #region Handlers

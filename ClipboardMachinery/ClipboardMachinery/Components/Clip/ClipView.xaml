@@ -104,18 +104,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid
-                            Background="Transparent"
-                            Cursor="Hand"
-                            Margin="5"
-                            cal:Bind.Model="{Binding}"
-                            cal:Message.Attach="
-                                [Event MouseLeftButtonUp] = [Action InvokeClickAction()];
-                                [Event MouseEnter] = [Action Focus()];
-                                [Event MouseLeave] = [Action Unfocus()]">
-
-                            <Path Data="{Binding Icon}" Fill="{Binding Color}" Stretch="Uniform" />
-                        </Grid>
+                        <ContentControl cal:View.Model="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media;
 using Caliburn.Micro;
 using Castle.Windsor;
 using ClipboardMachinery.Common.Models;
+using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Plumbing;
 
 namespace ClipboardMachinery.Components.Navigator {
@@ -16,7 +19,7 @@ namespace ClipboardMachinery.Components.Navigator {
             get;
         }
 
-        public BindableCollection<ActionButtonModel> Controls {
+        public BindableCollection<ActionButtonViewModel> Controls {
             get;
         }
 
@@ -34,7 +37,7 @@ namespace ClipboardMachinery.Components.Navigator {
 
         #endregion
 
-        public NavigatorViewModel(IWindsorContainer container) {
+        public NavigatorViewModel(IWindsorContainer container, Func<ActionButtonViewModel> buttonVmFactory) {
             // Automatically create pages from ViewModels that implements IScreenPage
             List<IScreenPage> pages = container.ResolveAll<IScreenPage>().ToList();
             pages.Sort((x, y) => x.Order.CompareTo(y.Order));
@@ -43,13 +46,13 @@ namespace ClipboardMachinery.Components.Navigator {
                pages.Select(page => new NavigatorModel(page))
             );
 
-            // Create control buttons
-            Controls = new BindableCollection<ActionButtonModel> {
-                new ActionButtonModel(
-                    iconName: "IconExit",
-                    clickAction: () => ExitButtonClicked?.Invoke(this, EventArgs.Empty)
-                )
-            };
+            // Create controls
+            Controls = new BindableCollection<ActionButtonViewModel>();
+
+            ActionButtonViewModel removeButton = buttonVmFactory.Invoke();
+            removeButton.Icon = (Geometry)Application.Current.FindResource("IconExit");
+            removeButton.ClickAction = Exit;
+            Controls.Add(removeButton);
         }
 
         protected override void OnInitialize() {
@@ -80,8 +83,8 @@ namespace ClipboardMachinery.Components.Navigator {
             NotifyOfPropertyChange(() => SelectedPageTitle);
         }
 
-        public void HandleControlClick(ActionButtonModel control)
-            => control?.InvokeClickAction();
+        private void Exit()
+            => ExitButtonClicked?.Invoke(this, EventArgs.Empty);
 
         #endregion
 

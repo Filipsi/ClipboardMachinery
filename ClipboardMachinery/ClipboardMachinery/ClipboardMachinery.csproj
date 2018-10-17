@@ -102,6 +102,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\ScrollableHeightBehavior.cs" />
+    <Compile Include="Components\ActionButton\ActionButtonView.xaml.cs">
+      <DependentUpon>ActionButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ActionButton\ActionButtonViewModel.cs" />
     <Compile Include="Components\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
@@ -113,7 +117,6 @@
     <Compile Include="Plumbing\Installers\MappingInstaller.cs" />
     <Compile Include="Components\Navigator\IScreenPage.cs" />
     <Compile Include="Components\Shell\IShell.cs" />
-    <Compile Include="Common\Models\ActionButtonModel.cs" />
     <Compile Include="Components\Clip\ClipModel.cs" />
     <Compile Include="Common\Models\ControlModel.cs" />
     <Compile Include="Components\Navigator\NavigatorModel.cs" />
@@ -193,6 +196,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Components\ActionButton\ActionButtonView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Shell\RotatingGear.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
