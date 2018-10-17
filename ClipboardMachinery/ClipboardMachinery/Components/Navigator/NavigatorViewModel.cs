@@ -5,9 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Castle.Windsor;
-using ClipboardMachinery.Common.Models;
 using ClipboardMachinery.Components.ActionButton;
-using ClipboardMachinery.Plumbing;
 
 namespace ClipboardMachinery.Components.Navigator {
 
@@ -15,7 +13,7 @@ namespace ClipboardMachinery.Components.Navigator {
 
         #region Properties
 
-        public BindableCollection<NavigatorModel> Pages {
+        public BindableCollection<ActionButtonViewModel> Pages {
             get;
         }
 
@@ -23,8 +21,8 @@ namespace ClipboardMachinery.Components.Navigator {
             get;
         }
 
-        public NavigatorModel Selected
-            => Pages?.FirstOrDefault(model => model.IsSelected);
+        public IScreenPage Selected
+            => Pages.FirstOrDefault(model => model.IsSelected)?.Model as IScreenPage;
 
         public string SelectedPageTitle
             => Selected?.Title;
@@ -38,12 +36,20 @@ namespace ClipboardMachinery.Components.Navigator {
         #endregion
 
         public NavigatorViewModel(IWindsorContainer container, Func<ActionButtonViewModel> buttonVmFactory) {
+
             // Automatically create pages from ViewModels that implements IScreenPage
             List<IScreenPage> pages = container.ResolveAll<IScreenPage>().ToList();
             pages.Sort((x, y) => x.Order.CompareTo(y.Order));
 
-            Pages = new BindableCollection<NavigatorModel>(
-               pages.Select(page => new NavigatorModel(page))
+            Pages = new BindableCollection<ActionButtonViewModel>(
+                pages.Select(page => {
+                    ActionButtonViewModel button = buttonVmFactory.Invoke();
+                    button.CanBeSelected = true;
+                    button.Icon = (Geometry)Application.Current.FindResource(page.Icon);
+                    button.Model = page;
+                    button.ClickAction = HandleNavigationClick;
+                    return button;
+                })
             );
 
             // Create controls
@@ -60,30 +66,25 @@ namespace ClipboardMachinery.Components.Navigator {
 
             // Select first page if no page is selected
             if (Pages.Count > 0 && Selected == null) {
-                SelectPage(Pages.First());
+                HandleNavigationClick(Pages.First());
             }
         }
 
         #region Handlers
 
-        public void SelectPage(NavigatorModel page) {
-            // Ignore currently selected page (can't be selected again)
-            if (page == Selected) {
-                return;
-            }
-
+        private void HandleNavigationClick(ActionButtonViewModel control) {
             // De-select currently selected pages
-            foreach (NavigatorModel pageModel in Pages.Where(m => m.IsSelected)) {
-                pageModel.IsSelected = false;
+            foreach (ActionButtonViewModel pageControl in Pages) {
+                pageControl.IsSelected = false;
             }
 
             // Select new one and notify about changes
-            page.IsSelected = true;
+            control.IsSelected = true;
             NotifyOfPropertyChange(() => Selected);
             NotifyOfPropertyChange(() => SelectedPageTitle);
         }
 
-        private void Exit()
+        private void Exit(object arg)
             => ExitButtonClicked?.Invoke(this, EventArgs.Empty);
 
         #endregion

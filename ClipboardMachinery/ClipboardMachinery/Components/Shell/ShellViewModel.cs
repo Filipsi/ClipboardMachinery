@@ -112,8 +112,8 @@ namespace ClipboardMachinery.Components.Shell {
             if(navigator.Selected == null) {
                 ActivateItem(null);
             } else {
-                navigator.Selected.Page.ConductWith(this);
-                ActivateItem(navigator.Selected.Page as IScreen);
+                navigator.Selected.ConductWith(this);
+                ActivateItem(navigator.Selected as IScreen);
             }
         }
 

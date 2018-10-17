@@ -1,13 +1,25 @@
 ﻿using Caliburn.Micro;
+using System;
 using System.Windows;
 using System.Windows.Media;
-using Action = System.Action;
 
 namespace ClipboardMachinery.Components.ActionButton {
 
     public class ActionButtonViewModel : Screen {
 
         #region Properties
+
+        public object Model {
+            get => model;
+            set {
+                if (model == value) {
+                    return;
+                }
+
+                model = value;
+                NotifyOfPropertyChange();
+            }
+        }
 
         public Geometry Icon {
             get => icon;
@@ -32,6 +44,22 @@ namespace ClipboardMachinery.Components.ActionButton {
                 NotifyOfPropertyChange();
 
                 if (!IsFocused) {
+                    NotifyOfPropertyChange(() => Color);
+                }
+            }
+        }
+
+        public SolidColorBrush SelectionColor {
+            get => selectionColor;
+            set {
+                if (selectionColor == value) {
+                    return;
+                }
+
+                selectionColor = value;
+                NotifyOfPropertyChange();
+
+                if (IsSelected) {
                     NotifyOfPropertyChange(() => Color);
                 }
             }
@@ -66,10 +94,41 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
-        public SolidColorBrush Color
-            => IsFocused ? HoverColor : defaultColor;
+        public bool CanBeSelected {
+            get => canBeSelected;
+            set {
+                if (canBeSelected == value) {
+                    return;
+                }
 
-        public Action ClickAction {
+                canBeSelected = value;
+                NotifyOfPropertyChange();
+
+                if (!canBeSelected) {
+                    IsSelected = false;
+                }
+            }
+        }
+
+        public bool IsSelected {
+            get => isSelected;
+            set {
+                if(!CanBeSelected) {
+                    return;
+                }
+
+                if (isSelected == value) {
+                    return;
+                }
+
+                isSelected = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => Color);
+            }
+        }
+
+
+        public Action<ActionButtonViewModel> ClickAction {
             get => clickAction;
             set {
                 if (clickAction == value) {
@@ -78,31 +137,48 @@ namespace ClipboardMachinery.Components.ActionButton {
 
                 clickAction = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => Color);
             }
         }
+
+        public SolidColorBrush Color
+            => IsSelected
+                ? SelectionColor
+                : (IsFocused ? HoverColor : DefaultColor);
 
         #endregion
 
         #region Fields
 
-        private Action clickAction;
+        private Action<ActionButtonViewModel> clickAction;
         private bool isFocused;
+        private bool isSelected;
+        private bool canBeSelected;
         private SolidColorBrush hoverColor;
         private SolidColorBrush defaultColor;
+        private SolidColorBrush selectionColor;
         private Geometry icon;
+        private object model;
 
         #endregion
 
         public ActionButtonViewModel() {
             defaultColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
-            hoverColor = (SolidColorBrush)Application.Current.FindResource("PanelSelectedBrush");
+            hoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
+            selectionColor = Application.Current.FindResource("PanelSelectedBrush") as SolidColorBrush;
         }
 
         #region Logic
 
-        public void Click()
-            => clickAction.Invoke();
+        public void Click() {
+            if (CanBeSelected) {
+                if (!IsSelected) {
+                    IsSelected = true;
+                    clickAction.Invoke(this);
+                }
+            } else {
+                clickAction.Invoke(this);
+            }
+        }
 
         public void Focus()
             => IsFocused = true;

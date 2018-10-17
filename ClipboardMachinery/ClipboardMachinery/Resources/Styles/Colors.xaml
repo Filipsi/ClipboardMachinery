@@ -7,6 +7,9 @@
     <Color x:Key="PanelControlColor">#A8A8A8</Color>
     <SolidColorBrush x:Key="PanelControlBrush" Color="{StaticResource PanelControlColor}" />
 
+    <Color x:Key="PanelHoverColor">#CCCCCC</Color>
+    <SolidColorBrush x:Key="PanelHoverBrush" Color="{StaticResource PanelHoverColor}" />
+
     <Color x:Key="PanelSelectedColor">#FFFFFF</Color>
     <SolidColorBrush x:Key="PanelSelectedBrush" Color="{StaticResource PanelSelectedColor}" />
 

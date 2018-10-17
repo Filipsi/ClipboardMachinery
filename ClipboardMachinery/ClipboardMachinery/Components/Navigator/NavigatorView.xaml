@@ -20,19 +20,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid
-                        cal:Bind.Model="{Binding}"
-                        cal:Message.Attach="[Event MouseLeftButtonUp] = [Action SelectPage($dataContext)]"
-                        MaxWidth="32"
-                        Margin="8"
-                        Cursor="Hand"
-                        Background="Transparent">
-
-                        <Path
-                            Data="{Binding Icon}"
-                            Fill="{Binding Color}"
-                            Stretch="Uniform" />
-                    </Grid>
+                    <ContentControl Margin="4" cal:View.Model="{Binding}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

@@ -12,7 +12,6 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using ClipboardMachinery.Common.Models;
 using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Components.Tag;
 using Image = System.Windows.Controls.Image;
@@ -223,7 +222,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Actions
 
-        public void Remove() {
+        public void Remove(object arg) {
 
         }
 

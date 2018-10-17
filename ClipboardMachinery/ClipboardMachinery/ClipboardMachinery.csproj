@@ -75,7 +75,6 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -118,8 +117,6 @@
     <Compile Include="Components\Navigator\IScreenPage.cs" />
     <Compile Include="Components\Shell\IShell.cs" />
     <Compile Include="Components\Clip\ClipModel.cs" />
-    <Compile Include="Common\Models\ControlModel.cs" />
-    <Compile Include="Components\Navigator\NavigatorModel.cs" />
     <Compile Include="Plumbing\Facilities\EventAggregatorFacility.cs" />
     <Compile Include="Plumbing\Installers\ComponentInstaller.cs" />
     <Compile Include="Plumbing\Installers\ServiceInstaller.cs" />
@@ -251,6 +248,9 @@
       <Project>{DFB6D5D3-2DCF-44BC-9EAC-40C56B1D2190}</Project>
       <Name>ClipboardMachinery.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />
