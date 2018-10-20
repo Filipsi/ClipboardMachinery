@@ -87,6 +87,10 @@ namespace ClipboardMachinery.Core.Repositories {
             return new LazyDataProvider<Clip>(this, batchSize);
         }
 
+        public async Task DeleteClip(int id) {
+            await connection.DeleteByIdAsync<Clip>(id);
+        }
+
         #region IDisposable
 
         private bool isDisposed;

@@ -12,6 +12,8 @@ namespace ClipboardMachinery.Core.Repositories {
 
         ILazyDataProvider CreateLazyClipProvider(int batchSize);
 
+        Task DeleteClip(int id);
+
     }
 
 }

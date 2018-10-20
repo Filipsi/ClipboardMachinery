@@ -16,52 +16,14 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border
-            x:Name="TagPanel"
-            Grid.Row="0"
-            Height="1"
-            BorderThickness="0,1,0,0"
-            BorderBrush="#E0E0E0"
-            Background="#f3f1ef">
-
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <ItemsControl Grid.Row="0" ItemsSource="{Binding Tags}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ContentControl cal:View.Model="{Binding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <TextBlock
-                    Grid.Column="1"
-                    Margin="0,0,8,0"
-                    VerticalAlignment="Center"
-                    Foreground="#2e3131"
-                    FontSize="14"
-                    FontFamily="Yu Gothic UI Light"
-                    Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" />
-            </Grid>
-        </Border>
-
-        <!-- Clip grid -->
+        <!-- Clip -->
         <Grid
-            Grid.Row="1"
-            Margin="0,4,0,4">
+            Grid.Row="0"
+            Margin="0,8,0,8">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48" />
@@ -109,6 +71,45 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Grid>
+
+        <!-- Tags and meta-data -->
+        <Border
+            x:Name="TagPanel"
+            Grid.Row="1"
+            Height="1"
+            BorderThickness="0,0,0,2"
+            BorderBrush="#E0E0E0">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ItemsControl
+                    Grid.Row="0"
+                    x:Name="Tags"
+                    Margin="4,0,0,0">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Foreground="#2e3131"
+                    FontSize="14"
+                    FontFamily="Yu Gothic UI Light"
+                    Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" />
+            </Grid>
+        </Border>
 
     </Grid>
 </UserControl>

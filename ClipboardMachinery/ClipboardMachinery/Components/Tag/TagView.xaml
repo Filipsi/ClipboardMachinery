@@ -7,34 +7,33 @@
     mc:Ignorable="d" d:DesignWidth="96"
     FontSize="14" FontFamily="Yu Gothic UI Light">
 
-    <Grid>
+    <Grid
+        Background="#192E3131"
+        Margin="4,0">
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border
+        <TextBlock
             Grid.Column="0"
-            Background="#E5E5E5">
-
-            <TextBlock
-                Padding="8,0"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Foreground="Black"
-                Text="{Binding Model.Name, FallbackValue='tag'}"
-                FontFamily="Calibri Light" />
-        </Border>
+            Padding="8,0"
+            TextAlignment="Left"
+            VerticalAlignment="Center"
+            Foreground="#2e3131"
+            Text="{Binding Model.Name, FallbackValue='tag'}"
+            FontFamily="Calibri" FontWeight="Bold" TextDecorations="{x:Null}" />
 
         <Border
             Grid.Column="1"
-            Background="#f2f1ef">
+            Background="Transparent">
 
             <TextBlock
-                Padding="8,0"
+                Padding="0,0,8,0"
+                TextAlignment="Left"
                 VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Foreground="Black"
+                Foreground="#2e3131"
                 Text="{Binding Model.Value, FallbackValue='value'}"
                 FontFamily="Calibri Light" />
         </Border>

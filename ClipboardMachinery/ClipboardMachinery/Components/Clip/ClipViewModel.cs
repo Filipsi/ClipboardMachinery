@@ -97,6 +97,12 @@ namespace ClipboardMachinery.Components.Clip {
 
         #endregion
 
+        #region Events
+
+        internal event EventHandler RemovalRequest;
+
+        #endregion
+
         #region Fields
 
         private static readonly Regex ImageDataPattern = new Regex(
@@ -222,8 +228,8 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Actions
 
-        public void Remove(object arg) {
-
+        public void Remove(ActionButtonViewModel source) {
+            RemovalRequest?.Invoke(this, EventArgs.Empty);
         }
 
         public void Select() {
