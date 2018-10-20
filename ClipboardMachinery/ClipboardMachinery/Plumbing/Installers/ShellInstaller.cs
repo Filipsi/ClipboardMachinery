@@ -3,8 +3,8 @@ using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using ClipboardMachinery.Components.Shell;
 using ClipboardMachinery.Plumbing.Facilities;
+using ClipboardMachinery.Windows.Shell;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 

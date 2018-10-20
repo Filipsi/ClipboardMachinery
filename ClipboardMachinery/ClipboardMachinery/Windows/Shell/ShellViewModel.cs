@@ -12,7 +12,7 @@ using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 
-namespace ClipboardMachinery.Components.Shell {
+namespace ClipboardMachinery.Windows.Shell {
 
     public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell {
 

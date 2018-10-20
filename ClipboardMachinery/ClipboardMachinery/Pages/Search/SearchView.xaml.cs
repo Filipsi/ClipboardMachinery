@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
-namespace ClipboardMachinery.Components.Pages.Search {
+namespace ClipboardMachinery.Pages.Search {
 
     public partial class SearchView : UserControl {
 

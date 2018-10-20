@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Navigator;
 
-namespace ClipboardMachinery.Components.Pages.Search {
+namespace ClipboardMachinery.Pages.Search {
 
     public class SearchViewModel : Screen, IScreenPage {
 

@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Navigator;
 
-namespace ClipboardMachinery.Components.Pages.Favorites {
+namespace ClipboardMachinery.Pages.Favorites {
 
     public class FavoritesViewModel : Screen, IScreenPage {
 

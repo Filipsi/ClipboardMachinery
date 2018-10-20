@@ -105,7 +105,7 @@
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\ActionButton\ActionButtonViewModel.cs" />
-    <Compile Include="Components\Shell\RotatingGear.xaml.cs">
+    <Compile Include="Windows\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Tag\TagModel.cs" />
@@ -115,39 +115,39 @@
     <Compile Include="Components\Tag\TagViewModel.cs" />
     <Compile Include="Plumbing\Installers\MappingInstaller.cs" />
     <Compile Include="Components\Navigator\IScreenPage.cs" />
-    <Compile Include="Components\Shell\IShell.cs" />
+    <Compile Include="Windows\Shell\IShell.cs" />
     <Compile Include="Components\Clip\ClipModel.cs" />
     <Compile Include="Plumbing\Facilities\EventAggregatorFacility.cs" />
     <Compile Include="Plumbing\Installers\ComponentInstaller.cs" />
     <Compile Include="Plumbing\Installers\ServiceInstaller.cs" />
     <Compile Include="Plumbing\Installers\ShellInstaller.cs" />
     <Compile Include="Components\Navigator\NavigatorViewModel.cs" />
-    <Compile Include="Components\Shell\ShellViewModel.cs" />
-    <Compile Include="Components\Pages\Favorites\FavoritesViewModel.cs" />
-    <Compile Include="Components\Pages\History\HistoryViewModel.cs" />
+    <Compile Include="Windows\Shell\ShellViewModel.cs" />
+    <Compile Include="Pages\Favorites\FavoritesViewModel.cs" />
+    <Compile Include="Pages\History\HistoryViewModel.cs" />
     <Compile Include="Components\Clip\ClipViewModel.cs" />
-    <Compile Include="Components\Pages\Search\SearchViewModel.cs" />
+    <Compile Include="Pages\Search\SearchViewModel.cs" />
     <Compile Include="Components\Navigator\NavigatorView.xaml.cs">
       <DependentUpon>NavigatorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Shell\ShellView.xaml.cs">
+    <Compile Include="Windows\Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Pages\Favorites\FavoritesView.xaml.cs">
+    <Compile Include="Pages\Favorites\FavoritesView.xaml.cs">
       <DependentUpon>FavoritesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Pages\History\HistoryView.xaml.cs">
+    <Compile Include="Pages\History\HistoryView.xaml.cs">
       <DependentUpon>HistoryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Clip\ClipView.xaml.cs">
       <DependentUpon>ClipView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Pages\Search\SearchView.xaml.cs">
+    <Compile Include="Pages\Search\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -196,7 +196,7 @@
     <Page Include="Components\ActionButton\ActionButtonView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Shell\RotatingGear.xaml">
+    <Page Include="Windows\Shell\RotatingGear.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -219,15 +219,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Shell\ShellView.xaml">
+    <Page Include="Windows\Shell\ShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Pages\Favorites\FavoritesView.xaml">
+    <Page Include="Pages\Favorites\FavoritesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Pages\History\HistoryView.xaml">
+    <Page Include="Pages\History\HistoryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -235,7 +235,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Pages\Search\SearchView.xaml">
+    <Page Include="Pages\Search\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

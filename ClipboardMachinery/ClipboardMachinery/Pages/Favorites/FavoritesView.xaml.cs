@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Components.Pages.Favorites {
+namespace ClipboardMachinery.Pages.Favorites {
 
     public partial class FavoritesView : UserControl {
 

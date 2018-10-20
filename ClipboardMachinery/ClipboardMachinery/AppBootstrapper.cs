@@ -5,12 +5,12 @@ using Caliburn.Micro;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
-using ClipboardMachinery.Components.Shell;
 using ClipboardMachinery.Plumbing;
+using ClipboardMachinery.Windows.Shell;
 
 namespace ClipboardMachinery {
 
-    internal class Bootstrapper : BootstrapperBase {
+    internal class AppBootstrapper : BootstrapperBase {
 
         #region Fields
 
@@ -20,12 +20,12 @@ namespace ClipboardMachinery {
 
         #region Bootstrapper
 
-        public Bootstrapper()
+        public AppBootstrapper()
             => Initialize();
 
         protected override void Configure()
             => container.Install(FromAssembly.This());
-        
+
         protected override object GetInstance(Type service, string key)
             => string.IsNullOrEmpty(key)
                 ? container.Resolve(service)

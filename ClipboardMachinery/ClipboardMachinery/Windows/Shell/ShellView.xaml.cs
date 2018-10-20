@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ClipboardMachinery.Components.Shell {
+namespace ClipboardMachinery.Windows.Shell {
 
     public partial class ShellView : Window {
 

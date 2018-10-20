@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Components.Pages.History {
+namespace ClipboardMachinery.Pages.History {
 
     public partial class HistoryView : UserControl {
 

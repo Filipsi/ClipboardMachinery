@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Components.Shell {
+namespace ClipboardMachinery.Windows.Shell {
 
     public partial class RotatingGear : UserControl {
 

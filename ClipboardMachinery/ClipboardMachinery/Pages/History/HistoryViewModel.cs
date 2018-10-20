@@ -6,7 +6,7 @@ using ClipboardMachinery.Core.Repositories;
 using ClipboardMachinery.Core.Repositories.Lazy;
 using Screen = Caliburn.Micro.Screen;
 
-namespace ClipboardMachinery.Components.Pages.History {
+namespace ClipboardMachinery.Pages.History {
 
     public class HistoryViewModel : Screen, IScreenPage {
 
