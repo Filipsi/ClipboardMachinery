@@ -21,7 +21,7 @@
                 </TextBlock>
                 <Path Width="32" Data="{StaticResource IconBox}" Fill="{StaticResource PanelControlBrush}" Stretch="Uniform" Margin="0,16,0,0" />
                 <TextBlock  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}" Margin="0,10,0,0" FontSize="10">
-                    Tip: Hotkey CTRL+H hides the app.
+                    Tip: Hot key CTRL+H hides the application.
                 </TextBlock>
             </StackPanel>
          </Border>
@@ -34,17 +34,12 @@
                 <behaviors:RemainingScrollableHeightBehavior RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
 
-            <ItemsControl ItemsSource="{Binding ClipboardItems}">
+            <ItemsControl x:Name="ClipboardItems">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ContentControl cal:View.Model="{Binding}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
     </Grid>

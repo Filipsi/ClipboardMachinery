@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Specialized;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
@@ -23,7 +25,10 @@ namespace ClipboardMachinery.Pages.History {
 
         #endregion
 
-        public bool ErrorMessageIsVisible { get; } = false;
+        #region Properties
+
+        public bool ErrorMessageIsVisible
+            => ClipboardItems.Count == 0;
 
         public BindableCollection<ClipViewModel> ClipboardItems {
             get;
@@ -39,32 +44,62 @@ namespace ClipboardMachinery.Pages.History {
                 remainingScrollableHeight = value;
                 NotifyOfPropertyChange();
 
-                if (remainingScrollableHeight < 200) {
-                    LoadClipBatch();
+                if (!loadLock && remainingScrollableHeight < 200) {
+                    loadLock = true;
+
+                    Task
+                        .Run(LoadClipBatch)
+                        .ContinueWith((t) => loadLock = false);
                 }
             }
         }
+
+        #endregion
+
+        #region Fields
 
         private readonly Func<ClipViewModel> clipVmFactory;
         private readonly ILazyDataProvider lazyClipProvider;
 
         private double remainingScrollableHeight;
+        private bool loadLock = false;
+
+        #endregion
 
         public HistoryViewModel(IDataRepository dataRepository, Func<ClipViewModel> clipVmFactory) {
             ClipboardItems = new BindableCollection<ClipViewModel>();
+            ClipboardItems.CollectionChanged += OnClipboardItemsCollectionChanged;
             this.clipVmFactory = clipVmFactory;
 
             lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize: 15);
-            LoadClipBatch();
+            Task.Run(LoadClipBatch);
         }
 
-        private void LoadClipBatch() {
-            foreach (ClipModel model in lazyClipProvider.GetNextBatch<ClipModel>()) {
+        #region Logic
+
+        private async Task LoadClipBatch() {
+            foreach (ClipModel model in await lazyClipProvider.GetNextBatchAsync<ClipModel>()) {
                 ClipViewModel vm = clipVmFactory.Invoke();
                 vm.Model = model;
                 ClipboardItems.Add(vm);
             }
         }
+
+        #endregion
+
+        #region Handlers
+
+        private void OnClipboardItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            switch (e.Action) {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Reset:
+                    NotifyOfPropertyChange(() => ErrorMessageIsVisible);
+                    break;
+            }
+        }
+
+        #endregion
 
     }
 

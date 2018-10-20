@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ServiceStack.OrmLite;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Data;
 
 namespace ClipboardMachinery.Core.Repositories.Lazy {
 
@@ -20,8 +15,8 @@ namespace ClipboardMachinery.Core.Repositories.Lazy {
             this.batchSize = batchSize;
         }
 
-        public IEnumerable<M> GetNextBatch<M>() {
-            List<T> entries = dataRepository.Connection.Select<T>(
+        public async Task<IEnumerable<M>> GetNextBatchAsync<M>() {
+            List<T> entries = await dataRepository.Connection.SelectAsync<T>(
                 "LIMIT @limit OFFSET @offset",
                 new { limit = batchSize, offset }
             );

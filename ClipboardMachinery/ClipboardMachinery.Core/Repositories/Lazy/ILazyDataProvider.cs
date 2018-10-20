@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Core.Repositories.Lazy {
 
     public interface ILazyDataProvider {
 
-        IEnumerable<M> GetNextBatch<M>();
+        Task<IEnumerable<M>> GetNextBatchAsync<M>();
 
     };
 
