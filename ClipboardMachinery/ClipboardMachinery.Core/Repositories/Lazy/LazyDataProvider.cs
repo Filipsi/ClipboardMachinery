@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ServiceStack.OrmLite;
 using System.Threading.Tasks;
+using ClipboardMachinery.Core.Repositories.Shema;
 
 namespace ClipboardMachinery.Core.Repositories.Lazy {
 
@@ -17,7 +18,7 @@ namespace ClipboardMachinery.Core.Repositories.Lazy {
 
         public async Task<IEnumerable<M>> GetNextBatchAsync<M>() {
             List<T> entries = await dataRepository.Connection.SelectAsync<T>(
-                "LIMIT @limit OFFSET @offset",
+                "ORDER BY id DESC LIMIT @limit OFFSET @offset",
                 new { limit = batchSize, offset }
             );
 
