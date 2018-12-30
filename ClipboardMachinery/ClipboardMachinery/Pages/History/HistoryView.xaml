@@ -11,7 +11,7 @@
     Background="{StaticResource BodyBackgroundBrush}">
 
     <Grid MinHeight="128">
-        <Border x:Name="ErrorMessageIsVisible">
+        <Border x:Name="WatermarkIsVisible">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
                     There is nothing here yet.

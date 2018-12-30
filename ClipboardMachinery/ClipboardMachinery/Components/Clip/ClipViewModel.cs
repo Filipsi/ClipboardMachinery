@@ -12,8 +12,11 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Core.Services.Clipboard;
+using static ClipboardMachinery.Common.Events.ClipEvent;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
@@ -97,12 +100,6 @@ namespace ClipboardMachinery.Components.Clip {
 
         #endregion
 
-        #region Events
-
-        internal event EventHandler RemovalRequest;
-
-        #endregion
-
         #region Fields
 
         private static readonly Regex ImageDataPattern = new Regex(
@@ -116,7 +113,9 @@ namespace ClipboardMachinery.Components.Clip {
             { EntryType.Text,  "IconTextFile" }
         };
 
+        private readonly IEventAggregator eventAggregator;
         private readonly Func<TagViewModel> tagVmFactory;
+        private readonly IClipboardService clipboardService;
 
         private ClipModel model;
         private bool isFocused;
@@ -133,8 +132,14 @@ namespace ClipboardMachinery.Components.Clip {
 
         #endregion
 
-        public ClipViewModel(Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> buttonVmFactory) {
+        public ClipViewModel(
+            ClipModel model, IEventAggregator eventAggregator,
+            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> buttonVmFactory,
+            IClipboardService clipboardService) {
+
             this.tagVmFactory = tagVmFactory;
+            this.eventAggregator = eventAggregator;
+            this.clipboardService = clipboardService;
             Tags = new BindableCollection<TagViewModel>();
             Controls = new BindableCollection<ActionButtonViewModel>();
 
@@ -144,6 +149,8 @@ namespace ClipboardMachinery.Components.Clip {
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = Remove;
             Controls.Add(removeButton);
+
+            Model = model;
         }
 
         #region Handlers
@@ -229,11 +236,14 @@ namespace ClipboardMachinery.Components.Clip {
         #region Actions
 
         public void Remove(ActionButtonViewModel source) {
-            RemovalRequest?.Invoke(this, EventArgs.Empty);
+            eventAggregator.PublishOnCurrentThreadAsync(
+                new ClipEvent(model, ClipEventType.Remove)
+            );
         }
 
         public void Select() {
-
+            clipboardService.IgnoreNextChange(model.Content);
+            clipboardService.SetClipboardContent(model.Content);
         }
 
         public void Focus() {

@@ -1,6 +1,6 @@
 ﻿using Caliburn.Micro;
 
-namespace ClipboardMachinery.Windows.Shell {
+namespace ClipboardMachinery.Plumbing {
 
     public interface IShell : IConductor {
 

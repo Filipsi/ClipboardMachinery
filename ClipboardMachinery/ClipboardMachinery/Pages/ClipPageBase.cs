@@ -1,20 +1,21 @@
 ﻿using Caliburn.Micro;
+using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Core.Repositories;
-using System;
-using System.Collections.Generic;
+using ClipboardMachinery.Plumbing.Factories;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class ClipPageBase : Screen {
+    public abstract class ClipPageBase : Screen, IHandle<ClipEvent> {
 
         #region Properties
 
-        public bool ErrorMessageIsVisible
+        public bool WatermarkIsVisible
             => ClipboardItems.Count == 0;
 
         public BindableCollection<ClipViewModel> ClipboardItems {
@@ -23,10 +24,17 @@ namespace ClipboardMachinery.Pages {
 
         #endregion
 
-        protected readonly IDataRepository dataRepository;
+        #region Fields
 
-        public ClipPageBase(IDataRepository dataRepository) {
+        protected readonly IDataRepository dataRepository;
+        protected readonly IClipViewModelFactory clipVmFactory;
+        protected bool AllowAddingClipsFromKeyboard = true;
+
+        #endregion
+
+        public ClipPageBase(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) {
             this.dataRepository = dataRepository;
+            this.clipVmFactory = clipVmFactory;
 
             ClipboardItems = new BindableCollection<ClipViewModel>();
             ClipboardItems.CollectionChanged += OnClipboardItemsCollectionChanged;
@@ -34,32 +42,32 @@ namespace ClipboardMachinery.Pages {
 
         #region Handlers
 
-        private async void OnClipRemovalRequest(object sender, EventArgs e) {
-            ClipViewModel clipVm = sender as ClipViewModel;
-            ClipboardItems.Remove(clipVm);
-            await dataRepository.DeleteClip(clipVm.Model.Id);
-        }
-
         private void OnClipboardItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    NotifyOfPropertyChange(() => ErrorMessageIsVisible);
-                    foreach (ClipViewModel clipVm in e.NewItems) {
-                        clipVm.RemovalRequest += OnClipRemovalRequest;
-                    }
-                    break;
-
                 case NotifyCollectionChangedAction.Remove:
-                    NotifyOfPropertyChange(() => ErrorMessageIsVisible);
-                    foreach (ClipViewModel clipVm in e.OldItems) {
-                        clipVm.RemovalRequest -= OnClipRemovalRequest;
+                case NotifyCollectionChangedAction.Reset:
+                    NotifyOfPropertyChange(() => WatermarkIsVisible);
+                    break;
+            }
+        }
+
+        public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
+            switch(message.EventType) {
+                case ClipEventType.Created:
+                    if (!AllowAddingClipsFromKeyboard) {
+                        return;
                     }
+
+                    ClipboardItems.Insert(0, clipVmFactory.Create(message.Source));
                     break;
 
-                case NotifyCollectionChangedAction.Reset:
-                    NotifyOfPropertyChange(() => ErrorMessageIsVisible);
-                    foreach (ClipViewModel clipVm in sender as ICollection<ClipViewModel>) {
-                        clipVm.RemovalRequest -= OnClipRemovalRequest;
+                case ClipEventType.Remove:
+                    ClipViewModel clip = ClipboardItems.FirstOrDefault(vm => vm.Model == message.Source);
+                    if (clip != null) {
+                        ClipboardItems.Remove(clip);
+                        await dataRepository.DeleteClip(clip.Model.Id);
+                        clipVmFactory.Release(clip);
                     }
                     break;
             }

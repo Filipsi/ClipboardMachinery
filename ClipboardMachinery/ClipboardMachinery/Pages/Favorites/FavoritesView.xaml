@@ -9,7 +9,7 @@
     Background="{StaticResource BodyBackgroundBrush}">
 
     <Grid MinHeight="128">
-        <Border x:Name="ErrorMessageIsVisible">
+        <Border x:Name="WatermarkIsVisible">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
                     The stars are nowhere to be seen.

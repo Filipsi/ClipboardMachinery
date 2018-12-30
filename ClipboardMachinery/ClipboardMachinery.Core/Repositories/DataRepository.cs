@@ -45,46 +45,34 @@ namespace ClipboardMachinery.Core.Repositories {
         public DataRepository(IMapper mapper) {
             Mapper = mapper;
 
-            if (Connection.CreateTableIfNotExists<Clip>()) {
-                Random random = new Random();
-
-                List<Clip> clips = new List<Clip>();
-                for (int i = 0; i < 128; i++) {
-                    Clip clip = new Clip {
-                        Content = $"clip number: {i}",
-                        Created = DateTime.UtcNow,
-                        Tags = new List<Tag>()
-                    };
-
-                    if (random.Next(0, 2) == 1) {
-                        clip.Tags.Add(new Tag {
-                            Type = new TagType {
-                                Name = "source",
-                                Type = typeof(string)
-                            },
-                            Value = "test"
-                        });
-                    }
-
-                    if (random.Next(0, 2) == 1) {
-                        clip.Tags.Add(new Tag {
-                            Type = new TagType {
-                                Name = "type",
-                                Type = typeof(string)
-                            },
-                            Value = "lorem ipsum"
-                        });
-                    }
-
-                    clips.Add(clip);
-                }
-
-                Connection.Insert(clips.ToArray());
-            }
+            // Initialize tables
+            Connection.CreateTableIfNotExists<Clip>();
         }
 
         public ILazyDataProvider CreateLazyClipProvider(int batchSize) {
             return new LazyDataProvider<Clip>(this, batchSize);
+        }
+
+        public async Task InsertClip(string content, DateTime created, KeyValuePair<string, string>[] tags) {
+            Clip clip = new Clip {
+                Content = content,
+                Created = created,
+                Tags = new List<Tag>()
+            };
+
+            if (tags != null) {
+                foreach (KeyValuePair<string, string> tagData in tags) {
+                    Tag tag = new Tag {
+                        Value = tagData.Value,
+                        Type = new TagType {
+                            Name = tagData.Key,
+                            Type = tagData.Key.GetType()
+                        },
+                    };
+                }
+            }
+
+            await connection.SaveAsync(clip, references: true);
         }
 
         public async Task DeleteClip(int id) {

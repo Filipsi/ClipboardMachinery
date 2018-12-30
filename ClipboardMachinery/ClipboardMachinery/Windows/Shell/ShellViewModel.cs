@@ -7,24 +7,21 @@ using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro;
 using Castle.Windsor;
+using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Core.Repositories;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
+using ClipboardMachinery.Plumbing;
+using ClipboardMachinery.Plumbing.Factories;
+using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Windows.Shell {
 
     public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell {
 
         #region Properties
-
-        public IObservableCollection<ClipViewModel> ClipboardItems {
-            get;
-        }
-
-        public ICollectionView ClipboardItemsView {
-            get;
-        }
 
         public bool IsVisible {
             get => isVisible;
@@ -54,27 +51,27 @@ namespace ClipboardMachinery.Windows.Shell {
 
         #region Fields
 
-        private readonly IWindsorContainer container;
-        private readonly Func<ClipViewModel> clipVmFactory;
+        private readonly IEventAggregator eventAggregator;
+        private readonly IWindsorContainer windsorContainer;
+        private readonly IDataRepository dataRepository;
 
         private bool isVisible = true;
 
         #endregion
 
         public ShellViewModel(
-            NavigatorViewModel navigator,
-            IWindsorContainer windsorContainer, IHotKeyService hotKeyService, IClipboardService clipboardService,
-            Func<ClipViewModel> clipViewModelFactory)  {
+            IEventAggregator eventAggregator, NavigatorViewModel navigator,
+            IWindsorContainer windsorContainer, IHotKeyService hotKeyService,
+            IClipboardService clipboardService, IDataRepository dataRepository)  {
 
-            container = windsorContainer;
-            clipVmFactory = clipViewModelFactory;
+            this.eventAggregator = eventAggregator;
+            this.windsorContainer = windsorContainer;
+            this.dataRepository = dataRepository;
 
             // HotKeys
             hotKeyService.Register(System.Windows.Input.Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
 
             // Clipboard
-            ClipboardItems = new BindableCollection<ClipViewModel>();
-            ClipboardItemsView = CollectionViewSource.GetDefaultView(ClipboardItems);
             clipboardService.ClipboardChanged += OnClipboardChanged;
 
             // Navigator
@@ -83,13 +80,6 @@ namespace ClipboardMachinery.Windows.Shell {
             Navigator.ExitButtonClicked += OnNavigatorExitButtonClicked;
             Navigator.PropertyChanged += OnNavigatorPropertyChanged;
         }
-
-        #region IShell
-
-        public void SetClipViewFiler(Predicate<object> filter)
-            => ClipboardItemsView.Filter = filter;
-
-        #endregion
 
         #region Event Handlers
 
@@ -107,10 +97,10 @@ namespace ClipboardMachinery.Windows.Shell {
             }
 
             NavigatorViewModel navigator = sender as NavigatorViewModel;
-            SetClipViewFiler(null);
 
             if(navigator.Selected == null) {
                 ActivateItem(null);
+
             } else {
                 navigator.Selected.ConductWith(this);
                 ActivateItem(navigator.Selected as IScreen);
@@ -118,17 +108,26 @@ namespace ClipboardMachinery.Windows.Shell {
         }
 
         private void OnClipboardChanged(object sender, ClipboardEventArgs e) {
-            if (e.Payload == string.Empty || e.Payload == ClipboardItems.FirstOrDefault()?.Model.Content) {
+            if (e.Payload == string.Empty) {
                 return;
             }
 
-            ClipViewModel vm = clipVmFactory.Invoke();
-            vm.Model = new ClipModel {
+            // Create clip model
+            ClipModel model = new ClipModel {
                 Created = DateTime.UtcNow,
                 Content = e.Payload
             };
 
-            ClipboardItems.Insert(0, vm);
+            // Save clip
+            dataRepository.InsertClip(model.Content, model.Created);
+
+            // Dispatch information about new clip creation
+            eventAggregator.PublishOnCurrentThreadAsync(
+                new ClipEvent(
+                    model,
+                    ClipEventType.Created
+                )
+            );
         }
 
         #endregion

@@ -4,6 +4,7 @@ using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Repositories;
 using ClipboardMachinery.Core.Repositories.Lazy;
+using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.History {
 
@@ -45,7 +46,6 @@ namespace ClipboardMachinery.Pages.History {
 
         #region Fields
 
-        private readonly Func<ClipViewModel> clipVmFactory;
         private readonly ILazyDataProvider lazyClipProvider;
 
         private double remainingScrollableHeight;
@@ -53,9 +53,7 @@ namespace ClipboardMachinery.Pages.History {
 
         #endregion
 
-        public HistoryViewModel(IDataRepository dataRepository, Func<ClipViewModel> clipVmFactory) : base(dataRepository) {
-            this.clipVmFactory = clipVmFactory;
-
+        public HistoryViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
             lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize: 15);
             Task.Run(LoadClipBatch);
         }
@@ -64,9 +62,7 @@ namespace ClipboardMachinery.Pages.History {
 
         private async Task LoadClipBatch() {
             foreach (ClipModel model in await lazyClipProvider.GetNextBatchAsync<ClipModel>()) {
-                ClipViewModel vm = clipVmFactory.Invoke();
-                vm.Model = model;
-                ClipboardItems.Add(vm);
+                ClipboardItems.Add(clipVmFactory.Create(model));
             }
         }
 

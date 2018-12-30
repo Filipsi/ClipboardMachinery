@@ -15,8 +15,12 @@ namespace ClipboardMachinery.Plumbing.Facilities {
         }
 
         private void OnComponentCreated(Castle.Core.ComponentModel model, object instance) {
-            if (typeof(IHandle).IsAssignableFrom(instance.GetType())) {
-                Kernel.Resolve<IEventAggregator>().Subscribe(instance as IHandle);
+            bool hasHandle = instance.GetType().GetInterfaces().Any(
+                x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IHandle<>)
+            );
+
+            if (hasHandle) {
+                Kernel.Resolve<IEventAggregator>().SubscribeOnPublishedThread(instance);
             }
         }
 
