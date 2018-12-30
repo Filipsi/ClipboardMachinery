@@ -9,7 +9,7 @@ namespace ClipboardMachinery.Core.Repositories {
 
         ILazyDataProvider CreateLazyClipProvider(int batchSize);
 
-        Task InsertClip(string content, DateTime created, KeyValuePair<string, string>[] tags = null);
+        Task InsertClip(string content, DateTime created, KeyValuePair<string, object>[] tags = null);
 
         Task DeleteClip(int id);
 

@@ -53,7 +53,7 @@ namespace ClipboardMachinery.Core.Repositories {
             return new LazyDataProvider<Clip>(this, batchSize);
         }
 
-        public async Task InsertClip(string content, DateTime created, KeyValuePair<string, string>[] tags) {
+        public async Task InsertClip(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
             Clip clip = new Clip {
                 Content = content,
                 Created = created,
@@ -61,12 +61,12 @@ namespace ClipboardMachinery.Core.Repositories {
             };
 
             if (tags != null) {
-                foreach (KeyValuePair<string, string> tagData in tags) {
+                foreach (KeyValuePair<string, object> tagData in tags) {
                     Tag tag = new Tag {
                         Value = tagData.Value,
                         Type = new TagType {
                             Name = tagData.Key,
-                            Type = tagData.Key.GetType()
+                            Type = tagData.Value.GetType()
                         },
                     };
                 }

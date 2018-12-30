@@ -34,27 +34,33 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         #region IClipboardService
 
         public void NotifyOfClipboardChange() {
-            string payload = string.Empty;
+            string content = string.Empty;
 
             if (System.Windows.Forms.Clipboard.ContainsText()) {
-                payload = System.Windows.Forms.Clipboard.GetText();
+                content = System.Windows.Forms.Clipboard.GetText();
 
             } else if (System.Windows.Forms.Clipboard.ContainsImage()) {
                 using (Image image = System.Windows.Forms.Clipboard.GetImage()) {
                     if (image != null) {
                         using (MemoryStream ms = new MemoryStream()) {
                             image.Save(ms, ImageFormat.Png);
-                            payload = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+                            content = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
                         }
                     }
                 }
             }
 
-            if (ignoreValue == payload) {
+            if (ignoreValue == content) {
                 return;
             }
 
-            ClipboardChanged?.Invoke(null, new ClipboardEventArgs(payload));
+            ClipboardChanged?.Invoke(
+                sender: this,
+                e: new ClipboardEventArgs(
+                    source: WindowHelper.GetActiveProcessName(),
+                    payload: content
+                )
+            );
         }
 
         public void IgnoreNextChange(string value) {

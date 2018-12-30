@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,7 @@ using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repositories;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
@@ -107,7 +109,7 @@ namespace ClipboardMachinery.Windows.Shell {
             }
         }
 
-        private void OnClipboardChanged(object sender, ClipboardEventArgs e) {
+        private async void OnClipboardChanged(object sender, ClipboardEventArgs e) {
             if (e.Payload == string.Empty) {
                 return;
             }
@@ -115,14 +117,27 @@ namespace ClipboardMachinery.Windows.Shell {
             // Create clip model
             ClipModel model = new ClipModel {
                 Created = DateTime.UtcNow,
-                Content = e.Payload
+                Content = e.Payload,
+                // TODO: Add config option to disable this
+                Tags = new BindableCollection<TagModel>(
+                    new TagModel[] {
+                        new TagModel {
+                            Name = "source",
+                            Value = e.Source
+                        }
+                    }
+                )
             };
 
             // Save clip
-            dataRepository.InsertClip(model.Content, model.Created);
+            await dataRepository.InsertClip(
+                content: model.Content,
+                created: model.Created,
+                tags: model.Tags.Select(tag => new KeyValuePair<string, object>(tag.Name, tag.Value)).ToArray()
+            );
 
             // Dispatch information about new clip creation
-            eventAggregator.PublishOnCurrentThreadAsync(
+            await eventAggregator.PublishOnCurrentThreadAsync(
                 new ClipEvent(
                     model,
                     ClipEventType.Created
