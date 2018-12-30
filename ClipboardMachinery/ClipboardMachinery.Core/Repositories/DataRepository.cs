@@ -62,13 +62,15 @@ namespace ClipboardMachinery.Core.Repositories {
 
             if (tags != null) {
                 foreach (KeyValuePair<string, object> tagData in tags) {
-                    Tag tag = new Tag {
-                        Value = tagData.Value,
-                        Type = new TagType {
-                            Name = tagData.Key,
-                            Type = tagData.Value.GetType()
-                        },
-                    };
+                    clip.Tags.Add(
+                        new Tag {
+                            Value = tagData.Value,
+                            Type = new TagType {
+                                Name = tagData.Key,
+                                Type = tagData.Value.GetType()
+                            },
+                        }
+                    );
                 }
             }
 
