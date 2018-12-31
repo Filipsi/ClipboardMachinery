@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Core.Repositories;
-using ClipboardMachinery.Core.Repositories.Lazy;
+using ClipboardMachinery.Core.Repository;
+using ClipboardMachinery.Core.Repository.LazyProvider;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.History {

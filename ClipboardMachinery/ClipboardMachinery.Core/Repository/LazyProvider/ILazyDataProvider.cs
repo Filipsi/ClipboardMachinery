@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ClipboardMachinery.Core.Repositories.Lazy {
+namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
     public interface ILazyDataProvider {
 

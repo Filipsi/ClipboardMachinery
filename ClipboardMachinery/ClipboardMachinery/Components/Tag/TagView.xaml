@@ -8,7 +8,7 @@
     FontSize="14" FontFamily="Yu Gothic UI Light">
 
     <Grid
-        Background="#192E3131"
+        Background="{Binding BackgroundColor}"
         Margin="4,0">
 
         <Grid.ColumnDefinitions>

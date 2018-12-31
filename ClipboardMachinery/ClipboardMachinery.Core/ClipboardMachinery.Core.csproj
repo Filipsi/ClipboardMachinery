@@ -86,13 +86,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\DataRepository.cs" />
-    <Compile Include="Repositories\IDataRepository.cs" />
-    <Compile Include="Repositories\Lazy\ILazyDataProvider.cs" />
-    <Compile Include="Repositories\Lazy\LazyDataProvider.cs" />
-    <Compile Include="Repositories\Shema\Clip.cs" />
-    <Compile Include="Repositories\Shema\Tag.cs" />
-    <Compile Include="Repositories\Shema\TagType.cs" />
+    <Compile Include="Repository\DataRepository.cs" />
+    <Compile Include="Repository\IDataRepository.cs" />
+    <Compile Include="Repository\LazyProvider\ILazyDataProvider.cs" />
+    <Compile Include="Repository\LazyProvider\LazyDataProvider.cs" />
+    <Compile Include="Repository\Schema\Clip.cs" />
+    <Compile Include="Repository\Schema\Color.cs" />
+    <Compile Include="Repository\Schema\Tag.cs" />
+    <Compile Include="Repository\Schema\TagType.cs" />
     <Compile Include="Services\Clipboard\ClipboardEventArgs.cs" />
     <Compile Include="Services\Clipboard\ClipboardService.cs" />
     <Compile Include="Services\Clipboard\IClipboardService.cs" />

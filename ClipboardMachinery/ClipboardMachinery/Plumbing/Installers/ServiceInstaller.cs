@@ -1,7 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using ClipboardMachinery.Core.Repositories.Lazy;
+using ClipboardMachinery.Core.Repository.LazyProvider;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 

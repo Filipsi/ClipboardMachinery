@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClipboardMachinery.Core.Repositories.Shema {
+namespace ClipboardMachinery.Core.Repository.Schema {
 
     public class Clip {
 
@@ -15,6 +15,7 @@ namespace ClipboardMachinery.Core.Repositories.Shema {
         [Required]
         public DateTime Created { get; set; }
 
+        [Reference]
         public List<Tag> Tags { get; set; }
 
     }

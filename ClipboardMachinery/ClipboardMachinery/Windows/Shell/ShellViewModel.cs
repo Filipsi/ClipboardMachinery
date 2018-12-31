@@ -12,7 +12,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Repositories;
+using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;
@@ -100,7 +100,7 @@ namespace ClipboardMachinery.Windows.Shell {
 
             NavigatorViewModel navigator = sender as NavigatorViewModel;
 
-            if(navigator.Selected == null) {
+            if (navigator.Selected == null) {
                 ActivateItem(null);
 
             } else {

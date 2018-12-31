@@ -4,27 +4,35 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Repositories.Shema;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClipboardMachinery.Core.Repository.Schema;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 
     public class MappingInstaller : IWindsorInstaller {
 
         public void Install(IWindsorContainer container, IConfigurationStore store) {
-            MapperConfiguration config = new MapperConfiguration(cfg => {
-                cfg.CreateMap<Clip, ClipModel>();
+            MapperConfiguration configuration = new MapperConfiguration(config => {
+                config
+                    .CreateMap<Clip, ClipModel>();
 
-                cfg.CreateMap<Tag, TagModel>()
-                   .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Type.Name));
+                config
+                    .CreateMap<Color, System.Windows.Media.Color>()
+                    .ForMember(c => c.ScA, opt => opt.Ignore())
+                    .ForMember(c => c.ScR, opt => opt.Ignore())
+                    .ForMember(c => c.ScG, opt => opt.Ignore())
+                    .ForMember(c => c.ScB, opt => opt.Ignore());
+
+                config
+                    .CreateMap<Tag, TagModel>()
+                    .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Type.Name))
+                    .ForMember(dest => dest.Color, opt => {
+                        opt.MapFrom(source => source.Type.Color);
+                        opt.AllowNull();
+                    });
             });
 
             container.Register(
-                Component.For<IMapper>().Instance(config.CreateMapper())
+                Component.For<IMapper>().Instance(configuration.CreateMapper())
             );
         }
 

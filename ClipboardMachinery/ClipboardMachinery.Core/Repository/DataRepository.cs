@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
-using ClipboardMachinery.Core.Repositories.Lazy;
-using ClipboardMachinery.Core.Repositories.Shema;
+using ClipboardMachinery.Core.Repository.LazyProvider;
+using ClipboardMachinery.Core.Repository.Schema;
 using ServiceStack.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
-namespace ClipboardMachinery.Core.Repositories {
+namespace ClipboardMachinery.Core.Repository {
 
     public class DataRepository : IDataRepository {
 
@@ -47,6 +46,8 @@ namespace ClipboardMachinery.Core.Repositories {
 
             // Initialize tables
             Connection.CreateTableIfNotExists<Clip>();
+            Connection.CreateTableIfNotExists<Tag>();
+            Connection.CreateTableIfNotExists<TagType>();
         }
 
         public ILazyDataProvider CreateLazyClipProvider(int batchSize) {
@@ -54,26 +55,34 @@ namespace ClipboardMachinery.Core.Repositories {
         }
 
         public async Task InsertClip(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
+            // Create clip entity
             Clip clip = new Clip {
                 Content = content,
                 Created = created,
                 Tags = new List<Tag>()
             };
 
+            // Add tags if there are any
             if (tags != null) {
                 foreach (KeyValuePair<string, object> tagData in tags) {
                     clip.Tags.Add(
                         new Tag {
-                            Value = tagData.Value,
+                            TypeId = tagData.Key,
                             Type = new TagType {
                                 Name = tagData.Key,
                                 Type = tagData.Value.GetType()
                             },
+                            Value = tagData.Value
                         }
                     );
                 }
             }
+            // Save nested tag references (TagType, etc...)
+            foreach (Tag tag in clip.Tags) {
+                await connection.SaveAllReferencesAsync(tag);
+            }
 
+            // Save clips
             await connection.SaveAsync(clip, references: true);
         }
 

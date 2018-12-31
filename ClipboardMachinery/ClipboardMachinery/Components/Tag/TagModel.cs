@@ -1,13 +1,11 @@
 ﻿using Caliburn.Micro;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace ClipboardMachinery.Components.Tag {
 
     public class TagModel : PropertyChangedBase {
+
+        #region Properties
 
         public string Name {
             get => name;
@@ -33,8 +31,33 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
+        public Color? Color {
+            get => color;
+            set {
+                if (color == value) {
+                    return;
+                }
+
+                if (value == null) {
+                    value = defaultColor;
+                }
+
+                color = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        #endregion
+
+        #region Fields
+
+        private static readonly Color defaultColor = System.Windows.Media.Color.FromArgb(26, 46, 49, 49);
+
         private string name;
         private object val;
+        private Color? color = defaultColor;
+
+        #endregion
 
     }
 

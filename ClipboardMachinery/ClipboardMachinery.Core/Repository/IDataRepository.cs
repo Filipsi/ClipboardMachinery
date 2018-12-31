@@ -1,9 +1,9 @@
-﻿using ClipboardMachinery.Core.Repositories.Lazy;
+﻿using ClipboardMachinery.Core.Repository.LazyProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ClipboardMachinery.Core.Repositories {
+namespace ClipboardMachinery.Core.Repository {
 
     public interface IDataRepository : IDisposable {
 

@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
-using ClipboardMachinery.Core.Repositories;
+using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Plumbing.Factories;
 using System.Collections.Specialized;
 using System.Linq;
