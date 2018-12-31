@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro;
@@ -21,11 +23,11 @@ using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Windows.Shell {
 
-    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell {
+    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell, IHandle<ClipEvent> {
 
         #region Properties
 
-        public bool IsVisible {
+    public bool IsVisible {
             get => isVisible;
             set {
                 if (isVisible == value)
@@ -56,6 +58,7 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IEventAggregator eventAggregator;
         private readonly IWindsorContainer windsorContainer;
         private readonly IDataRepository dataRepository;
+        private readonly IClipboardService clipboardService;
 
         private bool isVisible = true;
 
@@ -69,6 +72,7 @@ namespace ClipboardMachinery.Windows.Shell {
             this.eventAggregator = eventAggregator;
             this.windsorContainer = windsorContainer;
             this.dataRepository = dataRepository;
+            this.clipboardService = clipboardService;
 
             // HotKeys
             hotKeyService.Register(System.Windows.Input.Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
@@ -87,6 +91,16 @@ namespace ClipboardMachinery.Windows.Shell {
 
         private void OnAppVisiblityToggle(HotKey key) {
             IsVisible = !IsVisible;
+        }
+
+        public Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
+            if (message.EventType == ClipEventType.Select) {
+                clipboardService.IgnoreNextChange(message.Source.Content);
+                clipboardService.SetClipboardContent(message.Source.Content);
+                IsVisible = false;
+            }
+
+            return Task.CompletedTask;
         }
 
         private void OnNavigatorExitButtonClicked(object sender, EventArgs e) {

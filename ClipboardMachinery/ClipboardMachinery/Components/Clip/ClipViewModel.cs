@@ -115,7 +115,6 @@ namespace ClipboardMachinery.Components.Clip {
 
         private readonly IEventAggregator eventAggregator;
         private readonly Func<TagViewModel> tagVmFactory;
-        private readonly IClipboardService clipboardService;
 
         private ClipModel model;
         private bool isFocused;
@@ -134,12 +133,11 @@ namespace ClipboardMachinery.Components.Clip {
 
         public ClipViewModel(
             ClipModel model, IEventAggregator eventAggregator,
-            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> buttonVmFactory,
-            IClipboardService clipboardService) {
+            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> buttonVmFactory) {
 
             this.tagVmFactory = tagVmFactory;
             this.eventAggregator = eventAggregator;
-            this.clipboardService = clipboardService;
+
             Tags = new BindableCollection<TagViewModel>();
             Controls = new BindableCollection<ActionButtonViewModel>();
 
@@ -236,14 +234,11 @@ namespace ClipboardMachinery.Components.Clip {
         #region Actions
 
         public void Remove(ActionButtonViewModel source) {
-            eventAggregator.PublishOnCurrentThreadAsync(
-                new ClipEvent(model, ClipEventType.Remove)
-            );
+            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Remove));
         }
 
         public void Select() {
-            clipboardService.IgnoreNextChange(model.Content);
-            clipboardService.SetClipboardContent(model.Content);
+            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
         }
 
         public void Focus() {
