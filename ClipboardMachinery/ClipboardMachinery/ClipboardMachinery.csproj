@@ -101,6 +101,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\ScrollableHeightBehavior.cs" />
+    <Compile Include="Common\Converters\EqualityConverter.cs" />
     <Compile Include="Common\Events\PopupEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />
     <Compile Include="Components\ActionButton\ActionButtonView.xaml.cs">
@@ -108,8 +109,16 @@
     </Compile>
     <Compile Include="Components\ActionButton\ActionButtonViewModel.cs" />
     <Compile Include="Common\Events\ClipEvent.cs" />
+    <Compile Include="Components\ColorGallery\ColorGalleryView.xaml.cs">
+      <DependentUpon>ColorGalleryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ColorGallery\ColorGalleryViewModel.cs" />
+    <Compile Include="Components\ColorGallery\Presets\FlatColorsPreset.cs" />
+    <Compile Include="Components\ColorGallery\Presets\IColorPalette.cs" />
+    <Compile Include="Components\ColorGallery\Presets\MaterialColorsPreset.cs" />
     <Compile Include="Pages\ClipPageBase.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
+    <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
     <Compile Include="Popup\Manager\Interfaces\IExtensionControlsProvider.cs" />
     <Compile Include="Popup\Manager\PopupManagerView.xaml.cs">
@@ -209,6 +218,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Components\ActionButton\ActionButtonView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ColorGallery\ColorGalleryView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Popup\Manager\PopupManagerView.xaml">

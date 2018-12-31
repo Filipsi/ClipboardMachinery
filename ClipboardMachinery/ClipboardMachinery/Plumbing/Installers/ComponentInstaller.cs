@@ -2,6 +2,7 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using ClipboardMachinery.Components.ColorGallery.Presets;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Plumbing.Factories;
 
@@ -33,10 +34,23 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .AsFactory()
             );
 
-
             container.Register(
                 Component
                     .For<IPopupFactory>()
+                    .AsFactory()
+            );
+
+            container.Register(
+                Classes
+                    .FromThisAssembly()
+                    .BasedOn<IColorPalette>()
+                    .WithServiceBase()
+                    .LifestyleTransient()
+            );
+
+            container.Register(
+                Component
+                    .For<IColorGalleryFactory>()
                     .AsFactory()
             );
         }

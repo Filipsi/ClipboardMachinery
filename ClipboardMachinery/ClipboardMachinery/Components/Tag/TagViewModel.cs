@@ -41,7 +41,9 @@ namespace ClipboardMachinery.Components.Tag {
             => $"{Model?.Name}: {Model?.Value}";
 
         public SolidColorBrush BackgroundColor
-            => model.Color.HasValue ? new SolidColorBrush(model.Color.Value) : Brushes.Transparent;
+            => model.Color.HasValue
+                ? new SolidColorBrush(Color.FromArgb(40, model.Color.Value.R, model.Color.Value.G, model.Color.Value.B))
+                : Brushes.Transparent;
 
         #endregion
 

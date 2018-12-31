@@ -16,7 +16,6 @@
         Background="#60000000" >
 
         <Border
-            Height="128"
             VerticalAlignment="Center"
             Background="{StaticResource BodyBackgroundBrush}"
             BorderThickness="0,1,0,1"

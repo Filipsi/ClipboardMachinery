@@ -1,17 +1,13 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
+using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
 namespace ClipboardMachinery.Popup.TagEditor {
@@ -42,6 +38,10 @@ namespace ClipboardMachinery.Popup.TagEditor {
             }
         }
 
+        public ColorGalleryViewModel ColorGallery {
+            get;
+        }
+
         #endregion
 
         #region Fields
@@ -55,13 +55,19 @@ namespace ClipboardMachinery.Popup.TagEditor {
 
         public TagEditorViewModel(
             TagModel tagModel, Func<ActionButtonViewModel> actionButtonFactory,
-            IEventAggregator eventAggregator, IDataRepository dataRepository) {
+            IEventAggregator eventAggregator, IDataRepository dataRepository, ColorGalleryViewModel colorGalleryVm) {
 
             Model = tagModel;
             Value = Model.Value;
             ExtensionControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
+
+            // Setup color gallery
+            ColorGallery = colorGalleryVm;
+            if(Model.Color.HasValue) {
+                ColorGallery.SelectColor(Model.Color.Value);
+            }
 
             // Create extension control buttons
             ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
@@ -88,8 +94,18 @@ namespace ClipboardMachinery.Popup.TagEditor {
         }
 
         private void HandleSaveClick(ActionButtonViewModel button) {
-            Model.Value = Value;
-            dataRepository.UpdateTag(Model.Id, Model.Value);
+            // Update value of changed
+            if (Model.Value != Value) {
+                Model.Value = Value;
+                dataRepository.UpdateTag(Model.Id, Model.Value);
+            }
+
+            // Update color if changed
+            if (Model.Color != ColorGallery.SelectedColor) {
+                Model.Color = ColorGallery.SelectedColor;
+                dataRepository.UpdateTagProperty(Model.Name, Model.Color.Value);
+                eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ColorChange));
+            }
         }
 
         #endregion

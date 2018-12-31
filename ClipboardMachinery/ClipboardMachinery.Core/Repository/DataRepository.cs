@@ -103,7 +103,21 @@ namespace ClipboardMachinery.Core.Repository {
         }
 
         public async Task UpdateTag(int id, object value) {
-            await db.UpdateAsync<Tag>(new { Id = id, Value = value });
+            await db.UpdateAsync<Tag>(
+                new {
+                    Id = id,
+                    Value = value
+                }
+            );
+        }
+
+        public async Task UpdateTagProperty(string name, System.Windows.Media.Color color) {
+            await db.UpdateAsync<TagType>(
+                new {
+                    Id = name,
+                    Color = Mapper.Map<Schema.Color>(color)
+                }
+            );
         }
 
         #region IDisposable

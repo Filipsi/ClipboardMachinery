@@ -18,6 +18,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Components.Tag;
 using static ClipboardMachinery.Common.Events.ClipEvent;
+using static ClipboardMachinery.Common.Events.TagEvent;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
@@ -191,7 +192,17 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
-            Tags.RemoveRange(Tags.Where(vm => vm.Model.Id == message.Source.Id).ToArray());
+            switch(message.EventType) {
+                case TagEventType.Remove:
+                    Tags.RemoveRange(Tags.Where(vm => vm.Model.Id == message.Source.Id).ToArray());
+                    break;
+
+                case TagEventType.ColorChange:
+                    foreach(TagViewModel vm in Tags.Where(vm => vm.Model.Name == message.Source.Name)) {
+                        vm.Model.Color = message.Source.Color;
+                    }
+                    break;
+            }
             return Task.CompletedTask;
         }
 

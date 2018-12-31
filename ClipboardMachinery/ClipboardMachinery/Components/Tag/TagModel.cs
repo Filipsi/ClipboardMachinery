@@ -63,7 +63,7 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Fields
 
-        private static readonly Color defaultColor = System.Windows.Media.Color.FromArgb(26, 46, 49, 49);
+        private static readonly Color defaultColor = System.Windows.Media.Color.FromArgb(255, 96, 125, 139);
 
         private int id;
         private string name;

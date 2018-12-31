@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace ClipboardMachinery.Core.Repository {
 
@@ -30,6 +31,14 @@ namespace ClipboardMachinery.Core.Repository {
         /// <param name="id">Id of tag to update</param>
         /// <param name="value">A new value for the tag</param>
         Task UpdateTag(int id, object value);
+
+        /// <summary>
+        /// Updates TagType with corresponding name (primary key).
+        /// TagType name is equivalent to TagModel#Name.
+        /// </summary>
+        /// <param name="name">Id of TagType aka TagModel#Name</param>
+        /// <param name="color">New color of TagType</param>
+        Task UpdateTagProperty(string name, Color color);
 
         /// <summary>
         /// Remove clip with corresponding id and all related tags.

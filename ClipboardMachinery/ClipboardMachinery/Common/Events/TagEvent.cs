@@ -6,7 +6,8 @@ namespace ClipboardMachinery.Common.Events {
 
         public enum TagEventType {
             Add,
-            Remove
+            Remove,
+            ColorChange
         }
 
         public TagModel Source { get; }

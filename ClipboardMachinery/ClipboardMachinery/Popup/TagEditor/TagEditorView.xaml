@@ -2,23 +2,25 @@
     x:Class="ClipboardMachinery.Popup.TagEditor.TagEditorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Height="128">
+    Height="256">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="128" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="96" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
             <Path
-                Margin="32"
+                Width="96"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 Stretch="Uniform"
                 Data="{StaticResource IconTag}">
 
                 <Path.Fill>
-                    <SolidColorBrush Color="{Binding Model.Color, FallbackValue={StaticResource BodyControlColor}}" />
+                    <SolidColorBrush Color="{Binding ColorGallery.SelectedColor, FallbackValue={StaticResource BodyControlColor}}" />
                 </Path.Fill>
             </Path>
         </Grid>
@@ -94,6 +96,10 @@
                 <TextBox
                     Tag="Value"
                     Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ContentControl
+                    MinHeight="112"
+                    x:Name="ColorGallery" />
             </StackPanel>
         </Grid>
     </Grid>
