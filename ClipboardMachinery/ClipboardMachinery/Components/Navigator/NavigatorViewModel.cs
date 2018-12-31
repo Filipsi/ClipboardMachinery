@@ -45,6 +45,7 @@ namespace ClipboardMachinery.Components.Navigator {
                 pages.Select(page => {
                     ActionButtonViewModel button = buttonVmFactory.Invoke();
                     button.CanBeSelected = true;
+                    button.ToolTip = page.Title;
                     button.Icon = (Geometry)Application.Current.FindResource(page.Icon);
                     button.Model = page;
                     button.ClickAction = HandleNavigationClick;
