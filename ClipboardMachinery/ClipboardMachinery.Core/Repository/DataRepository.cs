@@ -16,11 +16,11 @@ namespace ClipboardMachinery.Core.Repository {
 
         internal IDbConnection Connection {
             get {
-                if (connection == null || connection.State == ConnectionState.Closed || connection.State == ConnectionState.Broken) {
-                    connection = dbFactory.Open();
+                if (db == null || db.State == ConnectionState.Closed || db.State == ConnectionState.Broken) {
+                    db = dbFactory.Open();
                 }
 
-                return connection;
+                return db;
             }
         }
 
@@ -37,7 +37,7 @@ namespace ClipboardMachinery.Core.Repository {
             dialectProvider: SqliteDialect.Provider
         );
 
-        private IDbConnection connection;
+        private IDbConnection db;
 
         #endregion
 
@@ -54,7 +54,7 @@ namespace ClipboardMachinery.Core.Repository {
             return new LazyDataProvider<Clip>(this, batchSize);
         }
 
-        public async Task InsertClip(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
+        public async Task<T> InsertClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
             // Create clip entity
             Clip clip = new Clip {
                 Content = content,
@@ -77,17 +77,25 @@ namespace ClipboardMachinery.Core.Repository {
                     );
                 }
             }
+
             // Save nested tag references (TagType, etc...)
             foreach (Tag tag in clip.Tags) {
-                await connection.SaveAllReferencesAsync(tag);
+                await db.SaveAllReferencesAsync(tag);
             }
 
             // Save clips
-            await connection.SaveAsync(clip, references: true);
+            await db.SaveAsync(clip, references: true);
+            return Mapper.Map<T>(clip);
         }
 
         public async Task DeleteClip(int id) {
-            await connection.DeleteByIdAsync<Clip>(id);
+            // Delete all related tags
+            foreach(Tag relatedTag in await db.SelectAsync<Tag>(t => t.ClipId == id)) {
+                await db.DeleteAsync(relatedTag);
+            }
+
+            // Delete the clip itself
+            await db.DeleteByIdAsync<Clip>(id);
         }
 
         #region IDisposable

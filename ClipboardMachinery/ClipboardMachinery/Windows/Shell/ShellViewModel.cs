@@ -128,26 +128,14 @@ namespace ClipboardMachinery.Windows.Shell {
                 return;
             }
 
-            // Create clip model
-            ClipModel model = new ClipModel {
-                Created = DateTime.UtcNow,
-                Content = e.Payload,
-                // TODO: Add config option to disable this
-                Tags = new BindableCollection<TagModel>(
-                    new TagModel[] {
-                        new TagModel {
-                            Name = "source",
-                            Value = e.Source
-                        }
-                    }
-                )
-            };
-
             // Save clip
-            await dataRepository.InsertClip(
-                content: model.Content,
-                created: model.Created,
-                tags: model.Tags.Select(tag => new KeyValuePair<string, object>(tag.Name, tag.Value)).ToArray()
+            ClipModel model = await dataRepository.InsertClip<ClipModel>(
+                content: e.Payload,
+                created: DateTime.UtcNow,
+                tags: new KeyValuePair<string, object>[] {
+                    // TODO: Add config option to disable this
+                    new KeyValuePair<string, object>("source", e.Source)
+                }
             );
 
             // Dispatch information about new clip creation
