@@ -4,7 +4,6 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Windows.Shell;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 
@@ -31,6 +30,13 @@ namespace ClipboardMachinery.Plumbing.Installers {
             container.Register(
                 Component
                     .For<IClipViewModelFactory>()
+                    .AsFactory()
+            );
+
+
+            container.Register(
+                Component
+                    .For<IPopupFactory>()
                     .AsFactory()
             );
         }

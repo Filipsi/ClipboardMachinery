@@ -1,4 +1,7 @@
 ﻿using Caliburn.Micro;
+using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Plumbing.Factories;
+using ClipboardMachinery.Popup.TagEditor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,9 +47,32 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Fields
 
+        private readonly IEventAggregator eventAggregator;
+        private readonly IPopupFactory popupFactory;
+
         private TagModel model;
 
         #endregion
+
+        public TagViewModel(IEventAggregator eventAggregator, IPopupFactory popupFactory) {
+            this.eventAggregator = eventAggregator;
+            this.popupFactory = popupFactory;
+        }
+
+        #region Actions
+
+        public void Edit() {
+            TagEditorViewModel tagEditor = popupFactory.CreateTagEditor(model);
+            tagEditor.Deactivated += (sender, args) => {
+                popupFactory.Release(tagEditor);
+            };
+
+            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagEditor));
+        }
+
+        #endregion
+
+        #region Handlers
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == nameof(TagModel.Name) || e.PropertyName == nameof(TagModel.Value)) {
@@ -59,6 +85,8 @@ namespace ClipboardMachinery.Components.Tag {
                 return;
             }
         }
+
+        #endregion
 
 
     }

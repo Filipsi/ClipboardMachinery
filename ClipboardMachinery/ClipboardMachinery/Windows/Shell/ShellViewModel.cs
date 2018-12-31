@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Caliburn.Micro;
 using Castle.Windsor;
@@ -19,7 +21,10 @@ using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;
 using ClipboardMachinery.Plumbing.Factories;
+using ClipboardMachinery.Popup.OverlayWrapper;
+using ClipboardMachinery.Popup.TagEditor;
 using static ClipboardMachinery.Common.Events.ClipEvent;
+using static ClipboardMachinery.Common.Events.PopupEvent;
 
 namespace ClipboardMachinery.Windows.Shell {
 
@@ -27,11 +32,12 @@ namespace ClipboardMachinery.Windows.Shell {
 
         #region Properties
 
-    public bool IsVisible {
+        public bool IsVisible {
             get => isVisible;
             set {
-                if (isVisible == value)
+                if (isVisible == value) {
                     return;
+                }
 
                 isVisible = value;
                 NotifyOfPropertyChange();
@@ -39,6 +45,10 @@ namespace ClipboardMachinery.Windows.Shell {
         }
 
         public NavigatorViewModel Navigator {
+            get;
+        }
+
+        public PopupWrapperViewModel Popup {
             get;
         }
 
@@ -65,7 +75,7 @@ namespace ClipboardMachinery.Windows.Shell {
         #endregion
 
         public ShellViewModel(
-            IEventAggregator eventAggregator, NavigatorViewModel navigator,
+            IEventAggregator eventAggregator, NavigatorViewModel navigator, PopupWrapperViewModel popupWrapperVm,
             IWindsorContainer windsorContainer, IHotKeyService hotKeyService,
             IClipboardService clipboardService, IDataRepository dataRepository)  {
 
@@ -73,6 +83,11 @@ namespace ClipboardMachinery.Windows.Shell {
             this.windsorContainer = windsorContainer;
             this.dataRepository = dataRepository;
             this.clipboardService = clipboardService;
+
+            // Popup wrapper
+            Popup = popupWrapperVm;
+            Popup.ConductWith(this);
+            Popup.DeactivateWith(this);
 
             // HotKeys
             hotKeyService.Register(System.Windows.Input.Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
@@ -83,6 +98,7 @@ namespace ClipboardMachinery.Windows.Shell {
             // Navigator
             Navigator = navigator;
             Navigator.ConductWith(this);
+            Navigator.DeactivateWith(this);
             Navigator.ExitButtonClicked += OnNavigatorExitButtonClicked;
             Navigator.PropertyChanged += OnNavigatorPropertyChanged;
         }

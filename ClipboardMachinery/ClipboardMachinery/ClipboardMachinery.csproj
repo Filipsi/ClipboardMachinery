@@ -101,6 +101,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\ScrollableHeightBehavior.cs" />
+    <Compile Include="Common\Events\PopupEvent.cs" />
     <Compile Include="Components\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>
@@ -108,6 +109,15 @@
     <Compile Include="Common\Events\ClipEvent.cs" />
     <Compile Include="Pages\ClipPageBase.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
+    <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
+    <Compile Include="Popup\Wrapper\PopupWrapperView.xaml.cs">
+      <DependentUpon>PopupWrapperView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Popup\Wrapper\PopupWrapperViewModel.cs" />
+    <Compile Include="Popup\TagEditor\TagEditorView.xaml.cs">
+      <DependentUpon>TagEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Popup\TagEditor\TagEditorViewModel.cs" />
     <Compile Include="Windows\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
@@ -197,6 +207,14 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Components\ActionButton\ActionButtonView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Popup\Wrapper\PopupWrapperView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Popup\TagEditor\TagEditorView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Shell\RotatingGear.xaml">

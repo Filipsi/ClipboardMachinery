@@ -1,0 +1,10 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Popup.TagEditor.TagEditorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Height="128">
+
+    <Grid>
+        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{StaticResource PanelControlBrush}">Yeet.</Label>
+    </Grid>
+</UserControl>
