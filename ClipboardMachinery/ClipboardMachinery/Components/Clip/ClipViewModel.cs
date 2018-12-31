@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -15,14 +17,13 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Services.Clipboard;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using Image = System.Windows.Controls.Image;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.Components.Clip {
 
-    public class ClipViewModel : Screen {
+    public class ClipViewModel : Screen, IHandle<TagEvent> {
 
         #region Properties
 
@@ -187,6 +188,11 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => Icon);
                 return;
             }
+        }
+
+        public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
+            Tags.RemoveRange(Tags.Where(vm => vm.Model.Id == message.Source.Id).ToArray());
+            return Task.CompletedTask;
         }
 
         #endregion

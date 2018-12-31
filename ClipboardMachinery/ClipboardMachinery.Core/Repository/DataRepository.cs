@@ -98,6 +98,10 @@ namespace ClipboardMachinery.Core.Repository {
             await db.DeleteByIdAsync<Clip>(id);
         }
 
+        public async Task DeleteTag(int id) {
+            await db.DeleteByIdAsync<Tag>(id);
+        }
+
         #region IDisposable
 
         private bool isDisposed;

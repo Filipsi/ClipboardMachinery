@@ -38,8 +38,10 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             // HACK: Load nested references for clip tags
             if (typeof(T) == typeof(Clip)) {
                 foreach (Clip clip in entries as List<Clip>) {
-                    foreach (Tag tag in clip.Tags) {
-                        await db.LoadReferencesAsync(tag);
+                    if (clip.Tags != null) {
+                        foreach (Tag tag in clip.Tags) {
+                            await db.LoadReferencesAsync(tag);
+                        }
                     }
                 }
             }

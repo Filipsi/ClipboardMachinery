@@ -5,6 +5,6 @@
     Height="128">
 
     <Grid>
-        <Label VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{StaticResource PanelControlBrush}">Yeet.</Label>
+
     </Grid>
 </UserControl>

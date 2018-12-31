@@ -30,6 +30,12 @@ namespace ClipboardMachinery.Core.Repository {
         /// <param name="id">Id of a clip to remove</param>
         Task DeleteClip(int id);
 
+        /// <summary>
+        /// Remove tag with corresponding id
+        /// </summary>
+        /// <param name="id">Id of tag to remove</param>
+        Task DeleteTag(int id);
+
     }
 
 }

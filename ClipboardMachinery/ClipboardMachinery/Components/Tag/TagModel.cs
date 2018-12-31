@@ -7,6 +7,18 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Properties
 
+        public int Id {
+            get => id;
+            set {
+                if (id == value) {
+                    return;
+                }
+
+                id = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         public string Name {
             get => name;
             set {
@@ -53,6 +65,7 @@ namespace ClipboardMachinery.Components.Tag {
 
         private static readonly Color defaultColor = System.Windows.Media.Color.FromArgb(26, 46, 49, 49);
 
+        private int id;
         private string name;
         private object val;
         private Color? color = defaultColor;

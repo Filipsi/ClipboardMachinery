@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="ClipboardMachinery.Popup.OverlayWrapper.PopupWrapperView"
+    x:Class="ClipboardMachinery.Popup.Manager.PopupManagerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,7 +13,7 @@
 
     <Grid
         Visibility="{Binding HasPopupOverlay, Converter={StaticResource BooleanToVisibilityConverter}}"
-        Background="#40000000" >
+        Background="#60000000" >
 
         <Border
             Height="128"
@@ -28,7 +28,10 @@
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel
+                                Margin="4"
+                                Height="26"
                                 Orientation="Horizontal"
+                                FlowDirection="RightToLeft"
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Right" />
                         </ItemsPanelTemplate>
@@ -37,8 +40,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <ContentControl
-                                Margin="4"
-                                Height="24"
+                                RenderOptions.BitmapScalingMode="HighQuality"
                                 cal:View.Model="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

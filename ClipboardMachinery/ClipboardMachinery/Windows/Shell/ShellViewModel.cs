@@ -21,7 +21,7 @@ using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popup.OverlayWrapper;
+using ClipboardMachinery.Popup.Manager;
 using ClipboardMachinery.Popup.TagEditor;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using static ClipboardMachinery.Common.Events.PopupEvent;
@@ -48,7 +48,7 @@ namespace ClipboardMachinery.Windows.Shell {
             get;
         }
 
-        public PopupWrapperViewModel Popup {
+        public PopupManagerViewModel Popup {
             get;
         }
 
@@ -75,7 +75,7 @@ namespace ClipboardMachinery.Windows.Shell {
         #endregion
 
         public ShellViewModel(
-            IEventAggregator eventAggregator, NavigatorViewModel navigator, PopupWrapperViewModel popupWrapperVm,
+            IEventAggregator eventAggregator, NavigatorViewModel navigator, PopupManagerViewModel popupWrapperVm,
             IWindsorContainer windsorContainer, IHotKeyService hotKeyService,
             IClipboardService clipboardService, IDataRepository dataRepository)  {
 
