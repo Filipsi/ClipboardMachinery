@@ -143,6 +143,7 @@ namespace ClipboardMachinery.Components.Clip {
 
             // Create controls
             ActionButtonViewModel removeButton = buttonVmFactory.Invoke();
+            removeButton.ToolTip = "Remove";
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = Remove;

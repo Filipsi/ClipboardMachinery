@@ -7,6 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     mc:Ignorable="d" d:DesignHeight="16" d:DesignWidth="16">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
     <Grid
         Background="Transparent"
         Cursor="Hand"
@@ -20,5 +24,11 @@
             Data="{Binding Icon}"
             Fill="{Binding Color}"
             Stretch="Uniform" />
+
+        <Grid.ToolTip>
+            <ToolTip
+                Visibility="{Binding HasToolTip, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Content="{Binding ToolTip}" />
+        </Grid.ToolTip>
     </Grid>
 </UserControl>

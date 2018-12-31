@@ -21,6 +21,19 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
+        public string ToolTip {
+            get => toolTip;
+            set {
+                if (toolTip == value) {
+                    return;
+                }
+
+                toolTip = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => HasToolTip);
+            }
+        }
+
         public Geometry Icon {
             get => icon;
             set {
@@ -145,6 +158,9 @@ namespace ClipboardMachinery.Components.ActionButton {
                 ? SelectionColor
                 : (IsFocused ? HoverColor : DefaultColor);
 
+        public bool HasToolTip
+            => !string.IsNullOrEmpty(ToolTip);
+
         #endregion
 
         #region Fields
@@ -158,6 +174,7 @@ namespace ClipboardMachinery.Components.ActionButton {
         private SolidColorBrush selectionColor;
         private Geometry icon;
         private object model;
+        private string toolTip;
 
         #endregion
 
