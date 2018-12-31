@@ -25,6 +25,13 @@ namespace ClipboardMachinery.Core.Repository {
         Task<T> InsertClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
+        /// Update value of tag with corresponding id
+        /// </summary>
+        /// <param name="id">Id of tag to update</param>
+        /// <param name="value">A new value for the tag</param>
+        Task UpdateTag(int id, object value);
+
+        /// <summary>
         /// Remove clip with corresponding id and all related tags.
         /// </summary>
         /// <param name="id">Id of a clip to remove</param>

@@ -56,8 +56,6 @@ namespace ClipboardMachinery.Popup.Manager {
             }
         }
 
-
-
         public bool HasPopupOverlay
             => popupContent != null;
 

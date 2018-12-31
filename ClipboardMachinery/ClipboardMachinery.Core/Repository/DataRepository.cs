@@ -102,6 +102,10 @@ namespace ClipboardMachinery.Core.Repository {
             await db.DeleteByIdAsync<Tag>(id);
         }
 
+        public async Task UpdateTag(int id, object value) {
+            await db.UpdateAsync<Tag>(new { Id = id, Value = value });
+        }
+
         #region IDisposable
 
         private bool isDisposed;

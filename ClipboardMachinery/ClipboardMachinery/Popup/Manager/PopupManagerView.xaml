@@ -18,7 +18,7 @@
         <Border
             Height="128"
             VerticalAlignment="Center"
-            Background="White"
+            Background="{StaticResource BodyBackgroundBrush}"
             BorderThickness="0,1,0,1"
             BorderBrush="{StaticResource BodyControlBrush}">
 
@@ -47,7 +47,12 @@
                 </ItemsControl>
 
                 <!-- Popup content -->
-                <ContentControl x:Name="PopupContent" />
+                <ContentControl
+                    x:Name="PopupContent"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"/>
             </Grid>
         </Border>
     </Grid>

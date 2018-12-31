@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
 namespace ClipboardMachinery.Popup.TagEditor {
@@ -23,11 +24,32 @@ namespace ClipboardMachinery.Popup.TagEditor {
 
         #endregion
 
+        #region Properties
+
+        public TagModel Model {
+            get;
+        }
+
+        public object Value {
+            get => val;
+            set {
+                if (val == value) {
+                    return;
+                }
+
+                val = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        #endregion
+
         #region Fields
 
-        private TagModel tagModel;
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
+
+        private object val;
 
         #endregion
 
@@ -35,10 +57,11 @@ namespace ClipboardMachinery.Popup.TagEditor {
             TagModel tagModel, Func<ActionButtonViewModel> actionButtonFactory,
             IEventAggregator eventAggregator, IDataRepository dataRepository) {
 
-            this.tagModel = tagModel;
+            Model = tagModel;
+            Value = Model.Value;
+            ExtensionControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
-            ExtensionControls = new BindableCollection<ActionButtonViewModel>();
 
             // Create extension control buttons
             ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
@@ -47,14 +70,26 @@ namespace ClipboardMachinery.Popup.TagEditor {
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = HandleRemoveClick;
             ExtensionControls.Add(removeButton);
+
+            ActionButtonViewModel saveButton = actionButtonFactory.Invoke();
+            saveButton.ToolTip = "Save";
+            saveButton.Icon = (Geometry)Application.Current.FindResource("IconSave");
+            saveButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
+            saveButton.ClickAction = HandleSaveClick;
+            ExtensionControls.Add(saveButton);
         }
 
         #region Handlers
 
         private void HandleRemoveClick(ActionButtonViewModel button) {
-            dataRepository.DeleteTag(tagModel.Id);
-            eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(tagModel, TagEventType.Remove));
+            dataRepository.DeleteTag(Model.Id);
+            eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.Remove));
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+        }
+
+        private void HandleSaveClick(ActionButtonViewModel button) {
+            Model.Value = Value;
+            dataRepository.UpdateTag(Model.Id, Model.Value);
         }
 
         #endregion
