@@ -76,13 +76,8 @@ namespace ClipboardMachinery.Core.Repository {
 
             // Handle tag type for every new tag
             foreach (Tag tag in clip.Tags) {
-                // Check if the TagType already exists
-                if (await db.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
-                    // If TagType exists, load reference to it
-                    await db.LoadReferencesAsync(tag);
-
-                } else {
-                    // If no matching TagType is found, create new one
+                // Check if TagType the Tag is specifying exits, if not create it
+                if (!await db.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
                     await db.InsertAsync(
                         new TagType {
                             Name = tag.TypeName,
@@ -91,6 +86,9 @@ namespace ClipboardMachinery.Core.Repository {
                         }
                     );
                 }
+
+                // Load reference to TagType
+                await db.LoadReferencesAsync(tag);
             }
 
             // Save clips
