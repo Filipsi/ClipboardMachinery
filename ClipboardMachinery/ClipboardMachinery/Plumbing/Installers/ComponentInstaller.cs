@@ -32,12 +32,14 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 Component
                     .For<IClipViewModelFactory>()
                     .AsFactory()
+                    .LifestyleTransient()
             );
 
             container.Register(
                 Component
                     .For<IPopupFactory>()
                     .AsFactory()
+                    .LifestyleTransient()
             );
 
             container.Register(
@@ -52,6 +54,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 Component
                     .For<IColorGalleryFactory>()
                     .AsFactory()
+                    .LifestyleTransient()
             );
         }
 

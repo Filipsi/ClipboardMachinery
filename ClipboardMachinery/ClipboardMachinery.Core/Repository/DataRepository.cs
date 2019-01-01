@@ -67,20 +67,30 @@ namespace ClipboardMachinery.Core.Repository {
                 foreach (KeyValuePair<string, object> tagData in tags) {
                     clip.Tags.Add(
                         new Tag {
-                            TypeId = tagData.Key,
-                            Type = new TagType {
-                                Name = tagData.Key,
-                                Type = tagData.Value.GetType()
-                            },
+                            TypeName = tagData.Key,
                             Value = tagData.Value
                         }
                     );
                 }
             }
 
-            // Save nested tag references (TagType, etc...)
+            // Handle tag type for every new tag
             foreach (Tag tag in clip.Tags) {
-                await db.SaveAllReferencesAsync(tag);
+                // Check if the TagType already exists
+                if (await db.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
+                    // If TagType exists, load reference to it
+                    await db.LoadReferencesAsync(tag);
+
+                } else {
+                    // If no matching TagType is found, create new one
+                    await db.InsertAsync(
+                        new TagType {
+                            Name = tag.TypeName,
+                            Type = tag.Value.GetType(),
+                            // No need to set color here, default is used if none is set
+                        }
+                    );
+                }
             }
 
             // Save clips

@@ -11,7 +11,7 @@ namespace ClipboardMachinery.Core.Repository.Schema {
         public int? ClipId { get; set; }
 
         [References(typeof(TagType))]
-        public string TypeId { get; set; }
+        public string TypeName { get; set; }
 
         [Reference]
         public TagType Type { get; set; }
