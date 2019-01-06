@@ -12,9 +12,9 @@
     </UserControl.Resources>
 
     <Grid
-        Background="Transparent"
         Cursor="Hand"
         Margin="5"
+        Background="Transparent"
         cal:Message.Attach="
             [Event MouseLeftButtonUp] = [Action Click()];
             [Event MouseEnter] = [Action Focus()];

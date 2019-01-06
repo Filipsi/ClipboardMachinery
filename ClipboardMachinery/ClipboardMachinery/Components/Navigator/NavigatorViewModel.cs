@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Castle.Windsor;
+using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
+using static ClipboardMachinery.Common.Events.PopupEvent;
 
 namespace ClipboardMachinery.Components.Navigator {
 
-    public class NavigatorViewModel : Screen {
+    public class NavigatorViewModel : Screen, IHandle<PopupEvent> {
 
         #region Properties
 
@@ -83,6 +87,16 @@ namespace ClipboardMachinery.Components.Navigator {
             control.IsSelected = true;
             NotifyOfPropertyChange(() => Selected);
             NotifyOfPropertyChange(() => SelectedPageTitle);
+        }
+
+        public Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
+            if (message.EventType == PopupEventType.Show || message.EventType == PopupEventType.Close) {
+                foreach (ActionButtonViewModel navigationButton in Pages) {
+                    navigationButton.IsEnabled = message.EventType == PopupEventType.Close;
+                }
+            }
+
+            return Task.CompletedTask;
         }
 
         private void Exit(object arg)

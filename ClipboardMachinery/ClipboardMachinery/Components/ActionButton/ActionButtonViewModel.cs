@@ -95,6 +95,19 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
+        public bool IsEnabled {
+            get => isEnabled;
+            set {
+                if (isEnabled == value) {
+                    return;
+                }
+
+                isEnabled = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => Color);
+            }
+        }
+
         public bool IsFocused {
             get => isFocused;
             private set {
@@ -141,7 +154,6 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
-
         public Action<ActionButtonViewModel> ClickAction {
             get => clickAction;
             set {
@@ -154,10 +166,17 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
-        public SolidColorBrush Color
-            => IsSelected
-                ? SelectionColor
-                : (IsFocused ? HoverColor : DefaultColor);
+        public SolidColorBrush Color {
+            get {
+                if (!IsEnabled) {
+                    return disabledColor;
+                }
+
+                return IsSelected
+                    ? SelectionColor
+                    : (IsFocused ? HoverColor : DefaultColor);
+            }
+        }
 
         public bool HasToolTip
             => !string.IsNullOrEmpty(ToolTip);
@@ -166,28 +185,32 @@ namespace ClipboardMachinery.Components.ActionButton {
 
         #region Fields
 
+        private static readonly SolidColorBrush panelDefaultColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
+        private static readonly SolidColorBrush panelHoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
+        private static readonly SolidColorBrush panelSelectionColor = Application.Current.FindResource("PanelSelectedBrush") as SolidColorBrush;
+        private static readonly SolidColorBrush disabledColor = Brushes.DimGray;
+
         private Action<ActionButtonViewModel> clickAction;
+        private SolidColorBrush defaultColor = panelDefaultColor;
+        private SolidColorBrush hoverColor = panelHoverColor;
+        private SolidColorBrush selectionColor = panelSelectionColor;
+        private bool isEnabled = true;
         private bool isFocused;
         private bool isSelected;
         private bool canBeSelected;
-        private SolidColorBrush hoverColor;
-        private SolidColorBrush defaultColor;
-        private SolidColorBrush selectionColor;
         private Geometry icon;
         private object model;
         private string toolTip;
 
         #endregion
 
-        public ActionButtonViewModel() {
-            defaultColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
-            hoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
-            selectionColor = Application.Current.FindResource("PanelSelectedBrush") as SolidColorBrush;
-        }
-
-        #region Logic
+        #region Actions
 
         public void Click() {
+            if (!IsEnabled) {
+                return;
+            }
+
             if (CanBeSelected) {
                 if (!IsSelected) {
                     IsSelected = true;
@@ -198,8 +221,11 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
-        public void Focus()
-            => IsFocused = true;
+        public void Focus() {
+            if (IsEnabled) {
+                IsFocused = true;
+            }
+        }
 
         public void Unfocus()
             => IsFocused = false;
