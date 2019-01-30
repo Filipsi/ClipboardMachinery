@@ -31,10 +31,12 @@
             CanContentScroll="True">
 
             <i:Interaction.Behaviors>
-                <behaviors:RemainingScrollableHeightBehavior RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}" />
+                <behaviors:ScrollControlBehavior
+                    RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}"
+                    VerticalOffset="{Binding VerticalScrollOffset}" />
             </i:Interaction.Behaviors>
 
-            <ItemsControl x:Name="ClipboardItems">
+            <ItemsControl x:Name="Items">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />

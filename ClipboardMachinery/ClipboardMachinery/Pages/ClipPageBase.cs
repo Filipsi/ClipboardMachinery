@@ -11,16 +11,12 @@ using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class ClipPageBase : Screen, IHandle<ClipEvent> {
+    public abstract class ClipPageBase : Conductor<ClipViewModel>.Collection.AllActive, IHandle<ClipEvent> {
 
         #region Properties
 
         public bool WatermarkIsVisible
-            => ClipboardItems.Count == 0;
-
-        public BindableCollection<ClipViewModel> ClipboardItems {
-            get;
-        }
+            => Items.Count == 0;
 
         #endregion
 
@@ -36,8 +32,7 @@ namespace ClipboardMachinery.Pages {
             this.dataRepository = dataRepository;
             this.clipVmFactory = clipVmFactory;
 
-            ClipboardItems = new BindableCollection<ClipViewModel>();
-            ClipboardItems.CollectionChanged += OnClipboardItemsCollectionChanged;
+            Items.CollectionChanged += OnClipboardItemsCollectionChanged;
         }
 
         #region Handlers
@@ -59,13 +54,13 @@ namespace ClipboardMachinery.Pages {
                         return;
                     }
 
-                    ClipboardItems.Insert(0, clipVmFactory.Create(message.Source));
+                    Items.Insert(0, clipVmFactory.Create(message.Source));
                     break;
 
                 case ClipEventType.Remove:
-                    ClipViewModel clip = ClipboardItems.FirstOrDefault(vm => vm.Model == message.Source);
+                    ClipViewModel clip = Items.FirstOrDefault(vm => vm.Model == message.Source);
                     if (clip != null) {
-                        ClipboardItems.Remove(clip);
+                        Items.Remove(clip);
                         await dataRepository.DeleteClip(clip.Model.Id);
                         clipVmFactory.Release(clip);
                     }

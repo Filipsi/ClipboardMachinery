@@ -53,6 +53,10 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             return dataRepository.Mapper.Map<M[]>(entries);
         }
 
+        public void Reset() {
+            offset = 0;
+        }
+
         #endregion
 
     }

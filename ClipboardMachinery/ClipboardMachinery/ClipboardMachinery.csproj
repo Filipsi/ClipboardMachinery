@@ -100,7 +100,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\Behaviors\ScrollableHeightBehavior.cs" />
+    <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
     <Compile Include="Common\Converters\EqualityConverter.cs" />
     <Compile Include="Common\Events\PopupEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />

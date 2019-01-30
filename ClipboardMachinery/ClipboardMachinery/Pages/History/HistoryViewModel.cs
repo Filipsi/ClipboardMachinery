@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
@@ -35,34 +37,65 @@ namespace ClipboardMachinery.Pages.History {
                 remainingScrollableHeight = value;
                 NotifyOfPropertyChange();
 
-                if (!loadLock && remainingScrollableHeight < 200) {
-                    loadLock = true;
-                    Task.Run(LoadClipBatch).ContinueWith((t) => loadLock = false);
+                if (!IsLoadingHistory && remainingScrollableHeight < 200) {
+                    loadHistoryTask = Task.Run(LoadClipBatch);
                 }
             }
         }
+
+        public double VerticalScrollOffset {
+            get => verticalScrollOffset;
+            set {
+                if (verticalScrollOffset == value) {
+                    return;
+                }
+
+                verticalScrollOffset = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        private bool IsLoadingHistory
+            => loadHistoryTask?.Status == TaskStatus.Running;
 
         #endregion
 
         #region Fields
 
+        private static readonly int batchSize = 15;
         private readonly ILazyDataProvider lazyClipProvider;
 
         private double remainingScrollableHeight;
-        private bool loadLock = false;
+        private double verticalScrollOffset;
+        private Task loadHistoryTask;
 
         #endregion
 
         public HistoryViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
-            lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize: 15);
-            Task.Run(LoadClipBatch);
+            lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize);
+            loadHistoryTask = Task.Run(LoadClipBatch);
         }
 
         #region Logic
 
         private async Task LoadClipBatch() {
             foreach (ClipModel model in await lazyClipProvider.GetNextBatchAsync<ClipModel>()) {
-                ClipboardItems.Add(clipVmFactory.Create(model));
+                Items.Add(clipVmFactory.Create(model));
+            }
+        }
+
+        #endregion
+
+        #region Handlers
+
+        protected override void OnDeactivate(bool close) {
+            base.OnDeactivate(close);
+
+            lazyClipProvider.Reset();
+            VerticalScrollOffset = 0;
+            foreach (ClipViewModel clip in Items.Skip(close ? 0 : batchSize).ToArray()) {
+                Items.Remove(clip);
+                clipVmFactory.Release(clip);
             }
         }
 

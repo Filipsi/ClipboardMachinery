@@ -13,6 +13,11 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
         /// <returns>An enumerable of queried clips mapped to M model</returns>
         Task<IEnumerable<M>> GetNextBatchAsync<M>();
 
+        /// <summary>
+        /// Resets the offset counter to the beginning of the history.
+        /// </summary>
+        void Reset();
+
     };
 
 }

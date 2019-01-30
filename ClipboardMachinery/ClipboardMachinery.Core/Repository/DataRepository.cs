@@ -45,7 +45,18 @@ namespace ClipboardMachinery.Core.Repository {
             Mapper = mapper;
 
             // Initialize tables
-            Connection.CreateTableIfNotExists<Clip>();
+            if(Connection.CreateTableIfNotExists<Clip>()) {
+                for(int i = 0; i < 256; i++) {
+                    Clip clip = new Clip {
+                        Content = i.ToString(),
+                        Created = DateTime.Now,
+                        Tags = new List<Tag>()
+                    };
+
+                    db.SaveAsync(clip);
+                }
+            }
+
             Connection.CreateTableIfNotExists<Tag>();
             Connection.CreateTableIfNotExists<TagType>();
         }
