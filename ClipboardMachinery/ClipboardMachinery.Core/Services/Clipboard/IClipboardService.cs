@@ -8,8 +8,6 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
         void IgnoreNextChange(string value);
 
-        void NotifyOfClipboardChange();
-
         void SetClipboardContent(object content);
 
     }

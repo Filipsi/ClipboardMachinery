@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Repository;
@@ -37,7 +38,7 @@ namespace ClipboardMachinery.Pages.History {
                 remainingScrollableHeight = value;
                 NotifyOfPropertyChange();
 
-                if (!IsLoadingHistory && remainingScrollableHeight < 200) {
+                if (!IsLoadingHistory && remainingScrollableHeight < 16) {
                     loadHistoryTask = Task.Run(LoadClipBatch);
                 }
             }
@@ -87,6 +88,18 @@ namespace ClipboardMachinery.Pages.History {
         #endregion
 
         #region Handlers
+
+        protected override void OnKeyboardClipAdded(ClipViewModel newClip) {
+            base.OnKeyboardClipAdded(newClip);
+
+            // When new clip is added and user is not scrolling, we try to keep loaded clip count at size of one batch
+            // This prevents from having too many items slowing down deactivation and switching between pages
+            if (Items.Count > batchSize && VerticalScrollOffset == 0) {
+                ClipViewModel lastClip = Items.Last();
+                Items.Remove(lastClip);
+                clipVmFactory.Release(lastClip);
+            }
+        }
 
         protected override void OnDeactivate(bool close) {
             base.OnDeactivate(close);

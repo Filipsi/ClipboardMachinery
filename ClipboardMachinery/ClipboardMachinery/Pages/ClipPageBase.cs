@@ -3,10 +3,12 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Plumbing.Factories;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
@@ -48,13 +50,15 @@ namespace ClipboardMachinery.Pages {
         }
 
         public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
-            switch(message.EventType) {
+            switch (message.EventType) {
                 case ClipEventType.Created:
                     if (!AllowAddingClipsFromKeyboard) {
                         return;
                     }
 
-                    Items.Insert(0, clipVmFactory.Create(message.Source));
+                    ClipViewModel createdClip = clipVmFactory.Create(message.Source);
+                    Items.Insert(0, createdClip);
+                    OnKeyboardClipAdded(createdClip);
                     break;
 
                 case ClipEventType.Remove:
@@ -66,6 +70,9 @@ namespace ClipboardMachinery.Pages {
                     }
                     break;
             }
+        }
+
+        protected virtual void OnKeyboardClipAdded(ClipViewModel newClip) {
         }
 
         #endregion

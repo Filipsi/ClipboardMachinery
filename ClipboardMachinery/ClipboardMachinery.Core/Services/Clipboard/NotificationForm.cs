@@ -6,22 +6,28 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
     internal class NotificationForm : Form {
 
-        private readonly IClipboardService clipboardService;
+        #region Events
 
-        public NotificationForm(IClipboardService clipboardService) {
-            this.clipboardService = clipboardService;
+        public event EventHandler ClipboardChanged;
 
+        #endregion
+
+        public NotificationForm() {
             NativeMethods.SetParent(Handle, NativeMethods.HwndMessage);
             NativeMethods.AddClipboardFormatListener(Handle);
         }
 
+        #region Handlers
+
         protected override void WndProc(ref Message m) {
             if (m.Msg == NativeMethods.WmClipboardupdate) {
-                clipboardService.NotifyOfClipboardChange();
+                ClipboardChanged?.Invoke(this, EventArgs.Empty);
             }
 
             base.WndProc(ref m);
         }
+
+        #endregion
 
         internal static class NativeMethods {
 

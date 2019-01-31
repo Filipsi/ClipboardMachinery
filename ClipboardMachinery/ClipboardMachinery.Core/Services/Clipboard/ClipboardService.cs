@@ -22,18 +22,19 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
         #region Properties
 
-        private readonly NotificationForm notificationHandler;
+        private static readonly NotificationForm notificationHandler = new NotificationForm();
+
         private string ignoreValue;
 
         #endregion
 
         public ClipboardService() {
-            notificationHandler = new NotificationForm(this);
+            notificationHandler.ClipboardChanged += OnClipboardChanged;
         }
 
         #region IClipboardService
 
-        public void NotifyOfClipboardChange() {
+        private void OnClipboardChanged(object sender, EventArgs e) {
             string content = string.Empty;
 
             if (System.Windows.Forms.Clipboard.ContainsText()) {
