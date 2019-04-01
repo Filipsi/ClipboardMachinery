@@ -34,7 +34,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontSize="13"
-                FontFamily="{StaticResource LatoThin}"
+                FontFamily="{StaticResource LatoRegular}"
                 Text="{Binding SelectedPreset.Name}" />
 
             <ContentControl
@@ -57,6 +57,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border
+                        Cursor="Hand"
                         SnapsToDevicePixels="True"
                         BorderThickness="1">
 
