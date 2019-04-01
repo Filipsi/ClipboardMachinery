@@ -9,6 +9,12 @@ namespace ClipboardMachinery.Core.Repository {
     public interface IDataRepository : IDisposable {
 
         /// <summary>
+        /// Cached content of last clip saved in the database.
+        /// This property is loaded at initialization and automatically updated when new clip is saved.
+        /// </summary>
+        string LastClipContent { get; }
+
+        /// <summary>
         /// Create clip provider that can be used to restive batches of clips sored by descending date.
         /// </summary>
         /// <param name="batchSize">Size of a batch of clips</param>

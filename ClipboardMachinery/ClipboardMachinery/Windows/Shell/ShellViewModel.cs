@@ -140,7 +140,14 @@ namespace ClipboardMachinery.Windows.Shell {
         }
 
         private async void OnClipboardChanged(object sender, ClipboardEventArgs e) {
-            if (e.Payload == string.Empty) {
+            // Check if there is anything to save
+            if (string.IsNullOrWhiteSpace(e.Payload)) {
+                return;
+            }
+
+            // Prevent from saving duplicates right after each other
+            // NOTE: This is made specifically for trigger happy @Jemmotar
+            if (e.Payload == dataRepository.LastClipContent) {
                 return;
             }
 

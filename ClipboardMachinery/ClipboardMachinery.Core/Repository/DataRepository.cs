@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace ClipboardMachinery.Core.Repository {
 
@@ -28,6 +27,11 @@ namespace ClipboardMachinery.Core.Repository {
             get;
         }
 
+        public string LastClipContent {
+            get;
+            private set;
+        }
+
         #endregion
 
         #region Fields
@@ -44,7 +48,7 @@ namespace ClipboardMachinery.Core.Repository {
         public DataRepository(IMapper mapper) {
             Mapper = mapper;
 
-            // Initialize tables
+            /*
             if(Connection.CreateTableIfNotExists<Clip>()) {
                 for(int i = 0; i < 256; i++) {
                     Clip clip = new Clip {
@@ -56,10 +60,19 @@ namespace ClipboardMachinery.Core.Repository {
                     db.SaveAsync(clip);
                 }
             }
+            */
 
+            // Initialize tables
+            Connection.CreateTableIfNotExists<Clip>();
             Connection.CreateTableIfNotExists<Tag>();
             Connection.CreateTableIfNotExists<TagType>();
+
+            // Load last saved clip
+            // NOTE: Yes, this is synchronous, don't yell at me.
+            LastClipContent = GetLastShalowClip().Result?.Content;
         }
+
+        #region IDataRepository
 
         public ILazyDataProvider CreateLazyClipProvider(int batchSize) {
             return new LazyDataProvider<Clip>(this, batchSize);
@@ -103,13 +116,20 @@ namespace ClipboardMachinery.Core.Repository {
             }
 
             // Save clips
-            await db.SaveAsync(clip, references: true);
+            bool wasSaveSuccessfull = await db.SaveAsync(clip, references: true);
+
+            // If we managed to successfully save the clip update last saved clip content
+            if (wasSaveSuccessfull) {
+                LastClipContent = clip.Content;
+            }
+
+            // Map it to the desired model
             return Mapper.Map<T>(clip);
         }
 
         public async Task DeleteClip(int id) {
             // Delete all related tags
-            foreach(Tag relatedTag in await db.SelectAsync<Tag>(t => t.ClipId == id)) {
+            foreach (Tag relatedTag in await db.SelectAsync<Tag>(t => t.ClipId == id)) {
                 await db.DeleteAsync(relatedTag);
             }
 
@@ -138,6 +158,16 @@ namespace ClipboardMachinery.Core.Repository {
                 }
             );
         }
+
+        #endregion
+
+        #region Helpers
+
+        private Task<Clip> GetLastShalowClip() {
+            return db.SingleAsync(db.From<Clip>().OrderByDescending(clip => clip.Id));
+        }
+
+        #endregion
 
         #region IDisposable
 
