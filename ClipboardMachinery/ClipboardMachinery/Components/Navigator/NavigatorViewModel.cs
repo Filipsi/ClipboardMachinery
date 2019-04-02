@@ -9,6 +9,7 @@ using Caliburn.Micro;
 using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
+using ClipboardMachinery.Components.SelectableButton;
 using static ClipboardMachinery.Common.Events.PopupEvent;
 
 namespace ClipboardMachinery.Components.Navigator {
@@ -17,7 +18,7 @@ namespace ClipboardMachinery.Components.Navigator {
 
         #region Properties
 
-        public BindableCollection<ActionButtonViewModel> Pages {
+        public BindableCollection<SelectableButtonViewModel> Pages {
             get;
         }
 
@@ -39,16 +40,16 @@ namespace ClipboardMachinery.Components.Navigator {
 
         #endregion
 
-        public NavigatorViewModel(IWindsorContainer container, Func<ActionButtonViewModel> buttonVmFactory) {
+        public NavigatorViewModel(
+            IWindsorContainer container, Func<ActionButtonViewModel> actionButtonFactory, Func<SelectableButtonViewModel> selectableButtonFactory) {
 
             // Automatically create pages from ViewModels that implements IScreenPage
             List<IScreenPage> pages = container.ResolveAll<IScreenPage>().ToList();
             pages.Sort((x, y) => x.Order.CompareTo(y.Order));
 
-            Pages = new BindableCollection<ActionButtonViewModel>(
+            Pages = new BindableCollection<SelectableButtonViewModel>(
                 pages.Select(page => {
-                    ActionButtonViewModel button = buttonVmFactory.Invoke();
-                    button.CanBeSelected = true;
+                    SelectableButtonViewModel button = selectableButtonFactory.Invoke();
                     button.ToolTip = page.Title;
                     button.Icon = (Geometry)Application.Current.FindResource(page.Icon);
                     button.Model = page;
@@ -60,7 +61,7 @@ namespace ClipboardMachinery.Components.Navigator {
             // Create controls
             Controls = new BindableCollection<ActionButtonViewModel>();
 
-            ActionButtonViewModel removeButton = buttonVmFactory.Invoke();
+            ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconExit");
             removeButton.ClickAction = Exit;
             Controls.Add(removeButton);
@@ -78,13 +79,17 @@ namespace ClipboardMachinery.Components.Navigator {
         #region Handlers
 
         private void HandleNavigationClick(ActionButtonViewModel control) {
+            if(!(control is SelectableButtonViewModel selectableControl)) {
+                return;
+            }
+
             // De-select currently selected pages
-            foreach (ActionButtonViewModel pageControl in Pages) {
+            foreach (SelectableButtonViewModel pageControl in Pages) {
                 pageControl.IsSelected = false;
             }
 
             // Select new one and notify about changes
-            control.IsSelected = true;
+            selectableControl.IsSelected = true;
             NotifyOfPropertyChange(() => Selected);
             NotifyOfPropertyChange(() => SelectedPageTitle);
         }

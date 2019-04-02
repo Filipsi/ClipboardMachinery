@@ -7,7 +7,8 @@ namespace ClipboardMachinery.Common.Events {
         public enum ClipEventType {
             Created,
             Remove,
-            Select
+            Select,
+            ToggleFavorite
         }
 
         public ClipModel Source { get; }

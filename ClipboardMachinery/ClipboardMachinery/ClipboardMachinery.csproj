@@ -116,6 +116,14 @@
     <Compile Include="Components\ColorGallery\Presets\FlatColorsPreset.cs" />
     <Compile Include="Components\ColorGallery\Presets\IColorPalette.cs" />
     <Compile Include="Components\ColorGallery\Presets\MaterialColorsPreset.cs" />
+    <Compile Include="Components\SelectableButton\SelectableButtonView.xaml.cs">
+      <DependentUpon>SelectableButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SelectableButton\SelectableButtonViewModel.cs" />
+    <Compile Include="Components\ToggleButton\ToggleButtonView.xaml.cs">
+      <DependentUpon>ToggleButtonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ToggleButton\ToggleButtonViewModel.cs" />
     <Compile Include="Pages\ClipPageBase.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
@@ -221,6 +229,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ColorGallery\ColorGalleryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SelectableButton\SelectableButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ToggleButton\ToggleButtonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

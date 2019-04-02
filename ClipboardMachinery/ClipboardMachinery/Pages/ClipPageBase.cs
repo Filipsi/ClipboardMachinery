@@ -26,6 +26,7 @@ namespace ClipboardMachinery.Pages {
 
         protected readonly IDataRepository dataRepository;
         protected readonly IClipViewModelFactory clipVmFactory;
+
         protected bool AllowAddingClipsFromKeyboard = true;
 
         #endregion

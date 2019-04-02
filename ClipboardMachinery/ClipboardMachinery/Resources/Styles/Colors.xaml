@@ -22,6 +22,9 @@
     <Color x:Key="ElementSelectColor">#446cb3</Color>
     <SolidColorBrush x:Key="ElementSelectBrush" Color="{StaticResource ElementSelectColor}" />
 
+    <Color x:Key="ElementFavoriteColor">#F1C40F</Color>
+    <SolidColorBrush x:Key="ElementFavoriteBrush" Color="{StaticResource ElementFavoriteColor}" />
+
     <Color x:Key="DangerousActionColor">#c0392b</Color>
     <SolidColorBrush x:Key="DangerousActionBrush" Color="{StaticResource DangerousActionColor}" />
 

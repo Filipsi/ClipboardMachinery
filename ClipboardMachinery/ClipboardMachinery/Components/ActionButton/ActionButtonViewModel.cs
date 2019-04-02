@@ -2,7 +2,6 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace ClipboardMachinery.Components.ActionButton {
 
@@ -63,22 +62,6 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
-        public SolidColorBrush SelectionColor {
-            get => selectionColor;
-            set {
-                if (selectionColor == value) {
-                    return;
-                }
-
-                selectionColor = value;
-                NotifyOfPropertyChange();
-
-                if (IsSelected) {
-                    NotifyOfPropertyChange(() => Color);
-                }
-            }
-        }
-
         public SolidColorBrush HoverColor {
             get => hoverColor;
             set {
@@ -121,39 +104,6 @@ namespace ClipboardMachinery.Components.ActionButton {
             }
         }
 
-        public bool CanBeSelected {
-            get => canBeSelected;
-            set {
-                if (canBeSelected == value) {
-                    return;
-                }
-
-                canBeSelected = value;
-                NotifyOfPropertyChange();
-
-                if (!canBeSelected) {
-                    IsSelected = false;
-                }
-            }
-        }
-
-        public bool IsSelected {
-            get => isSelected;
-            set {
-                if(!CanBeSelected) {
-                    return;
-                }
-
-                if (isSelected == value) {
-                    return;
-                }
-
-                isSelected = value;
-                NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => Color);
-            }
-        }
-
         public Action<ActionButtonViewModel> ClickAction {
             get => clickAction;
             set {
@@ -172,9 +122,9 @@ namespace ClipboardMachinery.Components.ActionButton {
                     return disabledColor;
                 }
 
-                return IsSelected
-                    ? SelectionColor
-                    : (IsFocused ? HoverColor : DefaultColor);
+                return IsFocused
+                    ? HoverColor
+                    : DefaultColor;
             }
         }
 
@@ -185,49 +135,36 @@ namespace ClipboardMachinery.Components.ActionButton {
 
         #region Fields
 
-        private static readonly SolidColorBrush panelDefaultColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
-        private static readonly SolidColorBrush panelHoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
-        private static readonly SolidColorBrush panelSelectionColor = Application.Current.FindResource("PanelSelectedBrush") as SolidColorBrush;
-        private static readonly SolidColorBrush disabledColor = Brushes.DimGray;
+        protected static readonly SolidColorBrush panelDefaultColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
+        protected static readonly SolidColorBrush panelHoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
+        protected static readonly SolidColorBrush disabledColor = Brushes.DimGray;
 
-        private Action<ActionButtonViewModel> clickAction;
-        private SolidColorBrush defaultColor = panelDefaultColor;
-        private SolidColorBrush hoverColor = panelHoverColor;
-        private SolidColorBrush selectionColor = panelSelectionColor;
-        private bool isEnabled = true;
-        private bool isFocused;
-        private bool isSelected;
-        private bool canBeSelected;
-        private Geometry icon;
-        private object model;
-        private string toolTip;
+        protected Action<ActionButtonViewModel> clickAction;
+        protected SolidColorBrush defaultColor = panelDefaultColor;
+        protected SolidColorBrush hoverColor = panelHoverColor;
+        protected bool isEnabled = true;
+        protected bool isFocused;
+        protected Geometry icon;
+        protected object model;
+        protected string toolTip;
 
         #endregion
 
         #region Actions
 
-        public void Click() {
-            if (!IsEnabled) {
-                return;
-            }
-
-            if (CanBeSelected) {
-                if (!IsSelected) {
-                    IsSelected = true;
-                    clickAction.Invoke(this);
-                }
-            } else {
+        public virtual void Click() {
+            if (IsEnabled) {
                 clickAction.Invoke(this);
             }
         }
 
-        public void Focus() {
+        public virtual void Focus() {
             if (IsEnabled) {
                 IsFocused = true;
             }
         }
 
-        public void Unfocus()
+        public virtual void Unfocus()
             => IsFocused = false;
 
         #endregion

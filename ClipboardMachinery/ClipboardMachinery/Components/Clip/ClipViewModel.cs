@@ -17,6 +17,7 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.ActionButton;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Components.ToggleButton;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using static ClipboardMachinery.Common.Events.TagEvent;
 using Image = System.Windows.Controls.Image;
@@ -135,7 +136,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         public ClipViewModel(
             ClipModel model, IEventAggregator eventAggregator,
-            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> buttonVmFactory) {
+            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> actionButtonFactory, Func<ToggleButtonViewModel> toggleButtonFactory) {
 
             this.tagVmFactory = tagVmFactory;
             this.eventAggregator = eventAggregator;
@@ -144,12 +145,20 @@ namespace ClipboardMachinery.Components.Clip {
             Controls = new BindableCollection<ActionButtonViewModel>();
 
             // Create controls
-            ActionButtonViewModel removeButton = buttonVmFactory.Invoke();
+            ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
             removeButton.ToolTip = "Remove";
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = Remove;
             Controls.Add(removeButton);
+
+            ToggleButtonViewModel favoriteButton = toggleButtonFactory.Invoke();
+            favoriteButton.ToolTip = "Favorite";
+            favoriteButton.Icon = (Geometry)Application.Current.FindResource("IconStarEmpty");
+            favoriteButton.ToggledIcon = (Geometry)Application.Current.FindResource("IconStarFull");
+            favoriteButton.ToggleColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteBrush");
+            favoriteButton.ClickAction = ToggleFavorite;
+            Controls.Add(favoriteButton);
 
             Model = model;
         }
@@ -257,6 +266,10 @@ namespace ClipboardMachinery.Components.Clip {
 
         public void Select() {
             eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
+        }
+
+        public void ToggleFavorite(ActionButtonViewModel source) {
+            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
         }
 
         public void Focus() {
