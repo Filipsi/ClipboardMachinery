@@ -146,7 +146,7 @@ namespace ClipboardMachinery.Windows.Shell {
             }
 
             // Prevent from saving duplicates right after each other
-            // NOTE: This is made specifically for trigger happy @Jemmotar
+            // NOTE: This was made specifically for trigger happy @Jemmotar
             if (e.Payload == dataRepository.LastClipContent) {
                 return;
             }

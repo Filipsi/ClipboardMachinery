@@ -75,7 +75,7 @@ namespace ClipboardMachinery.Core.Repository {
         #region IDataRepository
 
         public ILazyDataProvider CreateLazyClipProvider(int batchSize) {
-            return new LazyDataProvider<Clip>(this, batchSize);
+            return new LazyDataProvider<Clip>(this, batchSize, LoadNestedClipReferences);
         }
 
         public async Task<T> InsertClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
@@ -165,6 +165,18 @@ namespace ClipboardMachinery.Core.Repository {
 
         private Task<Clip> GetLastShalowClip() {
             return db.SingleAsync(db.From<Clip>().OrderByDescending(clip => clip.Id));
+        }
+
+        private async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {
+            // Go thought every single clip in the batch
+            foreach (Clip clip in batch) {
+                // Load nested references for clip tags if there are any
+                if (clip.Tags != null) {
+                    foreach (Tag tag in clip.Tags) {
+                        await db.LoadReferencesAsync(tag);
+                    }
+                }
+            }
         }
 
         #endregion

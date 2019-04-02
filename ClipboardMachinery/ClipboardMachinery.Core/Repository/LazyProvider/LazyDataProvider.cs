@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System;
 using ServiceStack.OrmLite.Legacy;
 using System.Data;
-using ClipboardMachinery.Core.Repository.Schema;
 
 namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
@@ -14,13 +13,16 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
         private readonly DataRepository dataRepository;
         private readonly int batchSize;
+        private readonly Func<IDbConnection, IList<T>, Task> onBatchLoaded;
+
         private int offset = 0;
 
         #endregion
 
-        internal LazyDataProvider(DataRepository dataRepository, int batchSize) {
+        internal LazyDataProvider(DataRepository dataRepository, int batchSize, Func<IDbConnection, IList<T>, Task> onBatchLoaded = null) {
             this.dataRepository = dataRepository;
             this.batchSize = batchSize;
+            this.onBatchLoaded = onBatchLoaded;
         }
 
         #region Logic
@@ -35,15 +37,11 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             // Load entries of type T
             List<T> entries = await db.LoadSelectAsync(query);
 
-            // HACK: Load nested references for clip tags
-            if (typeof(T) == typeof(Clip)) {
-                foreach (Clip clip in entries as List<Clip>) {
-                    if (clip.Tags != null) {
-                        foreach (Tag tag in clip.Tags) {
-                            await db.LoadReferencesAsync(tag);
-                        }
-                    }
-                }
+            // Run batch creation hooks
+            // This is used to perform type specific action when batch is loaded from the database
+            // For example to load nested references
+            if (onBatchLoaded != null) {
+                await onBatchLoaded.Invoke(db, entries);
             }
 
             // Move offset of lazy loader
