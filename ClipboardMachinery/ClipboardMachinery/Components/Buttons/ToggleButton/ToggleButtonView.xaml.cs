@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Components.ToggleButton {
+namespace ClipboardMachinery.Components.Buttons.ToggleButton {
 
     public partial class ToggleButtonView : UserControl {
 

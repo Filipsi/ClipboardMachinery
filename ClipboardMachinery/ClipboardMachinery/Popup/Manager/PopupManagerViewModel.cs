@@ -1,6 +1,6 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Components.ActionButton;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
 using System.Collections;

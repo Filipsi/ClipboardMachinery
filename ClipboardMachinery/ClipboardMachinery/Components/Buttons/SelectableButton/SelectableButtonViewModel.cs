@@ -1,8 +1,8 @@
-﻿using ClipboardMachinery.Components.ActionButton;
+﻿using ClipboardMachinery.Components.Buttons.ActionButton;
 using System.Windows;
 using System.Windows.Media;
 
-namespace ClipboardMachinery.Components.SelectableButton {
+namespace ClipboardMachinery.Components.Buttons.SelectableButton {
 
     public class SelectableButtonViewModel : ActionButtonViewModel {
 

@@ -1,6 +1,6 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Components.ActionButton;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repository;

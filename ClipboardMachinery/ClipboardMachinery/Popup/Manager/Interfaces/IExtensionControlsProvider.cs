@@ -1,5 +1,5 @@
 ﻿using Caliburn.Micro;
-using ClipboardMachinery.Components.ActionButton;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 
 namespace ClipboardMachinery.Popup.Manager.Interfaces {
 

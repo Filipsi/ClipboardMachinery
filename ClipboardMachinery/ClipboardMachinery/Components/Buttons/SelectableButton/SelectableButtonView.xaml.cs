@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Components.SelectableButton {
+namespace ClipboardMachinery.Components.Buttons.SelectableButton {
 
     public partial class SelectableButtonView : UserControl {
 

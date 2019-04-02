@@ -3,7 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 
-namespace ClipboardMachinery.Components.ActionButton {
+namespace ClipboardMachinery.Components.Buttons.ActionButton {
 
     public class ActionButtonViewModel : Screen {
 

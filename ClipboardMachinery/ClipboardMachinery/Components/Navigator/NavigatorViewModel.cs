@@ -8,8 +8,8 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Components.ActionButton;
-using ClipboardMachinery.Components.SelectableButton;
+using ClipboardMachinery.Components.Buttons.ActionButton;
+using ClipboardMachinery.Components.Buttons.SelectableButton;
 using static ClipboardMachinery.Common.Events.PopupEvent;
 
 namespace ClipboardMachinery.Components.Navigator {

@@ -1,12 +1,9 @@
 ﻿using Caliburn.Micro;
-using ClipboardMachinery.Components.ActionButton;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery.Presets;
 using ClipboardMachinery.Plumbing.Factories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 

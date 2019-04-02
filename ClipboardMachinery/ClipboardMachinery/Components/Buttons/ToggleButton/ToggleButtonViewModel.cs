@@ -1,12 +1,7 @@
-﻿using ClipboardMachinery.Components.ActionButton;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClipboardMachinery.Components.Buttons.ActionButton;
 using System.Windows.Media;
 
-namespace ClipboardMachinery.Components.ToggleButton {
+namespace ClipboardMachinery.Components.Buttons.ToggleButton {
 
     public class ToggleButtonViewModel : ActionButtonViewModel {
 

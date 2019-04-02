@@ -104,10 +104,10 @@
     <Compile Include="Common\Converters\EqualityConverter.cs" />
     <Compile Include="Common\Events\PopupEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />
-    <Compile Include="Components\ActionButton\ActionButtonView.xaml.cs">
+    <Compile Include="Components\Buttons\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\ActionButton\ActionButtonViewModel.cs" />
+    <Compile Include="Components\Buttons\ActionButton\ActionButtonViewModel.cs" />
     <Compile Include="Common\Events\ClipEvent.cs" />
     <Compile Include="Components\ColorGallery\ColorGalleryView.xaml.cs">
       <DependentUpon>ColorGalleryView.xaml</DependentUpon>
@@ -116,14 +116,14 @@
     <Compile Include="Components\ColorGallery\Presets\FlatColorsPreset.cs" />
     <Compile Include="Components\ColorGallery\Presets\IColorPalette.cs" />
     <Compile Include="Components\ColorGallery\Presets\MaterialColorsPreset.cs" />
-    <Compile Include="Components\SelectableButton\SelectableButtonView.xaml.cs">
+    <Compile Include="Components\Buttons\SelectableButton\SelectableButtonView.xaml.cs">
       <DependentUpon>SelectableButtonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SelectableButton\SelectableButtonViewModel.cs" />
-    <Compile Include="Components\ToggleButton\ToggleButtonView.xaml.cs">
+    <Compile Include="Components\Buttons\SelectableButton\SelectableButtonViewModel.cs" />
+    <Compile Include="Components\Buttons\ToggleButton\ToggleButtonView.xaml.cs">
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\ToggleButton\ToggleButtonViewModel.cs" />
+    <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
     <Compile Include="Pages\ClipPageBase.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
@@ -225,18 +225,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Components\ActionButton\ActionButtonView.xaml">
+    <Page Include="Components\Buttons\ActionButton\ActionButtonView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ColorGallery\ColorGalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\SelectableButton\SelectableButtonView.xaml">
+    <Page Include="Components\Buttons\SelectableButton\SelectableButtonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\ToggleButton\ToggleButtonView.xaml">
+    <Page Include="Components\Buttons\ToggleButton\ToggleButtonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
