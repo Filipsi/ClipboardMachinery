@@ -32,11 +32,35 @@ namespace ClipboardMachinery.Core.Repository {
         Task<T> InsertClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
-        /// Update value of tag with corresponding id
+        /// Remove clip with corresponding id and all related tags.
+        /// </summary>
+        /// <param name="id">Id of a clip to remove</param>
+        Task DeleteClip(int id);
+
+        /// <summary>
+        /// Create new tag for a clip.
+        /// When TagType specified by the name does not exist, it will be created with supplied value type used as a data type.
+        /// </summary>
+        /// <typeparam name="T">A type of data model that created tag instance will be mapped to and returned back</typeparam>
+        /// <param name="clipId">Id of a clip that this tag is related to</param>
+        /// <param name="name">Name of the tag that should be created. This corresponds to tag type definition.</param>
+        /// <param name="value">Value of the tag that will be created. If TagType specified by the name does not exist, this value data type will be used as newly created TagType's data type.</param>
+        /// <returns>An instance of created tag mapped to T model</returns>
+        Task<T> CreateTag<T>(int clipId, string name, object value);
+
+        /// <summary>
+        /// Update value of tag with corresponding id.
         /// </summary>
         /// <param name="id">Id of tag to update</param>
         /// <param name="value">A new value for the tag</param>
         Task UpdateTag(int id, object value);
+
+        /// <summary>
+        /// Remove tag with corresponding id.
+        /// Used to remove tag from a clip.
+        /// </summary>
+        /// <param name="id">Id of tag to remove</param>
+        Task DeleteTag(int id);
 
         /// <summary>
         /// Updates TagType with corresponding name (primary key).
@@ -45,18 +69,6 @@ namespace ClipboardMachinery.Core.Repository {
         /// <param name="name">Id of TagType aka TagModel#Name</param>
         /// <param name="color">New color of TagType</param>
         Task UpdateTagProperty(string name, Color color);
-
-        /// <summary>
-        /// Remove clip with corresponding id and all related tags.
-        /// </summary>
-        /// <param name="id">Id of a clip to remove</param>
-        Task DeleteClip(int id);
-
-        /// <summary>
-        /// Remove tag with corresponding id
-        /// </summary>
-        /// <param name="id">Id of tag to remove</param>
-        Task DeleteTag(int id);
 
     }
 

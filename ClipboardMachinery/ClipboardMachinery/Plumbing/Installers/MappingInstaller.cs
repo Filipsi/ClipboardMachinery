@@ -12,6 +12,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
         public void Install(IWindsorContainer container, IConfigurationStore store) {
             MapperConfiguration configuration = new MapperConfiguration(config => {
+                // Mappings from database to view
                 config
                     .CreateMap<Clip, ClipModel>();
 
@@ -29,6 +30,29 @@ namespace ClipboardMachinery.Plumbing.Installers {
                         opt.MapFrom(source => source.Type.Color);
                         opt.AllowNull();
                     });
+
+                // Mappings from view to database
+                // NOTE: Experimental
+
+                /*
+                config
+                    .CreateMap<ClipModel, Clip>()
+                    .AfterMap((source, desct) => {
+                        foreach (Tag tag in desct.Tags) {
+                            tag.ClipId = desct.Id;
+                        }
+                    });
+
+                config
+                    .CreateMap<System.Windows.Media.Color, Color>();
+
+                config
+                    .CreateMap<TagModel, Tag>()
+                    .ForMember(dest => dest.TypeName, opt => opt.MapFrom(source => source.Name))
+                    .ForPath(dest => dest.Type.Name, opt => opt.MapFrom(source => source.Name))
+                    .ForPath(dest => dest.Type.Color, opt => opt.MapFrom(source => source.Color))
+                    .ForPath(dest => dest.Type.Type, opt => opt.MapFrom(source => source.Value.GetType()));
+                */
             });
 
             container.Register(

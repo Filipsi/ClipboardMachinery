@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Plumbing.Factories;
 using System.Collections.Generic;
@@ -63,11 +64,34 @@ namespace ClipboardMachinery.Pages {
                     break;
 
                 case ClipEventType.Remove:
-                    ClipViewModel clip = Items.FirstOrDefault(vm => vm.Model == message.Source);
-                    if (clip != null) {
-                        Items.Remove(clip);
-                        await dataRepository.DeleteClip(clip.Model.Id);
-                        clipVmFactory.Release(clip);
+                    ClipViewModel clipToRemove = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
+                    if (clipToRemove != null) {
+                        Items.Remove(clipToRemove);
+                        await dataRepository.DeleteClip(clipToRemove.Model.Id);
+                        clipVmFactory.Release(clipToRemove);
+                    }
+                    break;
+
+                case ClipEventType.ToggleFavorite:
+                    ClipViewModel clipVm = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
+                    if (clipVm != null) {
+                        ClipModel clip = clipVm.Model;
+                        TagModel favoriteTag = clip.Tags.FirstOrDefault(
+                            tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+                        );
+
+                        if (favoriteTag == null) {
+                            TagModel newTag = await dataRepository.CreateTag<TagModel>(
+                                clipId: clip.Id,
+                                name: "category",
+                                value: "favorite"
+                            );
+
+                            clip.Tags.Add(newTag);
+                        } else {
+                            await dataRepository.DeleteTag(favoriteTag.Id);
+                            clip.Tags.Remove(favoriteTag);
+                        }
                     }
                     break;
             }

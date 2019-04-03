@@ -11,9 +11,13 @@ namespace ClipboardMachinery.Common.Events {
             ToggleFavorite
         }
 
+        #region Properties
+
         public ClipModel Source { get; }
 
         public ClipEventType EventType { get; }
+
+        #endregion
 
         public ClipEvent(ClipModel source, ClipEventType eventType) {
             Source = source;

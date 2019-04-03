@@ -118,6 +118,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         private readonly IEventAggregator eventAggregator;
         private readonly Func<TagViewModel> tagVmFactory;
+        private readonly ToggleButtonViewModel favoriteButton;
 
         private ClipModel model;
         private bool isFocused;
@@ -152,7 +153,7 @@ namespace ClipboardMachinery.Components.Clip {
             removeButton.ClickAction = Remove;
             Controls.Add(removeButton);
 
-            ToggleButtonViewModel favoriteButton = toggleButtonFactory.Invoke();
+            favoriteButton = toggleButtonFactory.Invoke();
             favoriteButton.ToolTip = "Favorite";
             favoriteButton.Icon = (Geometry)Application.Current.FindResource("IconStarEmpty");
             favoriteButton.ToggledIcon = (Geometry)Application.Current.FindResource("IconStarFull");
@@ -177,7 +178,7 @@ namespace ClipboardMachinery.Components.Clip {
 
                 case NotifyCollectionChangedAction.Remove:
                     foreach (TagModel model in e.OldItems) {
-                        foreach(TagViewModel vm in Tags.Where(vm => vm.Model == model)) {
+                        foreach (TagViewModel vm in Tags.Where(vm => vm.Model == model).ToArray()) {
                             Tags.Remove(vm);
                         }
                     }
@@ -187,6 +188,10 @@ namespace ClipboardMachinery.Components.Clip {
                     Tags.Clear();
                     break;
             }
+
+            favoriteButton.IsToggled = (sender as IList<TagModel>).Any(
+                tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+            );
         }
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -207,7 +212,7 @@ namespace ClipboardMachinery.Components.Clip {
                     break;
 
                 case TagEventType.ColorChange:
-                    foreach(TagViewModel vm in Tags.Where(vm => vm.Model.Name == message.Source.Name)) {
+                    foreach (TagViewModel vm in Tags.Where(vm => vm.Model.Name == message.Source.Name)) {
                         vm.Model.Color = message.Source.Color;
                     }
                     break;

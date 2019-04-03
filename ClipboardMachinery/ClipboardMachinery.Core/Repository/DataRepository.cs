@@ -137,8 +137,34 @@ namespace ClipboardMachinery.Core.Repository {
             await db.DeleteByIdAsync<Clip>(id);
         }
 
-        public async Task DeleteTag(int id) {
-            await db.DeleteByIdAsync<Tag>(id);
+        public async Task<T> CreateTag<T>(int clipId, string type, object value) {
+            // Create tag entity
+            Tag tag = new Tag {
+                ClipId = clipId,
+                TypeName = type,
+                Value = value
+            };
+
+            // Check if TagType exits, if not create it
+            if (!await db.ExistsAsync<TagType>(new { Name = type })) {
+                await db.InsertAsync(
+                    new TagType {
+                        Name = type,
+                        Type = value.GetType(),
+                        // No need to set color here, default is used if none is set
+                    }
+                );
+            }
+
+            // Load reference to TagType
+            // This is needed to actually fill the newly created tag with TagType values.
+            await db.LoadReferencesAsync(tag);
+
+            // Save newly created tag
+            await db.SaveAsync(tag, references: true);
+
+            // Map it to the desired model
+            return Mapper.Map<T>(tag);
         }
 
         public async Task UpdateTag(int id, object value) {
@@ -150,11 +176,15 @@ namespace ClipboardMachinery.Core.Repository {
             );
         }
 
+        public async Task DeleteTag(int id) {
+            await db.DeleteByIdAsync<Tag>(id);
+        }
+
         public async Task UpdateTagProperty(string name, System.Windows.Media.Color color) {
             await db.UpdateAsync<TagType>(
                 new {
-                    Id = name,
-                    Color = Mapper.Map<Schema.Color>(color)
+                    Name = name,
+                    Color = Mapper.Map<Color>(color)
                 }
             );
         }
