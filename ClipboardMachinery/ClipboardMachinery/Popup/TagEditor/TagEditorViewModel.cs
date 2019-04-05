@@ -98,12 +98,15 @@ namespace ClipboardMachinery.Popup.TagEditor {
             if (Model.Value != Value) {
                 Model.Value = Value;
                 dataRepository.UpdateTag(Model.Id, Model.Value);
+                eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ValueChange));
             }
 
             // Update color if changed
             if (Model.Color != ColorGallery.SelectedColor) {
                 Model.Color = ColorGallery.SelectedColor;
                 dataRepository.UpdateTagProperty(Model.Name, Model.Color.Value);
+
+                // NOTE: This is needed to change color of all tag types, not just this one.
                 eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ColorChange));
             }
         }

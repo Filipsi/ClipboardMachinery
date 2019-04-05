@@ -42,13 +42,14 @@ namespace ClipboardMachinery.Components.Clip {
                     OnModelTagCollectionChanged(model.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
 
+                model = value;
+
                 if (value != null) {
                     value.PropertyChanged += OnModelPropertyChanged;
                     value.Tags.CollectionChanged += OnModelTagCollectionChanged;
                     OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags));
                 }
 
-                model = value;
                 NotifyOfPropertyChange();
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
@@ -189,14 +190,10 @@ namespace ClipboardMachinery.Components.Clip {
                     break;
             }
 
-            favoriteButton.IsToggled = (sender as IList<TagModel>).Any(
-                tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
-            );
+            UpdateControlsState();
         }
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            ClipModel model = sender as ClipModel;
-
             if (e.PropertyName == nameof(ClipModel.Content)) {
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
@@ -214,6 +211,12 @@ namespace ClipboardMachinery.Components.Clip {
                 case TagEventType.ColorChange:
                     foreach (TagViewModel vm in Tags.Where(vm => vm.Model.Name == message.Source.Name)) {
                         vm.Model.Color = message.Source.Color;
+                    }
+                    break;
+
+                case TagEventType.ValueChange:
+                    if (Tags.Any(tag => tag.Model == message.Source)) {
+                        UpdateControlsState();
                     }
                     break;
             }
@@ -259,6 +262,12 @@ namespace ClipboardMachinery.Components.Clip {
                         Text = content
                     };
             }
+        }
+
+        private void UpdateControlsState() {
+            favoriteButton.IsToggled = Model.Tags.Any(
+                tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+            );
         }
 
         #endregion
