@@ -57,7 +57,7 @@ namespace ClipboardMachinery.Pages.History {
         }
 
         private bool IsLoadingHistory
-            => loadHistoryTask?.Status == TaskStatus.Running;
+            => loadHistoryTask?.IsCompleted == false;
 
         #endregion
 
@@ -104,6 +104,9 @@ namespace ClipboardMachinery.Pages.History {
         protected override void OnDeactivate(bool close) {
             base.OnDeactivate(close);
 
+            // This is done mainly for optimization and reset when pages are switched
+            // to prevent from having outdated clips or large amounts of then lingering on the page
+            // Also used when screen is closed to release all clips
             lazyClipProvider.Reset();
             VerticalScrollOffset = 0;
             foreach (ClipViewModel clip in Items.Skip(close ? 0 : batchSize).ToArray()) {

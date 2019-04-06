@@ -41,6 +41,14 @@ namespace ClipboardMachinery.Pages {
 
         #region Handlers
 
+        protected override void OnDeactivate(bool close) {
+            base.OnDeactivate(close);
+
+            if (close) {
+                Items.CollectionChanged -= OnClipboardItemsCollectionChanged;
+            }
+        }
+
         private void OnClipboardItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
