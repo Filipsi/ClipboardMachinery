@@ -3,35 +3,53 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
     mc:Ignorable="d" d:DesignWidth="512"
     Background="{StaticResource BodyBackgroundBrush}">
 
     <Grid MinHeight="128">
+
+        <!-- Watermark -->
         <Border x:Name="WatermarkIsVisible">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
-                    The stars are nowhere to be seen.
-                </TextBlock>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
-                    Favorite one of your pastes to begin stargazing.
-                </TextBlock>
-                <Path Width="32" Data="{StaticResource IconTelescope}" Fill="{StaticResource PanelControlBrush}" Stretch="Uniform" Margin="0,16,0,0" />
+            <Border.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
+                </Style>
+            </Border.Resources>
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock>The stars are nowhere to be seen.</TextBlock>
+                <TextBlock>Favorite one of your pastes to begin stargazing.</TextBlock>
+                <Path
+                    Width="32"
+                    Data="{StaticResource IconTelescope}"
+                    Fill="{StaticResource PanelControlBrush}"
+                    Stretch="Uniform"
+                    Margin="0,16,0,0" />
             </StackPanel>
         </Border>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
-            <ItemsControl ItemsSource="{Binding ClipboardItems}" >
+
+        <!-- Content -->
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            CanContentScroll="True">
+
+            <i:Interaction.Behaviors>
+                <behaviors:ScrollControlBehavior
+                    RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}"
+                    VerticalOffset="{Binding VerticalScrollOffset}" />
+            </i:Interaction.Behaviors>
+
+            <ItemsControl x:Name="Items">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ContentControl cal:View.Model="{Binding}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
     </Grid>

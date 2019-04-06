@@ -1,9 +1,10 @@
-﻿using Caliburn.Micro;
-using ClipboardMachinery.Components.Navigator;
+﻿using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Core.Repository;
+using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.Favorites {
 
-    public class FavoritesViewModel : Screen, IScreenPage {
+    public class FavoritesViewModel : LazyClipPage, IScreenPage {
 
         #region IPage
 
@@ -17,6 +18,11 @@ namespace ClipboardMachinery.Pages.Favorites {
             => 2;
 
         #endregion
+
+        public FavoritesViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(15, dataRepository, clipVmFactory) {
+            AllowAddingClipsFromKeyboard = false;
+            ClearAllItemsOnDeactivate = true;
+        }
 
     }
 

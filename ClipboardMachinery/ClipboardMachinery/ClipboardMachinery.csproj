@@ -125,6 +125,7 @@
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
     <Compile Include="Pages\ClipPageBase.cs" />
+    <Compile Include="Pages\LazyClipPage.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
