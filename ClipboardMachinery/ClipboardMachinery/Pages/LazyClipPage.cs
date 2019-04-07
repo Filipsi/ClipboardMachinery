@@ -95,6 +95,16 @@ namespace ClipboardMachinery.Pages {
             }
         }
 
+        protected override void OnActivate() {
+            base.OnActivate();
+
+            if (ClearAllItemsOnDeactivate) {
+                if (!IsLoadingBatch && RemainingScrollableHeight < 16) {
+                    loadBatchTask = Task.Run(LoadClipBatch);
+                }
+            }
+        }
+
         #endregion
 
     }

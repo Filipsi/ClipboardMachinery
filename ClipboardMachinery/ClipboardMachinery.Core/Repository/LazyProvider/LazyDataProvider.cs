@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using ServiceStack.OrmLite.Legacy;
 using System.Data;
+using ClipboardMachinery.Core.Repository.Schema;
 
 namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
@@ -16,6 +17,8 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
         private readonly Func<IDbConnection, IList<T>, Task> onBatchLoaded;
 
         private int offset = 0;
+        private string filteredTagName;
+        private string filteredTagValue;
 
         #endregion
 
@@ -31,7 +34,20 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             IDbConnection db = dataRepository.Connection;
 
             // Create SQL query
-            SqlExpression<T> query = db.From<T>().OrderByDescending("id").Limit(batchSize);
+            SqlExpression<T> query = db.From<T>();
+
+            // Apply filter
+            // NOTE: This is only experimental, more in-depth implementation will be needed once we start working on search.
+            if (typeof(T).IsAssignableFrom(typeof(Clip))) {
+                if (!string.IsNullOrEmpty(filteredTagName) && !string.IsNullOrEmpty(filteredTagValue)) {
+                    query
+                        .LeftJoin<Tag>()
+                        .Join<Tag, TagType>()
+                        .Where<Tag>(tag => tag.Type.Name == filteredTagName && tag.Value.ToString() == filteredTagValue);
+                }
+            }
+
+            query.OrderByDescending(1).Limit(batchSize);
             query.Offset = offset;
 
             // Load entries of type T
@@ -49,6 +65,11 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
             // Map T results to desired models
             return dataRepository.Mapper.Map<M[]>(entries);
+        }
+
+        public void ApplyTagFilter(string name, string value) {
+            filteredTagName = name;
+            filteredTagValue = value;
         }
 
         public void Reset() {
