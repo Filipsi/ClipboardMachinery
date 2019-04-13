@@ -72,8 +72,8 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             filteredTagValue = value;
         }
 
-        public void Reset() {
-            offset = 0;
+        public void SetOffsetTo(int offset) {
+            this.offset = offset;
         }
 
         #endregion

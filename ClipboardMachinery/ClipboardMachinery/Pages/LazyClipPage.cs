@@ -77,14 +77,9 @@ namespace ClipboardMachinery.Pages {
         #region Handlers
 
         protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
-
             // This is done mainly for optimization and reset when pages are switched
             // to prevent from having outdated clips or large amounts of then lingering on the page
             // Also used when screen is closed to release all clips
-            lazyClipProvider.Reset();
-            VerticalScrollOffset = 0;
-
             IEnumerable<ClipViewModel> itemsToRemove = close || ClearAllItemsOnDeactivate
                 ? Items
                 : Items.Skip(batchSize);
@@ -93,6 +88,11 @@ namespace ClipboardMachinery.Pages {
                 Items.Remove(clip);
                 clipVmFactory.Release(clip);
             }
+
+            lazyClipProvider.SetOffsetTo(Items.Count);
+            VerticalScrollOffset = 0;
+
+            base.OnDeactivate(close);
         }
 
         protected override void OnActivate() {

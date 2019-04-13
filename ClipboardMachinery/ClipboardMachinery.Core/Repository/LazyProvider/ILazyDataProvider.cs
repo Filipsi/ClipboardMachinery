@@ -22,9 +22,9 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
         void ApplyTagFilter(string name, string value);
 
         /// <summary>
-        /// Resets the offset counter to the beginning of the history.
+        /// Sets the offset counter to the specific point in the history.
         /// </summary>
-        void Reset();
+        void SetOffsetTo(int offset);
 
     };
 
