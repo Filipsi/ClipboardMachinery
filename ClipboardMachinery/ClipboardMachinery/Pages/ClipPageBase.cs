@@ -4,12 +4,10 @@ using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Plumbing.Factories;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
@@ -68,13 +66,14 @@ namespace ClipboardMachinery.Pages {
 
                     ClipViewModel createdClip = clipVmFactory.Create(message.Source);
                     Items.Insert(0, createdClip);
+                    ActivateItem(createdClip);
                     OnKeyboardClipAdded(createdClip);
                     break;
 
                 case ClipEventType.Remove:
                     ClipViewModel clipToRemove = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipToRemove != null) {
-                        Items.Remove(clipToRemove);
+                        clipToRemove.TryClose();
                         await dataRepository.DeleteClip(clipToRemove.Model.Id);
                         clipVmFactory.Release(clipToRemove);
                     }

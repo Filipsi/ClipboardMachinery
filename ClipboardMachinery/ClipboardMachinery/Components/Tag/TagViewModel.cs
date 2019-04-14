@@ -2,12 +2,7 @@
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Plumbing.Factories;
 using ClipboardMachinery.Popup.TagEditor;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace ClipboardMachinery.Components.Tag {
@@ -88,8 +83,15 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
-        #endregion
+        protected override void OnDeactivate(bool close) {
+            base.OnDeactivate(close);
 
+            if (close) {
+                Model = null;
+            }
+        }
+
+        #endregion
 
     }
 

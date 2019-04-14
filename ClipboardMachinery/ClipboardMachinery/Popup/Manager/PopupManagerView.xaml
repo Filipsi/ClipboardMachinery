@@ -47,7 +47,7 @@
 
                 <!-- Popup content -->
                 <ContentControl
-                    x:Name="PopupContent"
+                    x:Name="ActiveItem"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"

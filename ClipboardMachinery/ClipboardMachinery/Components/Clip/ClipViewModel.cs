@@ -21,11 +21,10 @@ using ClipboardMachinery.Components.Tag;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using static ClipboardMachinery.Common.Events.TagEvent;
 using Image = System.Windows.Controls.Image;
-using Screen = Caliburn.Micro.Screen;
 
 namespace ClipboardMachinery.Components.Clip {
 
-    public class ClipViewModel : Screen, IHandle<TagEvent> {
+    public class ClipViewModel : Conductor<TagViewModel>.Collection.AllActive, IHandle<TagEvent> {
 
         #region Properties
 
@@ -94,10 +93,6 @@ namespace ClipboardMachinery.Components.Clip {
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
 
-        public BindableCollection<TagViewModel> Tags {
-            get;
-        }
-
         public BindableCollection<ActionButtonViewModel> Controls {
             get;
         }
@@ -143,7 +138,6 @@ namespace ClipboardMachinery.Components.Clip {
             this.tagVmFactory = tagVmFactory;
             this.eventAggregator = eventAggregator;
 
-            Tags = new BindableCollection<TagViewModel>();
             Controls = new BindableCollection<ActionButtonViewModel>();
 
             // Create controls
@@ -152,6 +146,7 @@ namespace ClipboardMachinery.Components.Clip {
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = Remove;
+            removeButton.ConductWith(this);
             Controls.Add(removeButton);
 
             favoriteButton = toggleButtonFactory.Invoke();
@@ -160,6 +155,7 @@ namespace ClipboardMachinery.Components.Clip {
             favoriteButton.ToggledIcon = (Geometry)Application.Current.FindResource("IconStarFull");
             favoriteButton.ToggleColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteBrush");
             favoriteButton.ClickAction = ToggleFavorite;
+            favoriteButton.ConductWith(this);
             Controls.Add(favoriteButton);
 
             Model = model;
@@ -173,20 +169,22 @@ namespace ClipboardMachinery.Components.Clip {
                     foreach(TagModel model in e.NewItems) {
                         TagViewModel vm = tagVmFactory.Invoke();
                         vm.Model = model;
-                        Tags.Add(vm);
+                        ActivateItem(vm);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     foreach (TagModel model in e.OldItems) {
-                        foreach (TagViewModel vm in Tags.Where(vm => vm.Model == model).ToArray()) {
-                            Tags.Remove(vm);
+                        foreach (TagViewModel vm in Items.Where(vm => vm.Model == model).ToArray()) {
+                            DeactivateItem(vm, true);
                         }
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    Tags.Clear();
+                    foreach (TagViewModel vm in Items) {
+                        DeactivateItem(vm, true);
+                    }
                     break;
             }
 
@@ -205,17 +203,19 @@ namespace ClipboardMachinery.Components.Clip {
         public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch(message.EventType) {
                 case TagEventType.Remove:
-                    Tags.RemoveRange(Tags.Where(vm => vm.Model.Id == message.Source.Id).ToArray());
+                    foreach(TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.Source.Id).ToArray()) {
+                        DeactivateItem(tagToRemove, true);
+                    }
                     break;
 
                 case TagEventType.ColorChange:
-                    foreach (TagViewModel vm in Tags.Where(vm => vm.Model.Name == message.Source.Name)) {
+                    foreach (TagViewModel vm in Items.Where(vm => vm.Model.Name == message.Source.Name)) {
                         vm.Model.Color = message.Source.Color;
                     }
                     break;
 
                 case TagEventType.ValueChange:
-                    if (Tags.Any(tag => tag.Model == message.Source)) {
+                    if (Items.Any(tag => tag.Model == message.Source)) {
                         UpdateControlsState();
                     }
                     break;
@@ -233,6 +233,8 @@ namespace ClipboardMachinery.Components.Clip {
                     Hyperlink link = new Hyperlink(new Run(content)) {
                         NavigateUri = new Uri(content)
                     };
+
+                    // FIXME: Unhook this
                     link.RequestNavigate += (sender, args) => Process.Start(new ProcessStartInfo(args.Uri.AbsoluteUri));
 
                     TextBlock block = new TextBlock() {

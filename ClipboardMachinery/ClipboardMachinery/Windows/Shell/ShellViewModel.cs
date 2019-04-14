@@ -2,29 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using Caliburn.Micro;
 using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;
-using ClipboardMachinery.Plumbing.Factories;
 using ClipboardMachinery.Popup.Manager;
-using ClipboardMachinery.Popup.TagEditor;
 using static ClipboardMachinery.Common.Events.ClipEvent;
-using static ClipboardMachinery.Common.Events.PopupEvent;
 
 namespace ClipboardMachinery.Windows.Shell {
 
@@ -87,7 +79,6 @@ namespace ClipboardMachinery.Windows.Shell {
             // Popup wrapper
             Popup = popupWrapperVm;
             Popup.ConductWith(this);
-            Popup.DeactivateWith(this);
 
             // HotKeys
             hotKeyService.Register(System.Windows.Input.Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
@@ -98,12 +89,11 @@ namespace ClipboardMachinery.Windows.Shell {
             // Navigator
             Navigator = navigator;
             Navigator.ConductWith(this);
-            Navigator.DeactivateWith(this);
             Navigator.ExitButtonClicked += OnNavigatorExitButtonClicked;
             Navigator.PropertyChanged += OnNavigatorPropertyChanged;
         }
 
-        #region Event Handlers
+        #region Handlers
 
         private void OnAppVisiblityToggle(HotKey key) {
             IsVisible = !IsVisible;
@@ -134,8 +124,7 @@ namespace ClipboardMachinery.Windows.Shell {
                 ActivateItem(null);
 
             } else {
-                navigator.Selected.ConductWith(this);
-                ActivateItem(navigator.Selected as IScreen);
+                ActivateItem(navigator.Selected);
             }
         }
 

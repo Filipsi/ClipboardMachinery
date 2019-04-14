@@ -75,6 +75,7 @@ namespace ClipboardMachinery.Popup.TagEditor {
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = HandleRemoveClick;
+            removeButton.ConductWith(this);
             ExtensionControls.Add(removeButton);
 
             ActionButtonViewModel saveButton = actionButtonFactory.Invoke();
@@ -82,6 +83,7 @@ namespace ClipboardMachinery.Popup.TagEditor {
             saveButton.Icon = (Geometry)Application.Current.FindResource("IconSave");
             saveButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
             saveButton.ClickAction = HandleSaveClick;
+            saveButton.ConductWith(this);
             ExtensionControls.Add(saveButton);
         }
 

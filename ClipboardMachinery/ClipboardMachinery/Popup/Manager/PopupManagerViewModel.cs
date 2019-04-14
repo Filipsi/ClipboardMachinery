@@ -4,6 +4,7 @@ using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
@@ -14,7 +15,7 @@ using static ClipboardMachinery.Common.Events.PopupEvent;
 
 namespace ClipboardMachinery.Popup.Manager {
 
-    public class PopupManagerViewModel : Screen, IHandle<PopupEvent> {
+    public class PopupManagerViewModel : Conductor<IScreen>, IHandle<PopupEvent> {
 
         #region Properties
 
@@ -22,50 +23,14 @@ namespace ClipboardMachinery.Popup.Manager {
             get;
         }
 
-        public IScreen PopupContent {
-            get => popupContent;
-            private set {
-                if (popupContent == value) {
-                    return;
-                }
-
-                if (popupContent is IExtensionControlsProvider oldControls) {
-                    oldControls.ExtensionControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
-                    OnExtensionControlsCollectionChanged(
-                        sender: oldControls.ExtensionControls,
-                        e: new NotifyCollectionChangedEventArgs(
-                            action: NotifyCollectionChangedAction.Reset
-                        )
-                    );
-                }
-
-                if (value is IExtensionControlsProvider newControls) {
-                    newControls.ExtensionControls.CollectionChanged += OnExtensionControlsCollectionChanged;
-                    OnExtensionControlsCollectionChanged(
-                        sender: newControls.ExtensionControls,
-                        e: new NotifyCollectionChangedEventArgs(
-                            action: NotifyCollectionChangedAction.Add,
-                            changedItems: newControls.ExtensionControls.ToArray()
-                        )
-                    );
-                }
-
-                popupContent = value;
-                NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => HasPopupOverlay);
-            }
-        }
-
         public bool HasPopupOverlay
-            => popupContent != null;
+            => ActiveItem != null;
 
         #endregion
 
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
-
-        private IScreen popupContent;
 
         #endregion
 
@@ -79,16 +44,8 @@ namespace ClipboardMachinery.Popup.Manager {
             button.ToolTip = "Close";
             button.Icon = (Geometry)Application.Current.FindResource("IconExit");
             button.ClickAction = HandleCloseClick;
+            button.ConductWith(this);
             Controls.Add(button);
-        }
-
-        protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
-
-            if (close) {
-                // Unhook events when closing
-                PopupContent = null;
-            }
         }
 
         #region Handlers
@@ -96,12 +53,24 @@ namespace ClipboardMachinery.Popup.Manager {
         private void OnExtensionControlsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    Controls.AddRange(e.NewItems.Cast<ActionButtonViewModel>());
+                    foreach (ActionButtonViewModel extentionButton in e.NewItems) {
+                        extentionButton.ConductWith(this);
+                        Controls.Add(extentionButton);
+                    }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
+                    foreach (ActionButtonViewModel extentionButton in e.OldItems) {
+                        extentionButton.TryClose();
+                        Controls.Remove(extentionButton);
+                    }
+                    break;
+
                 case NotifyCollectionChangedAction.Reset:
-                    Controls.RemoveRange((e.OldItems ?? sender as IList).Cast<ActionButtonViewModel>());
+                    foreach (ActionButtonViewModel extentionButton in sender as IList<ActionButtonViewModel>) {
+                        extentionButton.TryClose();
+                        Controls.Remove(extentionButton);
+                    }
                     break;
             }
         }
@@ -113,18 +82,42 @@ namespace ClipboardMachinery.Popup.Manager {
         public Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
                 case PopupEventType.Show:
-                    PopupContent = message.Popup;
-                    PopupContent.ConductWith(this);
-                    PopupContent.Activate();
+                    ChangeActiveItem(message.Popup, true);
                     break;
 
                 case PopupEventType.Close:
-                    PopupContent.Deactivate(true);
-                    PopupContent = null;
+                    ChangeActiveItem(null, true);
                     break;
             }
 
             return Task.CompletedTask;
+        }
+
+        protected override void ChangeActiveItem(IScreen newItem, bool closePrevious) {
+            if (ActiveItem is IExtensionControlsProvider oldControls) {
+                oldControls.ExtensionControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
+                OnExtensionControlsCollectionChanged(
+                    sender: oldControls.ExtensionControls,
+                    e: new NotifyCollectionChangedEventArgs(
+                        action: NotifyCollectionChangedAction.Reset
+                    )
+                );
+            }
+
+            base.ChangeActiveItem(newItem, closePrevious);
+
+            if (newItem is IExtensionControlsProvider newControls) {
+                newControls.ExtensionControls.CollectionChanged += OnExtensionControlsCollectionChanged;
+                OnExtensionControlsCollectionChanged(
+                    sender: newControls.ExtensionControls,
+                    e: new NotifyCollectionChangedEventArgs(
+                        action: NotifyCollectionChangedAction.Add,
+                        changedItems: newControls.ExtensionControls.ToArray()
+                    )
+                );
+            }
+
+            NotifyOfPropertyChange(() => HasPopupOverlay);
         }
 
         #endregion

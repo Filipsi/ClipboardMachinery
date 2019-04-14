@@ -33,7 +33,7 @@ namespace ClipboardMachinery.Pages.History {
             // This prevents from having too many items slowing down deactivation and switching between pages
             if (Items.Count > batchSize && VerticalScrollOffset == 0) {
                 ClipViewModel lastClip = Items.Last();
-                Items.Remove(lastClip);
+                lastClip.TryClose();
                 clipVmFactory.Release(lastClip);
             }
         }

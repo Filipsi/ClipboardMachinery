@@ -22,7 +22,10 @@ namespace ClipboardMachinery.Pages {
                 remainingScrollableHeight = value;
                 NotifyOfPropertyChange();
 
-                if (!IsLoadingBatch && remainingScrollableHeight < 16) {
+                // Handle infinite scrolling
+                // Load new batch of item when user scrolls to the bottom of a page.
+                // Initial load is handed by OnActivate method.
+                if (IsActive && !IsLoadingBatch && remainingScrollableHeight < 16) {
                     loadBatchTask = Task.Run(LoadClipBatch);
                 }
             }
@@ -68,7 +71,7 @@ namespace ClipboardMachinery.Pages {
 
         private async Task LoadClipBatch() {
             foreach (ClipModel model in await lazyClipProvider.GetNextBatchAsync<ClipModel>()) {
-                Items.Add(clipVmFactory.Create(model));
+                ActivateItem(clipVmFactory.Create(model));
             }
         }
 
@@ -85,7 +88,7 @@ namespace ClipboardMachinery.Pages {
                 : Items.Skip(batchSize);
 
             foreach (ClipViewModel clip in itemsToRemove.ToArray()) {
-                Items.Remove(clip);
+                clip.TryClose(true);
                 clipVmFactory.Release(clip);
             }
 
@@ -96,13 +99,13 @@ namespace ClipboardMachinery.Pages {
         }
 
         protected override void OnActivate() {
-            base.OnActivate();
-
-            if (ClearAllItemsOnDeactivate) {
-                if (!IsLoadingBatch && RemainingScrollableHeight < 16) {
-                    loadBatchTask = Task.Run(LoadClipBatch);
-                }
+            // Initial item load after page activates.
+            // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
+            if (!IsLoadingBatch && Items.Count == 0) {
+                loadBatchTask = Task.Run(LoadClipBatch);
             }
+
+            base.OnActivate();
         }
 
         #endregion
