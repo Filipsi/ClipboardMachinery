@@ -23,7 +23,7 @@
 
             <StackPanel VerticalAlignment="Center">
                 <TextBlock>The stars are nowhere to be seen.</TextBlock>
-                <TextBlock>Favorite one of your pastes to begin stargazing.</TextBlock>
+                <TextBlock>Favorite one of your clips to begin stargazing.</TextBlock>
                 <Path
                     Width="32"
                     Data="{StaticResource IconTelescope}"

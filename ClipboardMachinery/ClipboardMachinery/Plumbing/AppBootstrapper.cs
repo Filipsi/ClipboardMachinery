@@ -31,7 +31,7 @@ namespace ClipboardMachinery.Plumbing {
         }
 
         protected override object GetInstance(Type service, string key) {
-            return string.IsNullOrEmpty(key) ? container.Resolve(service) : container.Resolve(service, key);
+            return string.IsNullOrEmpty(key) ? container.Resolve(service) : container.Resolve(key, service);
         }
 
         protected override IEnumerable<object> GetAllInstances(Type service) {
