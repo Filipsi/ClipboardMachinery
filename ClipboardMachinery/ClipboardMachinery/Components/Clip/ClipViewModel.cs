@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,6 +20,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.Tag;
+using Microsoft.Win32;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using static ClipboardMachinery.Common.Events.TagEvent;
 using Image = System.Windows.Controls.Image;
@@ -46,9 +49,10 @@ namespace ClipboardMachinery.Components.Clip {
                 if (value != null) {
                     value.PropertyChanged += OnModelPropertyChanged;
                     value.Tags.CollectionChanged += OnModelTagCollectionChanged;
-                    OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags));
+                    OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags.ToArray()));
                 }
 
+                HandleModelChange();
                 NotifyOfPropertyChange();
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
@@ -58,10 +62,14 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public object Content
-            => WrapContentForType(Type, Model.Content);
+            => WrapContentForType(Type, Model?.Content);
 
         public EntryType Type {
             get {
+                if (Model == null) {
+                    return EntryType.Empty;
+                }
+
                 if (ImageDataPattern.IsMatch(Model.Content)) {
                     return EntryType.Image;
                 }
@@ -88,7 +96,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public Geometry Icon
-            => Application.Current.FindResource(IconMap[Type]) as Geometry;
+            => (Geometry)Application.Current.TryFindResource(IconMap[Type]);
 
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
@@ -107,12 +115,14 @@ namespace ClipboardMachinery.Components.Clip {
         );
 
         private static readonly Dictionary<EntryType, string> IconMap = new Dictionary<EntryType, string> {
+            { EntryType.Empty, string.Empty   },
             { EntryType.Link,  "IconLink"     },
             { EntryType.Image, "IconPicture"  },
             { EntryType.Text,  "IconTextFile" }
         };
 
         private readonly IEventAggregator eventAggregator;
+        private readonly Func<ActionButtonViewModel> actionButtonFactory;
         private readonly Func<TagViewModel> tagVmFactory;
         private readonly ToggleButtonViewModel favoriteButton;
 
@@ -124,6 +134,7 @@ namespace ClipboardMachinery.Components.Clip {
         #region Enumerations
 
         public enum EntryType {
+            Empty,
             Text,
             Link,
             Image
@@ -137,6 +148,7 @@ namespace ClipboardMachinery.Components.Clip {
 
             this.tagVmFactory = tagVmFactory;
             this.eventAggregator = eventAggregator;
+            this.actionButtonFactory = actionButtonFactory;
 
             Controls = new BindableCollection<ActionButtonViewModel>();
 
@@ -163,6 +175,14 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Handlers
 
+        protected override void OnDeactivate(bool close) {
+            base.OnDeactivate(close);
+
+            if (close) {
+                Model = null;
+            }
+        }
+
         private void OnModelTagCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch(e.Action) {
                 case NotifyCollectionChangedAction.Add:
@@ -182,7 +202,7 @@ namespace ClipboardMachinery.Components.Clip {
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (TagViewModel vm in Items) {
+                    foreach (TagViewModel vm in Items.ToArray()) {
                         DeactivateItem(vm, true);
                     }
                     break;
@@ -223,12 +243,31 @@ namespace ClipboardMachinery.Components.Clip {
             return Task.CompletedTask;
         }
 
+        private void HandleModelChange() {
+            if (Type == EntryType.Image) {
+                ActionButtonViewModel exportImageButton = actionButtonFactory.Invoke();
+                exportImageButton.ToolTip = "Export as *.png";
+                exportImageButton.Icon = (Geometry)Application.Current.FindResource("IconExport");
+                exportImageButton.ClickAction = ExportImage;
+                exportImageButton.ConductWith(this);
+                Controls.Add(exportImageButton);
+            } else {
+                ActionButtonViewModel exportImageButton = Controls.FirstOrDefault(control => control.ToolTip == "Export as *.png");
+                if (exportImageButton != null) {
+                    Controls.Remove(exportImageButton);
+                }
+            }
+        }
+
         #endregion
 
         #region Logic
 
         private static object WrapContentForType(EntryType type, string content) {
             switch (type) {
+                case EntryType.Empty:
+                    return string.Empty;
+
                 case EntryType.Link:
                     Hyperlink link = new Hyperlink(new Run(content)) {
                         NavigateUri = new Uri(content)
@@ -259,7 +298,7 @@ namespace ClipboardMachinery.Components.Clip {
 
                 default:
                     return new TextBlock {
-                        Background = Brushes.Transparent,
+                        Background = System.Windows.Media.Brushes.Transparent,
                         TextWrapping = TextWrapping.Wrap,
                         Text = content
                     };
@@ -286,6 +325,26 @@ namespace ClipboardMachinery.Components.Clip {
 
         public void ToggleFavorite(ActionButtonViewModel source) {
             eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
+        }
+
+        private void ExportImage(ActionButtonViewModel source) {
+            if (Type != EntryType.Image) {
+                return;
+            }
+
+            SaveFileDialog dialog = new SaveFileDialog {
+                FileName = $"{Model.Id}-{Model.Created.ToFileTimeUtc()}",
+                Filter = "Portable Network Graphics (*.png)|*.png|All files (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() == true) {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create((Content as Image).Source as BitmapImage));
+
+                using (FileStream fileStream = new FileStream(dialog.FileName, FileMode.Create)) {
+                    encoder.Save(fileStream);
+                }
+            }
         }
 
         public void Focus() {

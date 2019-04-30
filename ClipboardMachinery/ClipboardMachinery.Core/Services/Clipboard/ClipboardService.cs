@@ -14,10 +14,10 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
         #endregion
 
-        #region Properties
+        #region Fields
 
         private static readonly NotificationForm notificationHandler = new NotificationForm();
-        private static readonly string imageHeader = "data:image/png;base64,";
+        private static readonly string pngImageHeader = "data:image/png;base64,";
 
         private string ignoreValue;
 
@@ -32,15 +32,15 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         private void OnClipboardChanged(object sender, EventArgs e) {
             string content = string.Empty;
 
-            if (System.Windows.Forms.Clipboard.ContainsText()) {
-                content = System.Windows.Forms.Clipboard.GetText();
+            if (Forms.Clipboard.ContainsText()) {
+                content = Forms.Clipboard.GetText();
 
-            } else if (System.Windows.Forms.Clipboard.ContainsImage()) {
-                using (Image image = System.Windows.Forms.Clipboard.GetImage()) {
+            } else if (Forms.Clipboard.ContainsImage()) {
+                using (Image image = Forms.Clipboard.GetImage()) {
                     if (image != null) {
-                        using (MemoryStream ms = new MemoryStream()) {
-                            image.Save(ms, ImageFormat.Png);
-                            content = $"{imageHeader}{Convert.ToBase64String(ms.ToArray())}";
+                        using (MemoryStream rawImage = new MemoryStream()) {
+                            image.Save(rawImage, ImageFormat.Png);
+                            content = $"{pngImageHeader}{Convert.ToBase64String(rawImage.ToArray())}";
                         }
                     }
                 }
@@ -64,9 +64,9 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         }
 
         public void SetClipboardContent(string content) {
-            if (content.StartsWith(imageHeader)) {
+            if (content.StartsWith(pngImageHeader)) {
                 try {
-                    byte[] rawImage = Convert.FromBase64String(content.Remove(0, imageHeader.Length));
+                    byte[] rawImage = Convert.FromBase64String(content.Remove(0, pngImageHeader.Length));
                     using (MemoryStream imageStream = new MemoryStream(rawImage, 0, rawImage.Length)) {
                         Forms.Clipboard.SetImage(Image.FromStream(imageStream));
                     }

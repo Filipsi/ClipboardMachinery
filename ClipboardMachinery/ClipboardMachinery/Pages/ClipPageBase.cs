@@ -73,8 +73,8 @@ namespace ClipboardMachinery.Pages {
                 case ClipEventType.Remove:
                     ClipViewModel clipToRemove = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipToRemove != null) {
-                        clipToRemove.TryClose();
                         await dataRepository.DeleteClip(clipToRemove.Model.Id);
+                        clipToRemove.TryClose();
                         clipVmFactory.Release(clipToRemove);
                     }
                     break;
