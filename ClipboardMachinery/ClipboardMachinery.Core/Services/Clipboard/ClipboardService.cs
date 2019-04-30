@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Media.Imaging;
+using Forms = System.Windows.Forms;
 
 namespace ClipboardMachinery.Core.Services.Clipboard {
 
@@ -23,6 +17,7 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         #region Properties
 
         private static readonly NotificationForm notificationHandler = new NotificationForm();
+        private static readonly string imageHeader = "data:image/png;base64,";
 
         private string ignoreValue;
 
@@ -45,7 +40,7 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
                     if (image != null) {
                         using (MemoryStream ms = new MemoryStream()) {
                             image.Save(ms, ImageFormat.Png);
-                            content = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+                            content = $"{imageHeader}{Convert.ToBase64String(ms.ToArray())}";
                         }
                     }
                 }
@@ -68,13 +63,21 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
             ignoreValue = value;
         }
 
-        public void SetClipboardContent(object content) {
-            if (typeof(Image).IsAssignableFrom(content.GetType())) {
-                System.Windows.Forms.Clipboard.SetImage((Image)content);
+        public void SetClipboardContent(string content) {
+            if (content.StartsWith(imageHeader)) {
+                try {
+                    byte[] rawImage = Convert.FromBase64String(content.Remove(0, imageHeader.Length));
+                    using (MemoryStream imageStream = new MemoryStream(rawImage, 0, rawImage.Length)) {
+                        Forms.Clipboard.SetImage(Image.FromStream(imageStream));
+                    }
+                } catch (FormatException) {
+                    // NO-OP
+                }
+
                 return;
             }
 
-            System.Windows.Forms.Clipboard.SetText((string)content);
+            Forms.Clipboard.SetText(content);
         }
 
         #endregion

@@ -8,7 +8,7 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
         void IgnoreNextChange(string value);
 
-        void SetClipboardContent(object content);
+        void SetClipboardContent(string content);
 
     }
 
