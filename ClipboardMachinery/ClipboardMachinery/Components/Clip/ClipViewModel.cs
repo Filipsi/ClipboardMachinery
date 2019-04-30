@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
@@ -62,7 +63,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public object Content
-            => WrapContentForType(Type, Model?.Content);
+            => Application.Current.Dispatcher.Invoke(() => WrapContentForType(Type, Model?.Content));
 
         public EntryType Type {
             get {
@@ -286,8 +287,10 @@ namespace ClipboardMachinery.Components.Clip {
                     string imageData = ImageDataPattern.Match(content).Groups[2].Value;
                     BitmapImage bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
                     bitmapImage.StreamSource = new MemoryStream(Convert.FromBase64String(imageData));
                     bitmapImage.EndInit();
+                    bitmapImage.Freeze();
 
                     return new Image {
                         Source = bitmapImage,

@@ -12,7 +12,9 @@
     SnapsToDevicePixels="True"
     RenderOptions.ClearTypeHint="Enabled"
     Loaded="OnLoaded"
-    cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]">
+    cal:Message.Attach="
+        [Event MouseEnter] = [Action Focus()];
+        [Event MouseLeave] = [Action Unfocus()]">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -52,7 +54,7 @@
 
                 <ContentControl
                     Grid.Row="0"
-                    Content="{Binding Content}"
+                    Content="{Binding Content, IsAsync=True}"
                     Foreground="Black"
                     FontSize="14" />
             </Grid>
