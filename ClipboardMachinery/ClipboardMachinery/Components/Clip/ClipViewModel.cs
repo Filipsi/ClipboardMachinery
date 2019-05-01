@@ -292,12 +292,16 @@ namespace ClipboardMachinery.Components.Clip {
                     bitmapImage.EndInit();
                     bitmapImage.Freeze();
 
-                    return new Image {
+                    Image image = new Image {
                         Source = bitmapImage,
                         Height = bitmapImage.Height,
                         MaxHeight = 128D,
-                        HorizontalAlignment = HorizontalAlignment.Left
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        UseLayoutRounding = true
                     };
+
+                    RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
+                    return image;
 
                 default:
                     return new TextBlock {
