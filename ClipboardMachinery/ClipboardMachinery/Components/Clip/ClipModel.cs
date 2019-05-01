@@ -1,11 +1,9 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Tag;
-using Newtonsoft.Json;
 using System;
 
 namespace ClipboardMachinery.Components.Clip {
 
-    [JsonObject(MemberSerialization.OptIn)]
     public class ClipModel : PropertyChangedBase {
 
         #region Properties
@@ -22,7 +20,6 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        [JsonProperty("content")]
         public string Content {
             get => rawContent;
             set {
@@ -35,7 +32,6 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        [JsonProperty("timestamp")]
         public DateTime Created {
             get => created;
             set {
