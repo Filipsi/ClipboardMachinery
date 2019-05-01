@@ -20,8 +20,8 @@ namespace ClipboardMachinery.Pages.Favorites {
         #endregion
 
         public FavoritesViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(15, dataRepository, clipVmFactory) {
-            AllowAddingClipsFromKeyboard = false;
-            ClearAllItemsOnDeactivate = true;
+            allowAddingClipsFromKeyboard = false;
+            clearAllItemsOnDeactivate = true;
             lazyClipProvider.ApplyTagFilter("category", "favorite");
         }
 

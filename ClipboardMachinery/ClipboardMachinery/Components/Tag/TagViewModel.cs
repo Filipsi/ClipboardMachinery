@@ -72,14 +72,15 @@ namespace ClipboardMachinery.Components.Tag {
         #region Handlers
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName == nameof(TagModel.Name) || e.PropertyName == nameof(TagModel.Value)) {
-                NotifyOfPropertyChange(() => Text);
-                return;
-            }
+            switch (e.PropertyName) {
+                case nameof(TagModel.Name):
+                case nameof(TagModel.Value):
+                    NotifyOfPropertyChange(() => Text);
+                    return;
 
-            if (e.PropertyName == nameof(TagModel.Color)) {
-                NotifyOfPropertyChange(() => BackgroundColor);
-                return;
+                case nameof(TagModel.Color):
+                    NotifyOfPropertyChange(() => BackgroundColor);
+                    return;
             }
         }
 

@@ -26,11 +26,11 @@ namespace ClipboardMachinery.Pages {
         protected readonly IDataRepository dataRepository;
         protected readonly IClipViewModelFactory clipVmFactory;
 
-        protected bool AllowAddingClipsFromKeyboard = true;
+        protected bool allowAddingClipsFromKeyboard = true;
 
         #endregion
 
-        public ClipPageBase(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) {
+        protected ClipPageBase(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) {
             this.dataRepository = dataRepository;
             this.clipVmFactory = clipVmFactory;
 
@@ -60,7 +60,7 @@ namespace ClipboardMachinery.Pages {
         public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
                 case ClipEventType.Created:
-                    if (!AllowAddingClipsFromKeyboard) {
+                    if (!allowAddingClipsFromKeyboard) {
                         return;
                     }
 

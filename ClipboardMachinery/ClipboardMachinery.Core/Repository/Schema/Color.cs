@@ -1,6 +1,4 @@
-﻿using ServiceStack.DataAnnotations;
-
-namespace ClipboardMachinery.Core.Repository.Schema {
+﻿namespace ClipboardMachinery.Core.Repository.Schema {
 
     public class Color {
 

@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
-using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
@@ -58,7 +57,6 @@ namespace ClipboardMachinery.Windows.Shell {
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
-        private readonly IWindsorContainer windsorContainer;
         private readonly IDataRepository dataRepository;
         private readonly IClipboardService clipboardService;
 
@@ -68,11 +66,9 @@ namespace ClipboardMachinery.Windows.Shell {
 
         public ShellViewModel(
             IEventAggregator eventAggregator, NavigatorViewModel navigator, PopupManagerViewModel popupWrapperVm,
-            IWindsorContainer windsorContainer, IHotKeyService hotKeyService,
-            IClipboardService clipboardService, IDataRepository dataRepository)  {
+            IHotKeyService hotKeyService, IClipboardService clipboardService, IDataRepository dataRepository)  {
 
             this.eventAggregator = eventAggregator;
-            this.windsorContainer = windsorContainer;
             this.dataRepository = dataRepository;
             this.clipboardService = clipboardService;
 
@@ -118,12 +114,7 @@ namespace ClipboardMachinery.Windows.Shell {
                 return;
             }
 
-            NavigatorViewModel navigator = sender as NavigatorViewModel;
-
-            if (navigator.Selected == null) {
-                ActivateItem(null);
-
-            } else {
+            if (sender is NavigatorViewModel navigator) {
                 ActivateItem(navigator.Selected);
             }
         }
@@ -144,7 +135,7 @@ namespace ClipboardMachinery.Windows.Shell {
             ClipModel model = await dataRepository.InsertClip<ClipModel>(
                 content: e.Payload,
                 created: DateTime.UtcNow,
-                tags: new KeyValuePair<string, object>[] {
+                tags: new[] {
                     // TODO: Add config option to disable this
                     new KeyValuePair<string, object>("source", e.Source)
                 }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -15,7 +13,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
@@ -71,7 +68,7 @@ namespace ClipboardMachinery.Components.Clip {
                     return EntryType.Empty;
                 }
 
-                if (ImageDataPattern.IsMatch(Model.Content)) {
+                if (imageDataPattern.IsMatch(Model.Content)) {
                     return EntryType.Image;
                 }
 
@@ -97,7 +94,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public Geometry Icon
-            => (Geometry)Application.Current.TryFindResource(IconMap[Type]);
+            => (Geometry)Application.Current.TryFindResource(iconMap[Type]);
 
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
@@ -110,12 +107,12 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Fields
 
-        private static readonly Regex ImageDataPattern = new Regex(
+        private static readonly Regex imageDataPattern = new Regex(
             pattern: @"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif));base64,(?<data>[A-Z0-9\+\/\=]+)$",
             options: RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase
         );
 
-        private static readonly Dictionary<EntryType, string> IconMap = new Dictionary<EntryType, string> {
+        private static readonly Dictionary<EntryType, string> iconMap = new Dictionary<EntryType, string> {
             { EntryType.Empty, string.Empty   },
             { EntryType.Link,  "IconLink"     },
             { EntryType.Image, "IconPicture"  },
@@ -187,16 +184,16 @@ namespace ClipboardMachinery.Components.Clip {
         private void OnModelTagCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch(e.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    foreach(TagModel model in e.NewItems) {
+                    foreach(TagModel tagModel in e.NewItems) {
                         TagViewModel vm = tagVmFactory.Invoke();
-                        vm.Model = model;
+                        vm.Model = tagModel;
                         ActivateItem(vm);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (TagModel model in e.OldItems) {
-                        foreach (TagViewModel vm in Items.Where(vm => vm.Model == model).ToArray()) {
+                    foreach (TagModel tagModel in e.OldItems) {
+                        foreach (TagViewModel vm in Items.Where(vm => vm.Model == tagModel).ToArray()) {
                             DeactivateItem(vm, true);
                         }
                     }
@@ -213,10 +210,12 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
+            // ReSharper disable once InvertIf
             if (e.PropertyName == nameof(ClipModel.Content)) {
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
                 NotifyOfPropertyChange(() => Icon);
+                // ReSharper disable once RedundantJumpStatement
                 return;
             }
         }
@@ -284,7 +283,7 @@ namespace ClipboardMachinery.Components.Clip {
                     return block;
 
                 case EntryType.Image:
-                    string imageData = ImageDataPattern.Match(content).Groups[2].Value;
+                    string imageData = imageDataPattern.Match(content).Groups[2].Value;
                     BitmapImage bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
@@ -305,7 +304,7 @@ namespace ClipboardMachinery.Components.Clip {
 
                 default:
                     return new TextBlock {
-                        Background = System.Windows.Media.Brushes.Transparent,
+                        Background = Brushes.Transparent,
                         TextWrapping = TextWrapping.Wrap,
                         Text = content
                     };
@@ -339,18 +338,24 @@ namespace ClipboardMachinery.Components.Clip {
                 return;
             }
 
+            if (!(((Image) Content).Source is BitmapImage bitmapImage)) {
+                return;
+            }
+
             SaveFileDialog dialog = new SaveFileDialog {
                 FileName = $"{Model.Id}-{Model.Created.ToFileTimeUtc()}",
                 Filter = "Portable Network Graphics (*.png)|*.png|All files (*.*)|*.*"
             };
 
-            if (dialog.ShowDialog() == true) {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create((Content as Image).Source as BitmapImage));
+            if (dialog.ShowDialog() != true) {
+                return;
+            }
 
-                using (FileStream fileStream = new FileStream(dialog.FileName, FileMode.Create)) {
-                    encoder.Save(fileStream);
-                }
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+
+            using (FileStream fileStream = new FileStream(dialog.FileName, FileMode.Create)) {
+                encoder.Save(fileStream);
             }
         }
 

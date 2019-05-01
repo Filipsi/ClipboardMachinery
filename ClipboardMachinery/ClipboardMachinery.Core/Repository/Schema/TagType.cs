@@ -1,6 +1,5 @@
 ﻿using ServiceStack.DataAnnotations;
 using System;
-using System.Windows.Media;
 
 namespace ClipboardMachinery.Core.Repository.Schema {
 
@@ -10,7 +9,7 @@ namespace ClipboardMachinery.Core.Repository.Schema {
         public string Name { get; set; }
 
         [Required]
-        public Type Type { get; set; }
+        public Type Kind { get; set; }
 
         public Color Color { get; set; }
 

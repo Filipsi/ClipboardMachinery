@@ -37,7 +37,7 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
         public Geometry Icon {
             get => icon;
             set {
-                if (icon == value) {
+                if (Equals(icon, value)) {
                     return;
                 }
 
@@ -49,7 +49,7 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
         public SolidColorBrush DefaultColor {
             get => defaultColor;
             set {
-                if (defaultColor == value) {
+                if (Equals(defaultColor, value)) {
                     return;
                 }
 
@@ -65,7 +65,7 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
         public SolidColorBrush HoverColor {
             get => hoverColor;
             set {
-                if (hoverColor == value) {
+                if (Equals(hoverColor, value)) {
                     return;
                 }
 

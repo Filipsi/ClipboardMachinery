@@ -3,7 +3,6 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -67,15 +66,25 @@ namespace ClipboardMachinery.Popup.Manager {
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (ActionButtonViewModel extentionButton in sender as IList<ActionButtonViewModel>) {
+                    foreach (ActionButtonViewModel extentionButton in (IList<ActionButtonViewModel>) sender) {
                         extentionButton.TryClose();
                         Controls.Remove(extentionButton);
                     }
                     break;
+
+                case NotifyCollectionChangedAction.Replace:
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         private void HandleCloseClick(ActionButtonViewModel button) {
+            // ReSharper disable once ArrangeStaticMemberQualifier
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 

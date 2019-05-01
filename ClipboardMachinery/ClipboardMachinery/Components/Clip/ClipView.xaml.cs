@@ -1,28 +1,30 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 
 namespace ClipboardMachinery.Components.Clip {
 
     public partial class ClipView : UserControl {
 
-        private DoubleAnimation expandAnimation = new DoubleAnimation {
+        #region Fields
+
+        private readonly DoubleAnimation expandAnimation = new DoubleAnimation {
             From = 1,
             To = 24,
             Duration = new Duration(TimeSpan.FromMilliseconds(250))
         };
 
-        private DoubleAnimation colapseAnimation = new DoubleAnimation {
+        private readonly DoubleAnimation colapseAnimation = new DoubleAnimation {
             From = 24,
             To = 1,
             Duration = new Duration(TimeSpan.FromMilliseconds(250))
         };
 
-        private Timer expandTimer = new Timer {
+        private readonly Timer expandTimer = new Timer {
             Interval = 800,
             AutoReset = false,
             Enabled = false
@@ -30,10 +32,16 @@ namespace ClipboardMachinery.Components.Clip {
 
         private bool isExpanded;
 
+        #endregion
+
         public ClipView() {
             InitializeComponent();
+
+            // FIXME: Unhook this
             expandTimer.Elapsed += OnExpandTimerElapsed;
         }
+
+        #region Handlers
 
         private void OnLoaded(object sender, EventArgs e) {
             if (DataContext is INotifyPropertyChanged observable) {
@@ -53,14 +61,23 @@ namespace ClipboardMachinery.Components.Clip {
                 return;
             }
 
-            bool isFocused = (bool)sender.GetType().GetProperty("IsFocused").GetValue(sender);
+            PropertyInfo isFocusedProperty = sender.GetType().GetProperty("IsFocused");
+            if (isFocusedProperty == null) {
+                return;
+            }
+
+            bool isFocused = (bool)isFocusedProperty.GetValue(sender);
             expandTimer.Enabled = isFocused;
 
-            if (!isFocused && isExpanded) {
-                TagPanel.BeginAnimation(HeightProperty, colapseAnimation);
-                isExpanded = false;
+            if (isFocused || !isExpanded) {
+                return;
             }
+
+            TagPanel.BeginAnimation(HeightProperty, colapseAnimation);
+            isExpanded = false;
         }
+
+        #endregion
 
     }
 

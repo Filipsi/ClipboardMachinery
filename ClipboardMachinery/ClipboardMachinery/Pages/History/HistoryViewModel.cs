@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Repository;
@@ -31,11 +32,13 @@ namespace ClipboardMachinery.Pages.History {
 
             // When new clip is added and user is not scrolling, we try to keep loaded clip count at size of one batch
             // This prevents from having too many items slowing down deactivation and switching between pages
-            if (Items.Count > batchSize && VerticalScrollOffset == 0) {
-                ClipViewModel lastClip = Items.Last();
-                lastClip.TryClose();
-                clipVmFactory.Release(lastClip);
+            if (Items.Count <= batchSize || !(Math.Abs(VerticalScrollOffset) < 4)) {
+                return;
             }
+
+            ClipViewModel lastClip = Items.Last();
+            lastClip.TryClose();
+            clipVmFactory.Release(lastClip);
         }
 
         #endregion

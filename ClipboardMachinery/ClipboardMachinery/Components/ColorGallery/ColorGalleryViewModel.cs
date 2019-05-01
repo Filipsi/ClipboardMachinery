@@ -81,24 +81,26 @@ namespace ClipboardMachinery.Components.ColorGallery {
         protected override void OnDeactivate(bool close) {
             base.OnDeactivate(close);
 
-            if (close) {
-                foreach(IColorPalette preset in Presets) {
-                    colorGalleryFactory.Release(preset);
-                }
+            if (!close) {
+                return;
+            }
+
+            foreach(IColorPalette preset in Presets) {
+                colorGalleryFactory.Release(preset);
             }
         }
 
         #region Actions
 
-        public void SelectColor(Color selectedColor) {
-            if (!SelectedPreset.Colors.Contains(selectedColor)) {
-                IColorPalette palette = Presets.FirstOrDefault(preset => preset.Colors.Contains(selectedColor));
+        public void SelectColor(Color newColor) {
+            if (!SelectedPreset.Colors.Contains(newColor)) {
+                IColorPalette palette = Presets.FirstOrDefault(preset => preset.Colors.Contains(newColor));
                 if (palette != null) {
                     SelectedPreset = palette;
                 }
             }
 
-            SelectedColor = selectedColor;
+            SelectedColor = newColor;
         }
 
         #endregion

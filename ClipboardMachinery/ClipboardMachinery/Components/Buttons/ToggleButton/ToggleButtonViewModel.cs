@@ -10,7 +10,7 @@ namespace ClipboardMachinery.Components.Buttons.ToggleButton {
         public new Geometry Icon {
             get => icon;
             set {
-                if (icon == value) {
+                if (Equals(icon, value)) {
                     return;
                 }
 
@@ -34,7 +34,7 @@ namespace ClipboardMachinery.Components.Buttons.ToggleButton {
         public Geometry ToggledIcon {
             get => toggledIcon;
             set {
-                if (toggledIcon == value) {
+                if (Equals(toggledIcon, value)) {
                     return;
                 }
 
@@ -50,7 +50,7 @@ namespace ClipboardMachinery.Components.Buttons.ToggleButton {
         public SolidColorBrush ToggleColor {
             get => toggleColor;
             set {
-                if (toggleColor == value) {
+                if (Equals(toggleColor, value)) {
                     return;
                 }
 

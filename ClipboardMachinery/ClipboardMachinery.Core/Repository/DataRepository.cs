@@ -27,6 +27,12 @@ namespace ClipboardMachinery.Core.Repository {
             get;
         }
 
+        /// <summary>
+        /// User version information from database PRAGMA.
+        /// </summary>
+        internal int Version
+            => Connection.Scalar<int>("PRAGMA user_version");
+
         public string LastClipContent {
             get;
             private set;
@@ -105,7 +111,7 @@ namespace ClipboardMachinery.Core.Repository {
                     await db.InsertAsync(
                         new TagType {
                             Name = tag.TypeName,
-                            Type = tag.Value.GetType(),
+                            Kind = tag.Value.GetType(),
                             // No need to set color here, default is used if none is set
                         }
                     );
@@ -150,7 +156,7 @@ namespace ClipboardMachinery.Core.Repository {
                 await db.InsertAsync(
                     new TagType {
                         Name = type,
-                        Type = value.GetType(),
+                        Kind = value.GetType(),
                         // No need to set color here, default is used if none is set
                     }
                 );
@@ -197,14 +203,16 @@ namespace ClipboardMachinery.Core.Repository {
             return db.SingleAsync(db.From<Clip>().OrderByDescending(clip => clip.Id));
         }
 
-        private async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {
+        private static async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {
             // Go thought every single clip in the batch
             foreach (Clip clip in batch) {
                 // Load nested references for clip tags if there are any
-                if (clip.Tags != null) {
-                    foreach (Tag tag in clip.Tags) {
-                        await db.LoadReferencesAsync(tag);
-                    }
+                if (clip.Tags == null) {
+                    continue;
+                }
+
+                foreach (Tag tag in clip.Tags) {
+                    await db.LoadReferencesAsync(tag);
                 }
             }
         }

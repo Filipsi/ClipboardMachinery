@@ -15,8 +15,8 @@ namespace ClipboardMachinery.Common.Behaviors {
         );
 
         public double RemainingScrollableHeight {
-            get { return (double)GetValue(RemainingScrollableHeightProperty); }
-            set { SetValue(RemainingScrollableHeightProperty, value); }
+            get => (double)GetValue(RemainingScrollableHeightProperty);
+            set => SetValue(RemainingScrollableHeightProperty, value);
         }
 
         public static readonly DependencyProperty VerticalOffsetProperty = DependencyProperty.Register(
@@ -31,8 +31,8 @@ namespace ClipboardMachinery.Common.Behaviors {
         );
 
         public double VerticalOffset {
-            get { return (double)GetValue(VerticalOffsetProperty); }
-            set { SetValue(VerticalOffsetProperty, value); }
+            get => (double)GetValue(VerticalOffsetProperty);
+            set => SetValue(VerticalOffsetProperty, value);
         }
 
         #endregion
@@ -54,14 +54,18 @@ namespace ClipboardMachinery.Common.Behaviors {
         #region Handlers
 
         private void OnScrollChanged(object sender, ScrollChangedEventArgs e) {
-            ScrollViewer scrollViewer = sender as ScrollViewer;
+            if (!(sender is ScrollViewer scrollViewer)) {
+                return;
+            }
+
             RemainingScrollableHeight = scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset;
             VerticalOffset = scrollViewer.VerticalOffset;
         }
 
         private static void OnVerticalOffsetChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            ScrollControlBehavior behavior = d as ScrollControlBehavior;
-            behavior.AssociatedObject.ScrollToVerticalOffset((double)e.NewValue);
+            if (d is ScrollControlBehavior behavior) {
+                behavior.AssociatedObject.ScrollToVerticalOffset((double) e.NewValue);
+            }
         }
 
         #endregion

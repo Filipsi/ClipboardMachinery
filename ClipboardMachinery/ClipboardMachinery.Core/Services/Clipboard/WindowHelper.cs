@@ -16,7 +16,7 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
             // See https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowthreadprocessid
             [DllImport("user32.dll")]
-            public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint ProcessId);
+            public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
 
             // https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getforegroundwindow
             [DllImport("user32.dll")]

@@ -2,7 +2,6 @@
 using ServiceStack.OrmLite;
 using System.Threading.Tasks;
 using System;
-using ServiceStack.OrmLite.Legacy;
 using System.Data;
 using ClipboardMachinery.Core.Repository.Schema;
 
@@ -10,13 +9,18 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
     public class LazyDataProvider<T> : ILazyDataProvider {
 
+        #region Properties
+
+        public int Offset { get; set; }
+
+        #endregion
+
         #region Fields
 
         private readonly DataRepository dataRepository;
         private readonly int batchSize;
         private readonly Func<IDbConnection, IList<T>, Task> onBatchLoaded;
 
-        private int offset = 0;
         private string filteredTagName;
         private string filteredTagValue;
 
@@ -30,7 +34,7 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
 
         #region Logic
 
-        public async Task<IEnumerable<M>> GetNextBatchAsync<M>() {
+        public async Task<IEnumerable<TM>> GetNextBatchAsync<TM>() {
             IDbConnection db = dataRepository.Connection;
 
             // Create SQL query
@@ -48,7 +52,7 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             }
 
             query.OrderByDescending(1).Limit(batchSize);
-            query.Offset = offset;
+            query.Offset = Offset;
 
             // Load entries of type T
             List<T> entries = await db.LoadSelectAsync(query);
@@ -61,19 +65,15 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
             }
 
             // Move offset of lazy loader
-            offset += entries.Count;
+            Offset += entries.Count;
 
             // Map T results to desired models
-            return dataRepository.Mapper.Map<M[]>(entries);
+            return dataRepository.Mapper.Map<TM[]>(entries);
         }
 
         public void ApplyTagFilter(string name, string value) {
             filteredTagName = name;
             filteredTagValue = value;
-        }
-
-        public void SetOffsetTo(int offset) {
-            this.offset = offset;
         }
 
         #endregion

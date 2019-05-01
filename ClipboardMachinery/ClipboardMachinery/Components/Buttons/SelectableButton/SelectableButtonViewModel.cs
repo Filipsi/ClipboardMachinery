@@ -11,7 +11,7 @@ namespace ClipboardMachinery.Components.Buttons.SelectableButton {
         public SolidColorBrush SelectionColor {
             get => selectionColor;
             set {
-                if (selectionColor == value) {
+                if (Equals(selectionColor, value)) {
                     return;
                 }
 

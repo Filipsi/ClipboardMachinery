@@ -1,4 +1,5 @@
-﻿using ClipboardMachinery.Components.Clip;
+﻿using System;
+using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Core.Repository;
 using ClipboardMachinery.Core.Repository.LazyProvider;
 using ClipboardMachinery.Plumbing.Factories;
@@ -15,7 +16,8 @@ namespace ClipboardMachinery.Pages {
         public double RemainingScrollableHeight {
             get => remainingScrollableHeight;
             set {
-                if (remainingScrollableHeight == value) {
+                // Floating point tolerance
+                if (Math.Abs(remainingScrollableHeight - value) < 4) {
                     return;
                 }
 
@@ -34,7 +36,8 @@ namespace ClipboardMachinery.Pages {
         public double VerticalScrollOffset {
             get => verticalScrollOffset;
             set {
-                if (verticalScrollOffset == value) {
+                // Floating point tolerance
+                if (Math.Abs(verticalScrollOffset - value) < 4) {
                     return;
                 }
 
@@ -57,11 +60,11 @@ namespace ClipboardMachinery.Pages {
         private double verticalScrollOffset;
         private Task loadBatchTask;
 
-        protected bool ClearAllItemsOnDeactivate = false;
+        protected bool clearAllItemsOnDeactivate = false;
 
         #endregion
 
-        public LazyClipPage(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
+        protected LazyClipPage(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
             this.batchSize = batchSize;
             lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize);
             loadBatchTask = Task.Run(LoadClipBatch);
@@ -83,7 +86,7 @@ namespace ClipboardMachinery.Pages {
             // This is done mainly for optimization and reset when pages are switched
             // to prevent from having outdated clips or large amounts of then lingering on the page
             // Also used when screen is closed to release all clips
-            IEnumerable<ClipViewModel> itemsToRemove = close || ClearAllItemsOnDeactivate
+            IEnumerable<ClipViewModel> itemsToRemove = close || clearAllItemsOnDeactivate
                 ? Items
                 : Items.Skip(batchSize);
 
@@ -92,7 +95,7 @@ namespace ClipboardMachinery.Pages {
                 clipVmFactory.Release(clip);
             }
 
-            lazyClipProvider.SetOffsetTo(Items.Count);
+            lazyClipProvider.Offset = Items.Count;
             VerticalScrollOffset = 0;
 
             base.OnDeactivate(close);

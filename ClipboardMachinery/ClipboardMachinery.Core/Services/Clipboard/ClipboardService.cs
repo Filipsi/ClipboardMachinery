@@ -17,7 +17,7 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         #region Fields
 
         private static readonly NotificationForm notificationHandler = new NotificationForm();
-        private static readonly string pngImageHeader = "data:image/png;base64,";
+        private const string pngImageHeader = "data:image/png;base64,";
 
         private string ignoreValue;
 
