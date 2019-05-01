@@ -1,37 +1,25 @@
 ﻿using AutoMapper;
-using ClipboardMachinery.Core.Repository.LazyProvider;
-using ClipboardMachinery.Core.Repository.Schema;
 using ServiceStack.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using ClipboardMachinery.Core.Data.LazyProvider;
+using ClipboardMachinery.Core.Data.Schema;
 
-namespace ClipboardMachinery.Core.Repository {
+namespace ClipboardMachinery.Core.Data {
 
     public class DataRepository : IDataRepository {
 
         #region Properties
 
-        internal IDbConnection Connection {
-            get {
-                if (db == null || db.State == ConnectionState.Closed || db.State == ConnectionState.Broken) {
-                    db = dbFactory.Open();
-                }
-
-                return db;
-            }
+        internal IStorageAdapter Storage {
+            get;
         }
 
         internal IMapper Mapper {
             get;
         }
-
-        /// <summary>
-        /// User version information from database PRAGMA.
-        /// </summary>
-        internal int Version
-            => Connection.Scalar<int>("PRAGMA user_version");
 
         public string LastClipContent {
             get;
@@ -40,42 +28,14 @@ namespace ClipboardMachinery.Core.Repository {
 
         #endregion
 
-        #region Fields
-
-        private readonly OrmLiteConnectionFactory dbFactory = new OrmLiteConnectionFactory(
-            connectionString: "Data Source=storage.sqlite;Version=3;",
-            dialectProvider: SqliteDialect.Provider
-        );
-
-        private IDbConnection db;
-
-        #endregion
-
-        public DataRepository(IMapper mapper) {
+        public DataRepository(IStorageAdapter storageAdapter, IMapper mapper) {
+            Storage = storageAdapter;
             Mapper = mapper;
 
-            /*
-            if(Connection.CreateTableIfNotExists<Clip>()) {
-                for(int i = 0; i < 256; i++) {
-                    Clip clip = new Clip {
-                        Content = i.ToString(),
-                        Created = DateTime.Now,
-                        Tags = new List<Tag>()
-                    };
-
-                    db.SaveAsync(clip);
-                }
-            }
-            */
-
-            // Initialize tables
-            Connection.CreateTableIfNotExists<Clip>();
-            Connection.CreateTableIfNotExists<Tag>();
-            Connection.CreateTableIfNotExists<TagType>();
-
             // Load last saved clip
-            // NOTE: Yes, this is synchronous, don't yell at me.
-            LastClipContent = GetLastShalowClip().Result?.Content;
+            IDbConnection db = Storage.Connection;
+            SqlExpression <Clip> expression = db.From<Clip>().OrderByDescending(clip => clip.Id);
+            LastClipContent = db.Single(expression).Content;
         }
 
         #region IDataRepository
@@ -84,7 +44,7 @@ namespace ClipboardMachinery.Core.Repository {
             return new LazyDataProvider<Clip>(this, batchSize, LoadNestedClipReferences);
         }
 
-        public async Task<T> InsertClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
+        public async Task<T> CreateClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
             // Create clip entity
             Clip clip = new Clip {
                 Content = content,
@@ -107,8 +67,8 @@ namespace ClipboardMachinery.Core.Repository {
             // Handle tag type for every new tag
             foreach (Tag tag in clip.Tags) {
                 // Check if TagType the Tag is specifying exits, if not create it
-                if (!await db.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
-                    await db.InsertAsync(
+                if (!await Storage.Connection.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
+                    await Storage.Connection.InsertAsync(
                         new TagType {
                             Name = tag.TypeName,
                             Kind = tag.Value.GetType(),
@@ -118,11 +78,11 @@ namespace ClipboardMachinery.Core.Repository {
                 }
 
                 // Load reference to TagType
-                await db.LoadReferencesAsync(tag);
+                await Storage.Connection.LoadReferencesAsync(tag);
             }
 
             // Save clips
-            bool wasSaveSuccessfull = await db.SaveAsync(clip, references: true);
+            bool wasSaveSuccessfull = await Storage.Connection.SaveAsync(clip, references: true);
 
             // If we managed to successfully save the clip update last saved clip content
             if (wasSaveSuccessfull) {
@@ -135,12 +95,12 @@ namespace ClipboardMachinery.Core.Repository {
 
         public async Task DeleteClip(int id) {
             // Delete all related tags
-            foreach (Tag relatedTag in await db.SelectAsync<Tag>(t => t.ClipId == id)) {
-                await db.DeleteAsync(relatedTag);
+            foreach (Tag relatedTag in await Storage.Connection.SelectAsync<Tag>(t => t.ClipId == id)) {
+                await Storage.Connection.DeleteAsync(relatedTag);
             }
 
             // Delete the clip itself
-            await db.DeleteByIdAsync<Clip>(id);
+            await Storage.Connection.DeleteByIdAsync<Clip>(id);
         }
 
         public async Task<T> CreateTag<T>(int clipId, string type, object value) {
@@ -152,8 +112,8 @@ namespace ClipboardMachinery.Core.Repository {
             };
 
             // Check if TagType exits, if not create it
-            if (!await db.ExistsAsync<TagType>(new { Name = type })) {
-                await db.InsertAsync(
+            if (!await Storage.Connection.ExistsAsync<TagType>(new { Name = type })) {
+                await Storage.Connection.InsertAsync(
                     new TagType {
                         Name = type,
                         Kind = value.GetType(),
@@ -164,17 +124,17 @@ namespace ClipboardMachinery.Core.Repository {
 
             // Load reference to TagType
             // This is needed to actually fill the newly created tag with TagType values.
-            await db.LoadReferencesAsync(tag);
+            await Storage.Connection.LoadReferencesAsync(tag);
 
             // Save newly created tag
-            await db.SaveAsync(tag, references: true);
+            await Storage.Connection.SaveAsync(tag, references: true);
 
             // Map it to the desired model
             return Mapper.Map<T>(tag);
         }
 
         public async Task UpdateTag(int id, object value) {
-            await db.UpdateAsync<Tag>(
+            await Storage.Connection.UpdateAsync<Tag>(
                 new {
                     Id = id,
                     Value = value
@@ -183,11 +143,11 @@ namespace ClipboardMachinery.Core.Repository {
         }
 
         public async Task DeleteTag(int id) {
-            await db.DeleteByIdAsync<Tag>(id);
+            await Storage.Connection.DeleteByIdAsync<Tag>(id);
         }
 
         public async Task UpdateTagProperty(string name, System.Windows.Media.Color color) {
-            await db.UpdateAsync<TagType>(
+            await Storage.Connection.UpdateAsync<TagType>(
                 new {
                     Name = name,
                     Color = Mapper.Map<Color>(color)
@@ -198,10 +158,6 @@ namespace ClipboardMachinery.Core.Repository {
         #endregion
 
         #region Helpers
-
-        private Task<Clip> GetLastShalowClip() {
-            return db.SingleAsync(db.From<Clip>().OrderByDescending(clip => clip.Id));
-        }
 
         private static async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {
             // Go thought every single clip in the batch
@@ -231,7 +187,7 @@ namespace ClipboardMachinery.Core.Repository {
         protected virtual void Dispose(bool disposing) {
             if (!isDisposed) {
                 if (disposing) {
-                    Connection.Dispose();
+                    Storage.Dispose();
                 }
 
                 // There are no unmanaged resources to release, but

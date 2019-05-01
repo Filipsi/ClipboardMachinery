@@ -90,15 +90,17 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\IStorageAdapter.cs" />
+    <Compile Include="Data\StorageAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\DataRepository.cs" />
-    <Compile Include="Repository\IDataRepository.cs" />
-    <Compile Include="Repository\LazyProvider\ILazyDataProvider.cs" />
-    <Compile Include="Repository\LazyProvider\LazyDataProvider.cs" />
-    <Compile Include="Repository\Schema\Clip.cs" />
-    <Compile Include="Repository\Schema\Color.cs" />
-    <Compile Include="Repository\Schema\Tag.cs" />
-    <Compile Include="Repository\Schema\TagType.cs" />
+    <Compile Include="Data\DataRepository.cs" />
+    <Compile Include="Data\IDataRepository.cs" />
+    <Compile Include="Data\LazyProvider\ILazyDataProvider.cs" />
+    <Compile Include="Data\LazyProvider\LazyDataProvider.cs" />
+    <Compile Include="Data\Schema\Clip.cs" />
+    <Compile Include="Data\Schema\Color.cs" />
+    <Compile Include="Data\Schema\Tag.cs" />
+    <Compile Include="Data\Schema\TagType.cs" />
     <Compile Include="Services\Clipboard\ClipboardEventArgs.cs" />
     <Compile Include="Services\Clipboard\ClipboardService.cs" />
     <Compile Include="Services\Clipboard\IClipboardService.cs" />

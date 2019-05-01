@@ -1,10 +1,10 @@
-﻿using ClipboardMachinery.Core.Repository.LazyProvider;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using ClipboardMachinery.Core.Data.LazyProvider;
 
-namespace ClipboardMachinery.Core.Repository {
+namespace ClipboardMachinery.Core.Data {
 
     public interface IDataRepository : IDisposable {
 
@@ -29,7 +29,7 @@ namespace ClipboardMachinery.Core.Repository {
         /// <param name="created">Date and time when clip was created</param>
         /// <param name="tags">Tags that clip have in format name=value</param>
         /// <returns>An instance of created clip mapped to T model</returns>
-        Task<T> InsertClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null);
+        Task<T> CreateClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
         /// Remove clip with corresponding id and all related tags.

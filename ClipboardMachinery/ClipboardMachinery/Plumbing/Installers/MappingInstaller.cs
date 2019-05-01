@@ -4,7 +4,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Repository.Schema;
+using ClipboardMachinery.Core.Data.Schema;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 

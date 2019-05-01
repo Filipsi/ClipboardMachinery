@@ -2,7 +2,7 @@
 using System.Linq;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Core.Repository;
+using ClipboardMachinery.Core.Data;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.History {

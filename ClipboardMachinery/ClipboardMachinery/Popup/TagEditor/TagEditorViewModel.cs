@@ -3,7 +3,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Repository;
+using ClipboardMachinery.Core.Data;
 using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
 using System.Windows;

@@ -3,9 +3,9 @@ using ServiceStack.OrmLite;
 using System.Threading.Tasks;
 using System;
 using System.Data;
-using ClipboardMachinery.Core.Repository.Schema;
+using ClipboardMachinery.Core.Data.Schema;
 
-namespace ClipboardMachinery.Core.Repository.LazyProvider {
+namespace ClipboardMachinery.Core.Data.LazyProvider {
 
     public class LazyDataProvider<T> : ILazyDataProvider {
 
@@ -35,7 +35,7 @@ namespace ClipboardMachinery.Core.Repository.LazyProvider {
         #region Logic
 
         public async Task<IEnumerable<TM>> GetNextBatchAsync<TM>() {
-            IDbConnection db = dataRepository.Connection;
+            IDbConnection db = dataRepository.Storage.Connection;
 
             // Create SQL query
             SqlExpression<T> query = db.From<T>();

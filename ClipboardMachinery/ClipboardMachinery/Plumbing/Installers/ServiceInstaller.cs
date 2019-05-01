@@ -1,7 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using ClipboardMachinery.Core.Repository;
+using ClipboardMachinery.Core.Data;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 
@@ -13,6 +13,14 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .For<IDataRepository>()
                     .ImplementedBy<DataRepository>()
                     .LifestyleSingleton()
+            );
+
+            container.Register(
+                Component
+                    .For<IStorageAdapter>()
+                    .ImplementedBy<StorageAdapter>()
+                    .DependsOn(Dependency.OnConfigValue("dataSourcePath", "storage.sqlite"))
+                    .LifestyleBoundToNearest<IDataRepository>()
             );
 
             container.Register(

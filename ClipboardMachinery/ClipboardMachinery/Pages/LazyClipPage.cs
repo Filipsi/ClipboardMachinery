@@ -1,11 +1,13 @@
 ﻿using System;
 using ClipboardMachinery.Components.Clip;
-using ClipboardMachinery.Core.Repository;
-using ClipboardMachinery.Core.Repository.LazyProvider;
+using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.Data.LazyProvider;
 using ClipboardMachinery.Plumbing.Factories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using Caliburn.Micro;
 
 namespace ClipboardMachinery.Pages {
 

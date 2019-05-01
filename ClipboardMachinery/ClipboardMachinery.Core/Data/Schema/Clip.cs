@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClipboardMachinery.Core.Repository.Schema {
+namespace ClipboardMachinery.Core.Data.Schema {
 
     public class Clip {
 

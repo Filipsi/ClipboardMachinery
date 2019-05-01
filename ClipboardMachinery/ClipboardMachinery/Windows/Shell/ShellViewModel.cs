@@ -10,7 +10,7 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Core.Repository;
+using ClipboardMachinery.Core.Data;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;
@@ -132,7 +132,7 @@ namespace ClipboardMachinery.Windows.Shell {
             }
 
             // Save clip
-            ClipModel model = await dataRepository.InsertClip<ClipModel>(
+            ClipModel model = await dataRepository.CreateClip<ClipModel>(
                 content: e.Payload,
                 created: DateTime.UtcNow,
                 tags: new[] {
