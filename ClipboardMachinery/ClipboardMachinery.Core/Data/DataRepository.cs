@@ -35,7 +35,7 @@ namespace ClipboardMachinery.Core.Data {
             // Load last saved clip
             IDbConnection db = Storage.Connection;
             SqlExpression <Clip> expression = db.From<Clip>().OrderByDescending(clip => clip.Id);
-            LastClipContent = db.Single(expression).Content;
+            LastClipContent = db.Single(expression)?.Content;
         }
 
         #region IDataRepository
