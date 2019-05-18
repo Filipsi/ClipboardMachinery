@@ -61,6 +61,7 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IClipboardService clipboardService;
 
         private bool isVisible = true;
+        private string lastAcceptedClipContent;
 
         #endregion
 
@@ -69,8 +70,11 @@ namespace ClipboardMachinery.Windows.Shell {
             IHotKeyService hotKeyService, IClipboardService clipboardService, IDataRepository dataRepository)  {
 
             this.eventAggregator = eventAggregator;
-            this.dataRepository = dataRepository;
             this.clipboardService = clipboardService;
+
+            // Data repository
+            this.dataRepository = dataRepository;
+            lastAcceptedClipContent = dataRepository.LastClipContent;
 
             // Popup wrapper
             Popup = popupWrapperVm;
@@ -96,12 +100,13 @@ namespace ClipboardMachinery.Windows.Shell {
         }
 
         public Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
-            if (message.EventType == ClipEventType.Select) {
-                clipboardService.IgnoreNextChange(message.Source.Content);
-                clipboardService.SetClipboardContent(message.Source.Content);
-                IsVisible = false;
+            if (message.EventType != ClipEventType.Select) {
+                return Task.CompletedTask;
             }
 
+            clipboardService.IgnoreNextChange(message.Source.Content);
+            clipboardService.SetClipboardContent(message.Source.Content);
+            IsVisible = false;
             return Task.CompletedTask;
         }
 
@@ -119,7 +124,7 @@ namespace ClipboardMachinery.Windows.Shell {
             }
         }
 
-        private async void OnClipboardChanged(object sender, ClipboardEventArgs e) {
+        private void OnClipboardChanged(object sender, ClipboardEventArgs e) {
             // Check if there is anything to save
             if (string.IsNullOrWhiteSpace(e.Payload)) {
                 return;
@@ -127,22 +132,34 @@ namespace ClipboardMachinery.Windows.Shell {
 
             // Prevent from saving duplicates right after each other
             // NOTE: This was made specifically for trigger happy @Jemmotar
-            if (e.Payload == dataRepository.LastClipContent) {
+            if (e.Payload == lastAcceptedClipContent) {
                 return;
             }
 
+            // Accept new clip from clipboard change
+            Task.Run(() => AcceptClip(e.Payload, e.Source));
+        }
+
+        #endregion
+
+        #region Logic
+
+        private async Task AcceptClip(string content, string source) {
+            // Update last accepted content
+            lastAcceptedClipContent = content;
+
             // Save clip
             ClipModel model = await dataRepository.CreateClip<ClipModel>(
-                content: e.Payload,
+                content: content,
                 created: DateTime.UtcNow,
                 tags: new[] {
                     // TODO: Add config option to disable this
-                    new KeyValuePair<string, object>("source", e.Source)
+                    new KeyValuePair<string, object>("source", source)
                 }
             );
 
             // Dispatch information about new clip creation
-            await eventAggregator.PublishOnCurrentThreadAsync(
+            await eventAggregator.PublishOnUIThreadAsync(
                 new ClipEvent(
                     model,
                     ClipEventType.Created

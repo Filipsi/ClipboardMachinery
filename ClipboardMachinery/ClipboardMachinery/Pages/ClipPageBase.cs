@@ -57,11 +57,11 @@ namespace ClipboardMachinery.Pages {
             }
         }
 
-        public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
+        public Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
                 case ClipEventType.Created:
                     if (!allowAddingClipsFromKeyboard) {
-                        return;
+                        return Task.CompletedTask;
                     }
 
                     ClipViewModel createdClip = clipVmFactory.Create(message.Source);
@@ -73,35 +73,42 @@ namespace ClipboardMachinery.Pages {
                 case ClipEventType.Remove:
                     ClipViewModel clipToRemove = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipToRemove != null) {
-                        await dataRepository.DeleteClip(clipToRemove.Model.Id);
-                        clipToRemove.TryClose();
-                        clipVmFactory.Release(clipToRemove);
+                        return Task.Run(() => {
+                            dataRepository.DeleteClip(clipToRemove.Model.Id);
+                            clipToRemove.TryClose();
+                            clipVmFactory.Release(clipToRemove);
+                        }, cancellationToken);
                     }
                     break;
 
                 case ClipEventType.ToggleFavorite:
                     ClipViewModel clipVm = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipVm != null) {
-                        ClipModel clip = clipVm.Model;
-                        TagModel favoriteTag = clip.Tags.FirstOrDefault(
-                            tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
-                        );
-
-                        if (favoriteTag == null) {
-                            TagModel newTag = await dataRepository.CreateTag<TagModel>(
-                                clipId: clip.Id,
-                                name: "category",
-                                value: "favorite"
+                        return Task.Run(async () => {
+                            ClipModel clip = clipVm.Model;
+                            TagModel favoriteTag = clip.Tags.FirstOrDefault(
+                                tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
                             );
 
-                            clip.Tags.Add(newTag);
-                        } else {
-                            await dataRepository.DeleteTag(favoriteTag.Id);
-                            clip.Tags.Remove(favoriteTag);
-                        }
+                            if (favoriteTag == null) {
+                                TagModel newTag = await dataRepository.CreateTag<TagModel>(
+                                    clipId: clip.Id,
+                                    name: "category",
+                                    value: "favorite"
+                                );
+
+                                clip.Tags.Add(newTag);
+                            }
+                            else {
+                                await dataRepository.DeleteTag(favoriteTag.Id);
+                                clip.Tags.Remove(favoriteTag);
+                            }
+                        }, cancellationToken);
                     }
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
         protected virtual void OnKeyboardClipAdded(ClipViewModel newClip) {
