@@ -104,6 +104,7 @@ namespace ClipboardMachinery.Popup.TagEditor {
             }
 
             // Update color if changed
+            // ReSharper disable once InvertIf
             if (Model.Color != ColorGallery.SelectedColor) {
                 Model.Color = ColorGallery.SelectedColor;
                 dataRepository.UpdateTagProperty(Model.Name, Model.Color.Value);

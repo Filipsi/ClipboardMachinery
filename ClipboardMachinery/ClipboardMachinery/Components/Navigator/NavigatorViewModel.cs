@@ -67,13 +67,13 @@ namespace ClipboardMachinery.Components.Navigator {
             Controls.Add(removeButton);
         }
 
-        protected override void OnInitialize() {
-            base.OnInitialize();
-
+        protected override Task OnInitializeAsync(CancellationToken cancellationToken) {
             // Select first page if no page is selected
             if (Pages.Count > 0 && Selected == null) {
                 HandleNavigationClick(Pages.First());
             }
+
+            return base.OnInitializeAsync(cancellationToken);
         }
 
         #region Handlers

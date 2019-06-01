@@ -4,6 +4,8 @@ using ClipboardMachinery.Components.ColorGallery.Presets;
 using ClipboardMachinery.Plumbing.Factories;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -78,16 +80,14 @@ namespace ClipboardMachinery.Components.ColorGallery {
             NextPageButton.ClickAction = HandleNextPresetClick;
         }
 
-        protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
-
-            if (!close) {
-                return;
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            if (close) {
+                foreach (IColorPalette preset in Presets) {
+                    colorGalleryFactory.Release(preset);
+                }
             }
 
-            foreach(IColorPalette preset in Presets) {
-                colorGalleryFactory.Release(preset);
-            }
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
 
         #region Actions

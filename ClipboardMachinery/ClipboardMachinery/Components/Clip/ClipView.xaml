@@ -12,6 +12,7 @@
     SnapsToDevicePixels="True"
     RenderOptions.ClearTypeHint="Enabled"
     Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
     cal:Message.Attach="
         [Event MouseEnter] = [Action Focus()];
         [Event MouseLeave] = [Action Unfocus()]">

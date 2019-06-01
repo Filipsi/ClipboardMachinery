@@ -44,7 +44,7 @@ namespace ClipboardMachinery.Windows.Shell {
         }
 
         public string AppVersion
-            => (Debugger.IsAttached ? "dev" : string.Empty) + Assembly.GetEntryAssembly().GetName().Version.ToString(3);
+            => (Debugger.IsAttached ? "dev" : string.Empty) + Assembly.GetEntryAssembly()?.GetName().Version.ToString(3);
 
         public double AppWidth
             => SystemParameters.PrimaryScreenWidth / 3;
@@ -110,17 +110,17 @@ namespace ClipboardMachinery.Windows.Shell {
             return Task.CompletedTask;
         }
 
-        private void OnNavigatorExitButtonClicked(object sender, EventArgs e) {
-            TryClose();
+        private async void OnNavigatorExitButtonClicked(object sender, EventArgs e) {
+            await TryCloseAsync();
         }
 
-        private void OnNavigatorPropertyChanged(object sender, PropertyChangedEventArgs e) {
+        private async void OnNavigatorPropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e.PropertyName != nameof(Navigator.Selected)) {
                 return;
             }
 
             if (sender is NavigatorViewModel navigator) {
-                ActivateItem(navigator.Selected);
+                await ActivateItemAsync(navigator.Selected, CancellationToken.None);
             }
         }
 

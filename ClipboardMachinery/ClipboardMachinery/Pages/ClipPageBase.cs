@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
@@ -39,12 +40,12 @@ namespace ClipboardMachinery.Pages {
 
         #region Handlers
 
-        protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
-
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
             if (close) {
                 Items.CollectionChanged -= OnClipboardItemsCollectionChanged;
             }
+
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
 
         private void OnClipboardItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
@@ -57,58 +58,53 @@ namespace ClipboardMachinery.Pages {
             }
         }
 
-        public Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
+        public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
                 case ClipEventType.Created:
                     if (!allowAddingClipsFromKeyboard) {
-                        return Task.CompletedTask;
+                        return;
                     }
 
                     ClipViewModel createdClip = clipVmFactory.Create(message.Source);
                     Items.Insert(0, createdClip);
-                    ActivateItem(createdClip);
+                    await ActivateItemAsync(createdClip, cancellationToken);
                     OnKeyboardClipAdded(createdClip);
                     break;
 
                 case ClipEventType.Remove:
                     ClipViewModel clipToRemove = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipToRemove != null) {
-                        return Task.Run(() => {
-                            dataRepository.DeleteClip(clipToRemove.Model.Id);
-                            clipToRemove.TryClose();
-                            clipVmFactory.Release(clipToRemove);
-                        }, cancellationToken);
+                        await Task.Run(() => dataRepository.DeleteClip(clipToRemove.Model.Id), cancellationToken);
+                        await clipToRemove.TryCloseAsync();
+                        clipVmFactory.Release(clipToRemove);
                     }
                     break;
 
                 case ClipEventType.ToggleFavorite:
                     ClipViewModel clipVm = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipVm != null) {
-                        return Task.Run(async () => {
-                            ClipModel clip = clipVm.Model;
-                            TagModel favoriteTag = clip.Tags.FirstOrDefault(
-                                tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
-                            );
+                        ClipModel clip = clipVm.Model;
+                        TagModel favoriteTag = clip.Tags.FirstOrDefault(
+                            tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+                        );
 
-                            if (favoriteTag == null) {
+                        if (favoriteTag == null) {
+                            await Task.Run(async () => {
                                 TagModel newTag = await dataRepository.CreateTag<TagModel>(
                                     clipId: clip.Id,
                                     name: "category",
                                     value: "favorite"
                                 );
 
-                                clip.Tags.Add(newTag);
-                            }
-                            else {
-                                await dataRepository.DeleteTag(favoriteTag.Id);
-                                clip.Tags.Remove(favoriteTag);
-                            }
-                        }, cancellationToken);
+                                await Application.Current.Dispatcher.InvokeAsync(() => clip.Tags.Add(newTag));
+                            }, cancellationToken);
+                        } else {
+                            await Task.Run(() => dataRepository.DeleteTag(favoriteTag.Id), cancellationToken);
+                            clip.Tags.Remove(favoriteTag);
+                        }
                     }
                     break;
             }
-
-            return Task.CompletedTask;
         }
 
         protected virtual void OnKeyboardClipAdded(ClipViewModel newClip) {

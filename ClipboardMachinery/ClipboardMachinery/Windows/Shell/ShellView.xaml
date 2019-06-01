@@ -3,22 +3,29 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ClipboardMachinery.Windows.Shell"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     SnapsToDevicePixels="True" UseLayoutRounding="True"
     RenderOptions.BitmapScalingMode="HighQuality"
     Background="{x:Null}" AllowsTransparency="True" WindowStyle="None"
-    ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" Width="Auto">
+    ShowInTaskbar="False" Topmost="True"
+    SizeToContent="Width" ResizeMode="NoResize">
 
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <BooleanToVisibilityConverter
+            x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
 
     <Window.Visibility>
-        <Binding Converter="{StaticResource BooleanToVisibilityConverter}" Path="IsVisible" Mode="TwoWay" />
+        <Binding
+            Converter="{StaticResource BooleanToVisibilityConverter}"
+            Path="IsVisible"
+            Mode="TwoWay" />
     </Window.Visibility>
 
-    <Grid Width="{Binding AppWidth, FallbackValue='384'}" MinWidth="384">
-
+    <Grid Width="{Binding Path=AppWidth, FallbackValue=384}">
         <local:RotatingGear
             Height="64"
             VerticalAlignment="Top" />
@@ -75,6 +82,3 @@
         </Grid>
     </Grid>
 </Window>
-
-
-

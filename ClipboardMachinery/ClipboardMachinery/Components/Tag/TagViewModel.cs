@@ -3,6 +3,8 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Plumbing.Factories;
 using ClipboardMachinery.Popup.TagEditor;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace ClipboardMachinery.Components.Tag {
@@ -84,12 +86,12 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
-        protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
-
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
             if (close) {
                 Model = null;
             }
+
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
 
         #endregion

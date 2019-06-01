@@ -27,7 +27,7 @@ namespace ClipboardMachinery.Pages.History {
 
         #region Handlers
 
-        protected override void OnKeyboardClipAdded(ClipViewModel newClip) {
+        protected override async void OnKeyboardClipAdded(ClipViewModel newClip) {
             base.OnKeyboardClipAdded(newClip);
 
             // When new clip is added and user is not scrolling, we try to keep loaded clip count at size of one batch
@@ -37,7 +37,7 @@ namespace ClipboardMachinery.Pages.History {
             }
 
             ClipViewModel lastClip = Items.Last();
-            lastClip.TryClose();
+            await lastClip.TryCloseAsync();
             clipVmFactory.Release(lastClip);
         }
 

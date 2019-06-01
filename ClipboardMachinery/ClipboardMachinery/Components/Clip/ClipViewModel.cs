@@ -72,6 +72,7 @@ namespace ClipboardMachinery.Components.Clip {
                     return EntryType.Image;
                 }
 
+                // ReSharper disable once ConvertIfStatementToReturnStatement
                 if (Uri.IsWellFormedUriString(Model.Content, UriKind.Absolute)) {
                     return EntryType.Link;
                 }
@@ -173,35 +174,37 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Handlers
 
-        protected override void OnDeactivate(bool close) {
-            base.OnDeactivate(close);
-
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
             if (close) {
                 Model = null;
             }
+
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
 
-        private void OnModelTagCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private async void OnModelTagCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch(e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach(TagModel tagModel in e.NewItems) {
                         TagViewModel vm = tagVmFactory.Invoke();
                         vm.Model = tagModel;
-                        ActivateItem(vm);
+                        await ActivateItemAsync(vm, CancellationToken.None);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     foreach (TagModel tagModel in e.OldItems) {
                         foreach (TagViewModel vm in Items.Where(vm => vm.Model == tagModel).ToArray()) {
-                            DeactivateItem(vm, true);
+                            await DeactivateItemAsync(vm, true, CancellationToken.None);
                         }
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (TagViewModel vm in Items.ToArray()) {
-                        DeactivateItem(vm, true);
+                    if (Items?.Count > 0) {
+                        foreach (TagViewModel vm in Items.ToArray()) {
+                            await DeactivateItemAsync(vm, true, CancellationToken.None);
+                        }
                     }
                     break;
             }
@@ -220,11 +223,11 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
+        public async Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch(message.EventType) {
                 case TagEventType.Remove:
                     foreach(TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.Source.Id).ToArray()) {
-                        DeactivateItem(tagToRemove, true);
+                        await DeactivateItemAsync(tagToRemove, true, cancellationToken);
                     }
                     break;
 
@@ -240,7 +243,6 @@ namespace ClipboardMachinery.Components.Clip {
                     }
                     break;
             }
-            return Task.CompletedTask;
         }
 
         private void HandleModelChange() {
@@ -312,25 +314,33 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         private void UpdateControlsState() {
-            favoriteButton.IsToggled = Model.Tags.Any(
-                tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
-            );
+            if (Model == null) {
+                favoriteButton.IsToggled = false;
+            } else {
+                favoriteButton.IsToggled = Model.Tags.Any(
+                    tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+                );
+            }
         }
 
         #endregion
 
         #region Actions
 
-        public void Remove(ActionButtonViewModel source) {
-            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Remove));
+        public async void Remove(ActionButtonViewModel source) {
+            source.IsEnabled = false;
+            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Remove));
+            source.IsEnabled = true;
         }
 
         public void Select() {
             eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
         }
 
-        public void ToggleFavorite(ActionButtonViewModel source) {
-            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
+        public async void ToggleFavorite(ActionButtonViewModel source) {
+            source.IsEnabled = false;
+            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
+            source.IsEnabled = true;
         }
 
         private void ExportImage(ActionButtonViewModel source) {

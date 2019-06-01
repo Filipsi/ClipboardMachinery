@@ -38,8 +38,8 @@ namespace ClipboardMachinery.Plumbing {
             yield return container.ResolveAll(service);
         }
 
-        protected override void OnStartup(object sender, StartupEventArgs e) {
-            DisplayRootViewFor<IShell>();
+        protected override async void OnStartup(object sender, StartupEventArgs e) {
+            await DisplayRootViewForAsync(typeof(IShell));
         }
 
         protected override void OnExit(object sender, EventArgs e) {

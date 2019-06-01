@@ -36,21 +36,28 @@ namespace ClipboardMachinery.Components.Clip {
 
         public ClipView() {
             InitializeComponent();
-
-            // FIXME: Unhook this
-            expandTimer.Elapsed += OnExpandTimerElapsed;
         }
 
         #region Handlers
 
         private void OnLoaded(object sender, EventArgs e) {
+            expandTimer.Elapsed += OnExpandTimerElapsed;
+
             if (DataContext is INotifyPropertyChanged observable) {
                 observable.PropertyChanged += OnDataContextPropertyChanged;
             }
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e) {
+            expandTimer.Elapsed -= OnExpandTimerElapsed;
+
+            if (DataContext is INotifyPropertyChanged observable) {
+                observable.PropertyChanged -= OnDataContextPropertyChanged;
+            }
+        }
+
         private void OnExpandTimerElapsed(object sender, ElapsedEventArgs e) {
-            Dispatcher.Invoke(() => {
+            Application.Current.Dispatcher.Invoke(() => {
                 TagPanel.BeginAnimation(HeightProperty, expandAnimation);
                 isExpanded = true;
             });

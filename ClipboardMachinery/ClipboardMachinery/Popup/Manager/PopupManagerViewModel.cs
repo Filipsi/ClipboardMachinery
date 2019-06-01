@@ -49,7 +49,7 @@ namespace ClipboardMachinery.Popup.Manager {
 
         #region Handlers
 
-        private void OnExtensionControlsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private async void OnExtensionControlsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach (ActionButtonViewModel extentionButton in e.NewItems) {
@@ -60,26 +60,17 @@ namespace ClipboardMachinery.Popup.Manager {
 
                 case NotifyCollectionChangedAction.Remove:
                     foreach (ActionButtonViewModel extentionButton in e.OldItems) {
-                        extentionButton.TryClose();
+                        await extentionButton.TryCloseAsync();
                         Controls.Remove(extentionButton);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
                     foreach (ActionButtonViewModel extentionButton in (IList<ActionButtonViewModel>) sender) {
-                        extentionButton.TryClose();
+                        await extentionButton.TryCloseAsync();
                         Controls.Remove(extentionButton);
                     }
                     break;
-
-                case NotifyCollectionChangedAction.Replace:
-                    break;
-
-                case NotifyCollectionChangedAction.Move:
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -88,21 +79,19 @@ namespace ClipboardMachinery.Popup.Manager {
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 
-        public Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
+        public async Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
                 case PopupEventType.Show:
-                    ChangeActiveItem(message.Popup, true);
+                    await ChangeActiveItemAsync(message.Popup, true, cancellationToken);
                     break;
 
                 case PopupEventType.Close:
-                    ChangeActiveItem(null, true);
+                    await ChangeActiveItemAsync(null, true, cancellationToken);
                     break;
             }
-
-            return Task.CompletedTask;
         }
 
-        protected override void ChangeActiveItem(IScreen newItem, bool closePrevious) {
+        protected override async Task ChangeActiveItemAsync(IScreen newItem, bool closePrevious, CancellationToken cancellationToken) {
             if (ActiveItem is IExtensionControlsProvider oldControls) {
                 oldControls.ExtensionControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
@@ -113,7 +102,7 @@ namespace ClipboardMachinery.Popup.Manager {
                 );
             }
 
-            base.ChangeActiveItem(newItem, closePrevious);
+            await base.ChangeActiveItemAsync(newItem, closePrevious, cancellationToken);
 
             if (newItem is IExtensionControlsProvider newControls) {
                 newControls.ExtensionControls.CollectionChanged += OnExtensionControlsCollectionChanged;

@@ -5,9 +5,8 @@ using ClipboardMachinery.Core.Data.LazyProvider;
 using ClipboardMachinery.Plumbing.Factories;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using Caliburn.Micro;
 
 namespace ClipboardMachinery.Pages {
 
@@ -76,7 +75,7 @@ namespace ClipboardMachinery.Pages {
 
         private async Task LoadClipBatch() {
             foreach (ClipModel model in await lazyClipProvider.GetNextBatchAsync<ClipModel>()) {
-                ActivateItem(clipVmFactory.Create(model));
+                await ActivateItemAsync(clipVmFactory.Create(model), CancellationToken.None);
             }
         }
 
@@ -84,7 +83,15 @@ namespace ClipboardMachinery.Pages {
 
         #region Handlers
 
-        protected override void OnDeactivate(bool close) {
+        protected override async Task OnActivateAsync(CancellationToken cancellationToken) {
+            // Initial item load after page activates.
+            // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
+            if (!IsLoadingBatch && Items.Count == 0) {
+                await Task.Run(LoadClipBatch, cancellationToken);
+            }
+        }
+
+        protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
             // This is done mainly for optimization and reset when pages are switched
             // to prevent from having outdated clips or large amounts of then lingering on the page
             // Also used when screen is closed to release all clips
@@ -93,24 +100,12 @@ namespace ClipboardMachinery.Pages {
                 : Items.Skip(batchSize);
 
             foreach (ClipViewModel clip in itemsToRemove.ToArray()) {
-                clip.TryClose(true);
+                await clip.TryCloseAsync(true);
                 clipVmFactory.Release(clip);
             }
 
             lazyClipProvider.Offset = Items.Count;
             VerticalScrollOffset = 0;
-
-            base.OnDeactivate(close);
-        }
-
-        protected override void OnActivate() {
-            // Initial item load after page activates.
-            // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
-            if (!IsLoadingBatch && Items.Count == 0) {
-                loadBatchTask = Task.Run(LoadClipBatch);
-            }
-
-            base.OnActivate();
         }
 
         #endregion
