@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class LazyClipPage : ClipPageBase {
+    public abstract class LazyClipHolder : ClipHolder {
 
         #region Properties
 
@@ -65,7 +65,7 @@ namespace ClipboardMachinery.Pages {
 
         #endregion
 
-        protected LazyClipPage(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
+        protected LazyClipHolder(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
             this.batchSize = batchSize;
             lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize);
             loadBatchTask = Task.Run(LoadClipBatch);

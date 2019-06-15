@@ -120,12 +120,12 @@
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
-    <Compile Include="Pages\ClipPageBase.cs" />
-    <Compile Include="Pages\LazyClipPage.cs" />
+    <Compile Include="Pages\ClipHolder.cs" />
+    <Compile Include="Pages\LazyClipHolder.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
-    <Compile Include="Popup\Manager\Interfaces\IExtensionControlsProvider.cs" />
+    <Compile Include="Popup\Manager\IPopupExtendedControls.cs" />
     <Compile Include="Popup\Manager\PopupManagerView.xaml.cs">
       <DependentUpon>PopupManagerView.xaml</DependentUpon>
     </Compile>

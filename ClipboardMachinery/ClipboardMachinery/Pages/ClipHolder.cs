@@ -13,7 +13,7 @@ using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class ClipPageBase : Conductor<ClipViewModel>.Collection.AllActive, IHandle<ClipEvent> {
+    public abstract class ClipHolder : Conductor<ClipViewModel>.Collection.AllActive, IHandle<ClipEvent> {
 
         #region Properties
 
@@ -31,7 +31,7 @@ namespace ClipboardMachinery.Pages {
 
         #endregion
 
-        protected ClipPageBase(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) {
+        protected ClipHolder(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) {
             this.dataRepository = dataRepository;
             this.clipVmFactory = clipVmFactory;
 

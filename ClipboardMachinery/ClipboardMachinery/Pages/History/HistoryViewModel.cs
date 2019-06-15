@@ -7,7 +7,7 @@ using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.History {
 
-    public class HistoryViewModel : LazyClipPage, IScreenPage {
+    public class HistoryViewModel : LazyClipHolder, IScreenPage {
 
         #region IPage
 

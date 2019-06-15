@@ -1,4 +1,5 @@
-﻿using ClipboardMachinery.Components.Buttons.ActionButton;
+﻿using System.Threading.Tasks;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 using System.Windows;
 using System.Windows.Media;
 
@@ -62,10 +63,12 @@ namespace ClipboardMachinery.Components.Buttons.SelectableButton {
 
         #region Actions
 
-        public override void Click() {
+        public override async Task Click() {
             if (IsEnabled && !IsSelected) {
+                IsEnabled = false;
                 IsSelected = true;
-                clickAction.Invoke(this);
+                await clickHandler.Invoke(this);
+                IsEnabled = true;
             }
         }
 

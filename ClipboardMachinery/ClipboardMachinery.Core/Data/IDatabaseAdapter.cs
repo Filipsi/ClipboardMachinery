@@ -3,7 +3,7 @@ using System.Data;
 
 namespace ClipboardMachinery.Core.Data {
 
-    public interface IStorageAdapter : IDisposable {
+    public interface IDatabaseAdapter : IDisposable {
 
         /// <summary>
         /// A connection to the database.
@@ -17,7 +17,7 @@ namespace ClipboardMachinery.Core.Data {
         bool IsConnectionOpen { get; }
 
         /// <summary>
-        /// User version information from database PRAGMA.
+        /// User version information from database PRAGMA table.
         /// </summary>
         int Version { get; }
 

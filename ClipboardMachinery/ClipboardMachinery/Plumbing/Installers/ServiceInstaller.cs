@@ -17,8 +17,8 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
-                    .For<IStorageAdapter>()
-                    .ImplementedBy<StorageAdapter>()
+                    .For<IDatabaseAdapter>()
+                    .ImplementedBy<DatabaseAdapter>()
                     .DependsOn(Dependency.OnConfigValue("dataSourcePath", "storage.sqlite"))
                     .LifestyleBoundToNearest<IDataRepository>()
             );

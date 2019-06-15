@@ -5,7 +5,7 @@ using ServiceStack.OrmLite;
 
 namespace ClipboardMachinery.Core.Data {
 
-    public class StorageAdapter : IStorageAdapter {
+    public class DatabaseAdapter : IDatabaseAdapter {
 
         #region Properties
 
@@ -34,7 +34,7 @@ namespace ClipboardMachinery.Core.Data {
 
         #endregion
 
-        public StorageAdapter(string dataSourcePath) {
+        public DatabaseAdapter(string dataSourcePath) {
             // Create connection factory in order to connect to the database
             dbFactory = new OrmLiteConnectionFactory(
                 connectionString: $"Data Source={dataSourcePath};Version=3;",

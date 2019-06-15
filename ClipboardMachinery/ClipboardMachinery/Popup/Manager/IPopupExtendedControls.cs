@@ -1,9 +1,9 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 
-namespace ClipboardMachinery.Popup.Manager.Interfaces {
+namespace ClipboardMachinery.Popup.Manager {
 
-    internal interface IExtensionControlsProvider {
+    internal interface IPopupExtendedControls {
 
         BindableCollection<ActionButtonViewModel> ExtensionControls { get; }
 

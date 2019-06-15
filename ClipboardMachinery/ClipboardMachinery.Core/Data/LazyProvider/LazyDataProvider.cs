@@ -35,7 +35,7 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
         #region Logic
 
         public async Task<IEnumerable<TM>> GetNextBatchAsync<TM>() {
-            IDbConnection db = dataRepository.Storage.Connection;
+            IDbConnection db = dataRepository.Database.Connection;
 
             // Create SQL query
             SqlExpression<T> query = db.From<T>();

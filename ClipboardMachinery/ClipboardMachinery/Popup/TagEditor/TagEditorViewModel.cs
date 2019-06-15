@@ -4,17 +4,18 @@ using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Data;
-using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using ClipboardMachinery.Popup.Manager;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
 namespace ClipboardMachinery.Popup.TagEditor {
 
-    public class TagEditorViewModel : Screen, IExtensionControlsProvider {
+    public class TagEditorViewModel : Screen, IPopupExtendedControls {
 
-        #region IExtensionControlsProvider
+        #region IPopupExtendedControls
 
         public BindableCollection<ActionButtonViewModel> ExtensionControls { get; }
 
@@ -89,29 +90,31 @@ namespace ClipboardMachinery.Popup.TagEditor {
 
         #region Handlers
 
-        private void HandleRemoveClick(ActionButtonViewModel button) {
-            dataRepository.DeleteTag(Model.Id);
-            eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.Remove));
-            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+        private async Task HandleRemoveClick(ActionButtonViewModel button) {
+            await dataRepository.DeleteTag(Model.Id);
+            await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.Remove));
+            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 
-        private void HandleSaveClick(ActionButtonViewModel button) {
+        private async Task HandleSaveClick(ActionButtonViewModel button) {
             // Update value of changed
             if (Model.Value != Value) {
                 Model.Value = Value;
-                dataRepository.UpdateTag(Model.Id, Model.Value);
-                eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ValueChange));
+                await dataRepository.UpdateTag(Model.Id, Model.Value);
+                await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ValueChange));
             }
 
             // Update color if changed
             // ReSharper disable once InvertIf
             if (Model.Color != ColorGallery.SelectedColor) {
                 Model.Color = ColorGallery.SelectedColor;
-                dataRepository.UpdateTagProperty(Model.Name, Model.Color.Value);
+                await dataRepository.UpdateTagProperty(Model.Name, Model.Color.Value);
 
                 // NOTE: This is needed to change color of all tag types, not just this one.
-                eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ColorChange));
+                await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ColorChange));
             }
+
+            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 
         #endregion

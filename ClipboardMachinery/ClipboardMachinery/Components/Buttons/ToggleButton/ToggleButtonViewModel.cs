@@ -1,4 +1,5 @@
-﻿using ClipboardMachinery.Components.Buttons.ActionButton;
+﻿using System.Threading.Tasks;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 using System.Windows.Media;
 
 namespace ClipboardMachinery.Components.Buttons.ToggleButton {
@@ -104,13 +105,13 @@ namespace ClipboardMachinery.Components.Buttons.ToggleButton {
 
         #region Actions
 
-        public override void Click() {
-            if (!IsEnabled) {
-                return;
+        public override async Task Click() {
+            if (IsEnabled) {
+                IsEnabled = false;
+                IsToggled = !IsToggled;
+                await clickHandler.Invoke(this);
+                IsEnabled = true;
             }
-
-            IsToggled = !IsToggled;
-            clickAction.Invoke(this);
         }
 
         #endregion

@@ -80,14 +80,14 @@ namespace ClipboardMachinery.Components.ColorGallery {
             NextPageButton.ClickAction = HandleNextPresetClick;
         }
 
-        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+        protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
             if (close) {
                 foreach (IColorPalette preset in Presets) {
                     colorGalleryFactory.Release(preset);
                 }
             }
 
-            return base.OnDeactivateAsync(close, cancellationToken);
+            await base.OnDeactivateAsync(close, cancellationToken);
         }
 
         #region Actions
@@ -107,12 +107,13 @@ namespace ClipboardMachinery.Components.ColorGallery {
 
         #region Handlers
 
-        private void HandlePreviousPresetClick(ActionButtonViewModel obj) {
+        private Task HandlePreviousPresetClick(ActionButtonViewModel obj) {
             if (SelectedPreset == null) {
                 if (Presets.Count > 0) {
                     SelectedPreset = Presets.LastOrDefault();
                 }
-                return;
+
+                return Task.CompletedTask;
             }
 
             int currentIndex = Presets.IndexOf(SelectedPreset);
@@ -123,14 +124,16 @@ namespace ClipboardMachinery.Components.ColorGallery {
             }
 
             SelectedPreset = Presets[currentIndex];
+            return Task.CompletedTask;
         }
 
-        private void HandleNextPresetClick(ActionButtonViewModel obj) {
+        private Task HandleNextPresetClick(ActionButtonViewModel source) {
             if (SelectedPreset == null) {
                 if (Presets.Count > 0) {
                     SelectedPreset = Presets.FirstOrDefault();
                 }
-                return;
+
+                return Task.CompletedTask;
             }
 
             int currentIndex = Presets.IndexOf(SelectedPreset);
@@ -141,6 +144,7 @@ namespace ClipboardMachinery.Components.ColorGallery {
             }
 
             SelectedPreset = Presets[currentIndex];
+            return Task.CompletedTask;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -104,14 +105,14 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
             }
         }
 
-        public Action<ActionButtonViewModel> ClickAction {
-            get => clickAction;
+        public Func<ActionButtonViewModel, Task> ClickAction {
+            get => clickHandler;
             set {
-                if (clickAction == value) {
+                if (clickHandler == value) {
                     return;
                 }
 
-                clickAction = value;
+                clickHandler = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -139,7 +140,7 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
         protected static readonly SolidColorBrush panelHoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
         protected static readonly SolidColorBrush disabledColor = Brushes.DimGray;
 
-        protected Action<ActionButtonViewModel> clickAction;
+        protected Func<ActionButtonViewModel, Task> clickHandler;
         protected SolidColorBrush defaultColor = panelDefaultColor;
         protected SolidColorBrush hoverColor = panelHoverColor;
         protected bool isEnabled = true;
@@ -152,9 +153,11 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
 
         #region Actions
 
-        public virtual void Click() {
+        public virtual async Task Click() {
             if (IsEnabled) {
-                clickAction.Invoke(this);
+                IsEnabled = false;
+                await clickHandler.Invoke(this);
+                IsEnabled = true;
             }
         }
 

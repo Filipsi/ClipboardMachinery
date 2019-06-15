@@ -4,7 +4,7 @@ using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.Favorites {
 
-    public class FavoritesViewModel : LazyClipPage, IScreenPage {
+    public class FavoritesViewModel : LazyClipHolder, IScreenPage {
 
         #region IPage
 

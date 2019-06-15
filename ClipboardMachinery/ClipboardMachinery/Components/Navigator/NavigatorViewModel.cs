@@ -78,9 +78,9 @@ namespace ClipboardMachinery.Components.Navigator {
 
         #region Handlers
 
-        private void HandleNavigationClick(ActionButtonViewModel control) {
+        private Task HandleNavigationClick(ActionButtonViewModel control) {
             if(!(control is SelectableButtonViewModel selectableControl)) {
-                return;
+                return Task.CompletedTask;
             }
 
             // De-select currently selected pages
@@ -92,6 +92,7 @@ namespace ClipboardMachinery.Components.Navigator {
             selectableControl.IsSelected = true;
             NotifyOfPropertyChange(() => Selected);
             NotifyOfPropertyChange(() => SelectedPageTitle);
+            return Task.CompletedTask;
         }
 
         public Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
@@ -106,8 +107,10 @@ namespace ClipboardMachinery.Components.Navigator {
             return Task.CompletedTask;
         }
 
-        private void Exit(object arg)
-            => ExitButtonClicked?.Invoke(this, EventArgs.Empty);
+        private Task Exit(object arg) {
+            ExitButtonClicked?.Invoke(this, EventArgs.Empty);
+            return Task.CompletedTask;
+        }
 
         #endregion
 

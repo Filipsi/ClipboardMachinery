@@ -327,29 +327,25 @@ namespace ClipboardMachinery.Components.Clip {
 
         #region Actions
 
-        public async void Remove(ActionButtonViewModel source) {
-            source.IsEnabled = false;
+        public async Task Remove(ActionButtonViewModel source) {
             await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Remove));
-            source.IsEnabled = true;
         }
 
         public void Select() {
             eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
         }
 
-        public async void ToggleFavorite(ActionButtonViewModel source) {
-            source.IsEnabled = false;
+        public async Task ToggleFavorite(ActionButtonViewModel source) {
             await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
-            source.IsEnabled = true;
         }
 
-        private void ExportImage(ActionButtonViewModel source) {
+        private Task ExportImage(ActionButtonViewModel source) {
             if (Type != EntryType.Image) {
-                return;
+                return Task.CompletedTask;
             }
 
             if (!(((Image) Content).Source is BitmapImage bitmapImage)) {
-                return;
+                return Task.CompletedTask;
             }
 
             SaveFileDialog dialog = new SaveFileDialog {
@@ -358,7 +354,7 @@ namespace ClipboardMachinery.Components.Clip {
             };
 
             if (dialog.ShowDialog() != true) {
-                return;
+                return Task.CompletedTask;
             }
 
             BitmapEncoder encoder = new PngBitmapEncoder();
@@ -367,6 +363,8 @@ namespace ClipboardMachinery.Components.Clip {
             using (FileStream fileStream = new FileStream(dialog.FileName, FileMode.Create)) {
                 encoder.Save(fileStream);
             }
+
+            return Task.CompletedTask;
         }
 
         public void Focus() {

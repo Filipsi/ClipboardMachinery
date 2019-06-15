@@ -1,7 +1,6 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
-using ClipboardMachinery.Popup.Manager.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -74,9 +73,8 @@ namespace ClipboardMachinery.Popup.Manager {
             }
         }
 
-        private void HandleCloseClick(ActionButtonViewModel button) {
-            // ReSharper disable once ArrangeStaticMemberQualifier
-            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+        private async Task HandleCloseClick(ActionButtonViewModel button) {
+            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 
         public async Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
@@ -92,7 +90,7 @@ namespace ClipboardMachinery.Popup.Manager {
         }
 
         protected override async Task ChangeActiveItemAsync(IScreen newItem, bool closePrevious, CancellationToken cancellationToken) {
-            if (ActiveItem is IExtensionControlsProvider oldControls) {
+            if (ActiveItem is IPopupExtendedControls oldControls) {
                 oldControls.ExtensionControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
                     sender: oldControls.ExtensionControls,
@@ -104,7 +102,7 @@ namespace ClipboardMachinery.Popup.Manager {
 
             await base.ChangeActiveItemAsync(newItem, closePrevious, cancellationToken);
 
-            if (newItem is IExtensionControlsProvider newControls) {
+            if (newItem is IPopupExtendedControls newControls) {
                 newControls.ExtensionControls.CollectionChanged += OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
                     sender: newControls.ExtensionControls,

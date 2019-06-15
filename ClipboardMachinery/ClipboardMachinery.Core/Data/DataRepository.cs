@@ -13,7 +13,7 @@ namespace ClipboardMachinery.Core.Data {
 
         #region Properties
 
-        internal IStorageAdapter Storage {
+        internal IDatabaseAdapter Database {
             get;
         }
 
@@ -28,12 +28,12 @@ namespace ClipboardMachinery.Core.Data {
 
         #endregion
 
-        public DataRepository(IStorageAdapter storageAdapter, IMapper mapper) {
-            Storage = storageAdapter;
+        public DataRepository(IDatabaseAdapter databaseAdapter, IMapper mapper) {
+            Database = databaseAdapter;
             Mapper = mapper;
 
             // Load last saved clip
-            IDbConnection db = Storage.Connection;
+            IDbConnection db = Database.Connection;
             SqlExpression <Clip> expression = db.From<Clip>().OrderByDescending(clip => clip.Id);
             LastClipContent = db.Single(expression)?.Content;
         }
@@ -67,8 +67,8 @@ namespace ClipboardMachinery.Core.Data {
             // Handle tag type for every new tag
             foreach (Tag tag in clip.Tags) {
                 // Check if TagType the Tag is specifying exits, if not create it
-                if (!await Storage.Connection.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
-                    await Storage.Connection.InsertAsync(
+                if (!await Database.Connection.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
+                    await Database.Connection.InsertAsync(
                         new TagType {
                             Name = tag.TypeName,
                             Kind = tag.Value.GetType(),
@@ -78,11 +78,11 @@ namespace ClipboardMachinery.Core.Data {
                 }
 
                 // Load reference to TagType
-                await Storage.Connection.LoadReferencesAsync(tag);
+                await Database.Connection.LoadReferencesAsync(tag);
             }
 
             // Save clips
-            bool wasSaveSuccessfull = await Storage.Connection.SaveAsync(clip, references: true);
+            bool wasSaveSuccessfull = await Database.Connection.SaveAsync(clip, references: true);
 
             // If we managed to successfully save the clip update last saved clip content
             if (wasSaveSuccessfull) {
@@ -95,12 +95,12 @@ namespace ClipboardMachinery.Core.Data {
 
         public async Task DeleteClip(int id) {
             // Delete all related tags
-            foreach (Tag relatedTag in await Storage.Connection.SelectAsync<Tag>(t => t.ClipId == id)) {
-                await Storage.Connection.DeleteAsync(relatedTag);
+            foreach (Tag relatedTag in await Database.Connection.SelectAsync<Tag>(t => t.ClipId == id)) {
+                await Database.Connection.DeleteAsync(relatedTag);
             }
 
             // Delete the clip itself
-            await Storage.Connection.DeleteByIdAsync<Clip>(id);
+            await Database.Connection.DeleteByIdAsync<Clip>(id);
         }
 
         public async Task<T> CreateTag<T>(int clipId, string type, object value) {
@@ -112,8 +112,8 @@ namespace ClipboardMachinery.Core.Data {
             };
 
             // Check if TagType exits, if not create it
-            if (!await Storage.Connection.ExistsAsync<TagType>(new { Name = type })) {
-                await Storage.Connection.InsertAsync(
+            if (!await Database.Connection.ExistsAsync<TagType>(new { Name = type })) {
+                await Database.Connection.InsertAsync(
                     new TagType {
                         Name = type,
                         Kind = value.GetType(),
@@ -124,17 +124,17 @@ namespace ClipboardMachinery.Core.Data {
 
             // Load reference to TagType
             // This is needed to actually fill the newly created tag with TagType values.
-            await Storage.Connection.LoadReferencesAsync(tag);
+            await Database.Connection.LoadReferencesAsync(tag);
 
             // Save newly created tag
-            await Storage.Connection.SaveAsync(tag, references: true);
+            await Database.Connection.SaveAsync(tag, references: true);
 
             // Map it to the desired model
             return Mapper.Map<T>(tag);
         }
 
         public async Task UpdateTag(int id, object value) {
-            await Storage.Connection.UpdateAsync<Tag>(
+            await Database.Connection.UpdateAsync<Tag>(
                 new {
                     Id = id,
                     Value = value
@@ -143,11 +143,11 @@ namespace ClipboardMachinery.Core.Data {
         }
 
         public async Task DeleteTag(int id) {
-            await Storage.Connection.DeleteByIdAsync<Tag>(id);
+            await Database.Connection.DeleteByIdAsync<Tag>(id);
         }
 
         public async Task UpdateTagProperty(string name, System.Windows.Media.Color color) {
-            await Storage.Connection.UpdateAsync<TagType>(
+            await Database.Connection.UpdateAsync<TagType>(
                 new {
                     Name = name,
                     Color = Mapper.Map<Color>(color)
@@ -187,7 +187,7 @@ namespace ClipboardMachinery.Core.Data {
         protected virtual void Dispose(bool disposing) {
             if (!isDisposed) {
                 if (disposing) {
-                    Storage.Dispose();
+                    Database.Dispose();
                 }
 
                 // There are no unmanaged resources to release, but
