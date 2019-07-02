@@ -1,22 +1,13 @@
 ﻿using Caliburn.Micro;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using static ClipboardMachinery.ViewModels.ClipViewModel;
 
-namespace ClipboardMachinery.Models {
+namespace ClipboardMachinery.Models
+{
 
-    [JsonObject(MemberSerialization.OptIn)]
     public class ClipModel : PropertyChangedBase {
 
         #region Properties
 
-        [JsonProperty("content")]
         public string RawContent {
             get => rawContent;
             set {
@@ -28,7 +19,6 @@ namespace ClipboardMachinery.Models {
             }
         }
 
-        [JsonProperty("timestamp")]
         public DateTime Created {
             get => created;
             set {
