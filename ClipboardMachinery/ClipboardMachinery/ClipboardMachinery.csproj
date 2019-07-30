@@ -120,8 +120,12 @@
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
-    <Compile Include="Pages\ClipHolder.cs" />
-    <Compile Include="Pages\LazyClipHolder.cs" />
+    <Compile Include="Pages\ClipPageBase.cs" />
+    <Compile Include="Pages\LazyPageBase.cs" />
+    <Compile Include="Pages\TagTypes\TagTypesView.xaml.cs">
+      <DependentUpon>TagTypesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TagTypes\TagTypesViewModel.cs" />
     <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
@@ -237,11 +241,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\TagTypes\TagTypesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Popup\Manager\PopupManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Popup\TagEditor\TagEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\LiteTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

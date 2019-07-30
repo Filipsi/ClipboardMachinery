@@ -27,74 +27,15 @@
 
         <Grid Grid.Column="1">
             <StackPanel VerticalAlignment="Center">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type TextBox}">
-                        <Setter Property="Margin" Value="4" />
-                        <Setter Property="Padding" Value="2" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="{StaticResource BodyControlBrush}" />
-                        <Setter Property="BorderThickness" Value="0,0,0,1" />
-                        <Setter Property="FontSize" Value="14" />
-
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type TextBox}">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-
-                                        <Border
-                                            Grid.Row="0"
-                                            x:Name="border"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            Background="{TemplateBinding Background}"
-                                            SnapsToDevicePixels="True">
-
-                                            <ScrollViewer
-                                                x:Name="PART_ContentHost"
-                                                Focusable="false"
-                                                HorizontalScrollBarVisibility="Hidden"
-                                                VerticalScrollBarVisibility="Hidden" />
-                                        </Border>
-
-                                        <TextBlock
-                                            x:Name="TagLabel"
-                                            Grid.Row="1"
-                                            Foreground="{StaticResource BodyControlBrush}"
-                                            FontSize="13"
-                                            Margin="1,4"
-                                            FontFamily="{StaticResource LatoThin}"
-                                            Text="{TemplateBinding Tag}" />
-                                    </Grid>
-
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsEnabled" Value="false">
-                                            <Setter Property="Opacity" TargetName="border" Value="0.56" />
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="true">
-                                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource PanelHoverBrush}" />
-                                        </Trigger>
-                                        <Trigger Property="IsFocused" Value="true">
-                                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource ElementSelectBrush}" />
-                                            <Setter Property="Foreground" TargetName="TagLabel" Value="{StaticResource ElementSelectBrush}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </StackPanel.Resources>
-
                 <TextBox
-                    IsReadOnly="True"
                     Tag="Tag"
+                    IsReadOnly="True"
+                    Style="{StaticResource LiteTextBoxStyle}"
                     Text="{Binding Model.Name}" />
 
                 <TextBox
                     Tag="Value"
+                    Style="{StaticResource LiteTextBoxStyle}"
                     Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ContentControl

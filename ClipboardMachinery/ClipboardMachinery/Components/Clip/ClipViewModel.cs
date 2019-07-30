@@ -164,6 +164,8 @@ namespace ClipboardMachinery.Components.Clip {
             favoriteButton.ToolTip = "Favorite";
             favoriteButton.Icon = (Geometry)Application.Current.FindResource("IconStarEmpty");
             favoriteButton.ToggledIcon = (Geometry)Application.Current.FindResource("IconStarFull");
+            favoriteButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteBrush");
+            favoriteButton.DisabledColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteDisabledBrush");
             favoriteButton.ToggleColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteBrush");
             favoriteButton.ClickAction = ToggleFavorite;
             favoriteButton.ConductWith(this);

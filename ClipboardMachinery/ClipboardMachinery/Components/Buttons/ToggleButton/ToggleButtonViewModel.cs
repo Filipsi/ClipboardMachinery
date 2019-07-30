@@ -81,7 +81,7 @@ namespace ClipboardMachinery.Components.Buttons.ToggleButton {
         public new SolidColorBrush Color {
             get {
                 if (!IsEnabled) {
-                    return disabledColor;
+                    return DisabledColor;
                 }
 
                 return IsToggled

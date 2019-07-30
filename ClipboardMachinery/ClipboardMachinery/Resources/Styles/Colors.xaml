@@ -25,6 +25,9 @@
     <Color x:Key="ElementFavoriteColor">#F1C40F</Color>
     <SolidColorBrush x:Key="ElementFavoriteBrush" Color="{StaticResource ElementFavoriteColor}" />
 
+    <Color x:Key="ElementFavoriteDisabledColor">#C6AB3F</Color>
+    <SolidColorBrush x:Key="ElementFavoriteDisabledBrush" Color="{StaticResource ElementFavoriteDisabledColor}" />
+
     <Color x:Key="DangerousActionColor">#c0392b</Color>
     <SolidColorBrush x:Key="DangerousActionBrush" Color="{StaticResource DangerousActionColor}" />
 

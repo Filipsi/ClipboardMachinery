@@ -1,16 +1,15 @@
 ﻿using System;
-using ClipboardMachinery.Components.Clip;
-using ClipboardMachinery.Core.Data;
-using ClipboardMachinery.Core.Data.LazyProvider;
-using ClipboardMachinery.Plumbing.Factories;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Caliburn.Micro;
+using ClipboardMachinery.Core.Data.LazyProvider;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class LazyClipHolder : ClipHolder {
+    public abstract class LazyPage<TVM, TM> : Conductor<TVM>.Collection.AllActive where TVM : class, IScreen where TM : class {
 
         #region Properties
 
@@ -29,7 +28,7 @@ namespace ClipboardMachinery.Pages {
                 // Load new batch of item when user scrolls to the bottom of a page.
                 // Initial load is handed by OnActivate method.
                 if (IsActive && !IsLoadingBatch && remainingScrollableHeight < 16) {
-                    loadBatchTask = Task.Run(LoadClipBatch);
+                    loadBatchTask = Task.Run(LoadDataBatch);
                 }
             }
         }
@@ -47,37 +46,45 @@ namespace ClipboardMachinery.Pages {
             }
         }
 
+        protected ILazyDataProvider DataProvider {
+            get;
+        }
+
         private bool IsLoadingBatch
             => loadBatchTask?.IsCompleted == false;
+
+        public bool WatermarkIsVisible
+            => Items.Count == 0;
 
         #endregion
 
         #region Fields
 
-        protected readonly int batchSize;
-        protected readonly ILazyDataProvider lazyClipProvider;
-
         private double remainingScrollableHeight;
         private double verticalScrollOffset;
         private Task loadBatchTask;
 
-        protected bool clearAllItemsOnDeactivate = false;
-
         #endregion
 
-        protected LazyClipHolder(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(dataRepository, clipVmFactory) {
-            this.batchSize = batchSize;
-            lazyClipProvider = dataRepository.CreateLazyClipProvider(batchSize);
-            loadBatchTask = Task.Run(LoadClipBatch);
+        protected LazyPage(ILazyDataProvider dataProvider) {
+            Items.CollectionChanged += OnItemsCollectionChanged;
+            DataProvider = dataProvider;
         }
 
         #region Logic
 
-        private async Task LoadClipBatch() {
-            foreach (ClipModel model in await lazyClipProvider.GetNextBatchAsync<ClipModel>()) {
-                await ActivateItemAsync(clipVmFactory.Create(model), CancellationToken.None);
+        private async Task LoadDataBatch() {
+            foreach (TM model in await DataProvider.GetNextBatchAsync<TM>()) {
+                await ActivateItemAsync(CreateItem(model), CancellationToken.None);
             }
         }
+
+        protected abstract TVM CreateItem(TM model);
+
+        protected abstract void ReleaseItem(TVM instance);
+
+        protected abstract bool IsClearingItemsWhenDeactivating(bool close);
+
 
         #endregion
 
@@ -87,29 +94,41 @@ namespace ClipboardMachinery.Pages {
             // Initial item load after page activates.
             // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
             if (!IsLoadingBatch && Items.Count == 0) {
-                await Task.Run(LoadClipBatch, cancellationToken);
+                await Task.Run(LoadDataBatch, cancellationToken);
             }
         }
 
         protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            if (close) {
+                Items.CollectionChanged -= OnItemsCollectionChanged;
+            }
+
             // This is done mainly for optimization and reset when pages are switched
             // to prevent from having outdated clips or large amounts of then lingering on the page
             // Also used when screen is closed to release all clips
-            IEnumerable<ClipViewModel> itemsToRemove = close || clearAllItemsOnDeactivate
+            IEnumerable<TVM> itemsToRemove = close || IsClearingItemsWhenDeactivating(close)
                 ? Items
-                : Items.Skip(batchSize);
+                : Items.Skip(DataProvider.BatchSize);
 
-            foreach (ClipViewModel clip in itemsToRemove.ToArray()) {
-                await clip.TryCloseAsync(true);
-                clipVmFactory.Release(clip);
+            foreach (TVM item in itemsToRemove.ToArray()) {
+                await item.TryCloseAsync(true);
+                ReleaseItem(item);
             }
 
-            lazyClipProvider.Offset = Items.Count;
+            DataProvider.Offset = Items.Count;
             VerticalScrollOffset = 0;
         }
 
+        private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            switch (e.Action) {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Reset:
+                    NotifyOfPropertyChange(() => WatermarkIsVisible);
+                    break;
+            }
+        }
+
         #endregion
-
     }
-
 }

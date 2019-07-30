@@ -4,7 +4,6 @@ using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.Data;
 using ClipboardMachinery.Plumbing.Factories;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,55 +12,42 @@ using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class ClipHolder : Conductor<ClipViewModel>.Collection.AllActive, IHandle<ClipEvent> {
-
-        #region Properties
-
-        public bool WatermarkIsVisible
-            => Items.Count == 0;
-
-        #endregion
+    public abstract class ClipPageBase : LazyPage<ClipViewModel, ClipModel>, IHandle<ClipEvent> {
 
         #region Fields
 
         protected readonly IDataRepository dataRepository;
         protected readonly IClipViewModelFactory clipVmFactory;
 
-        protected bool allowAddingClipsFromKeyboard = true;
+        #endregion
+
+        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory)
+            : base(dataRepository.CreateLazyClipProvider(batchSize)) {
+
+            this.dataRepository = dataRepository;
+            this.clipVmFactory = clipVmFactory;
+        }
+
+        #region Logic
+
+        protected override ClipViewModel CreateItem(ClipModel model) {
+            return clipVmFactory.Create(model);
+        }
+
+        protected override void ReleaseItem(ClipViewModel instance) {
+            clipVmFactory.Release(instance);
+        }
+
+        protected abstract bool IsAllowedAddClipsFromKeyboard(ClipEvent message);
 
         #endregion
 
-        protected ClipHolder(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) {
-            this.dataRepository = dataRepository;
-            this.clipVmFactory = clipVmFactory;
-
-            Items.CollectionChanged += OnClipboardItemsCollectionChanged;
-        }
-
         #region Handlers
-
-        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
-            if (close) {
-                Items.CollectionChanged -= OnClipboardItemsCollectionChanged;
-            }
-
-            return base.OnDeactivateAsync(close, cancellationToken);
-        }
-
-        private void OnClipboardItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            switch (e.Action) {
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Remove:
-                case NotifyCollectionChangedAction.Reset:
-                    NotifyOfPropertyChange(() => WatermarkIsVisible);
-                    break;
-            }
-        }
 
         public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
                 case ClipEventType.Created:
-                    if (!allowAddingClipsFromKeyboard) {
+                    if (!IsAllowedAddClipsFromKeyboard(message)) {
                         return;
                     }
 

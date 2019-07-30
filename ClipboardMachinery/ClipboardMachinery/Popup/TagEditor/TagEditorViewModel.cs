@@ -108,7 +108,7 @@ namespace ClipboardMachinery.Popup.TagEditor {
             // ReSharper disable once InvertIf
             if (Model.Color != ColorGallery.SelectedColor) {
                 Model.Color = ColorGallery.SelectedColor;
-                await dataRepository.UpdateTagProperty(Model.Name, Model.Color.Value);
+                await dataRepository.UpdateTagType(Model.Name, Model.Color.Value);
 
                 // NOTE: This is needed to change color of all tag types, not just this one.
                 await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.ColorChange));

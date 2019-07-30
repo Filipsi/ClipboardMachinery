@@ -146,10 +146,14 @@ namespace ClipboardMachinery.Core.Data {
             await Database.Connection.DeleteByIdAsync<Tag>(id);
         }
 
-        public async Task UpdateTagProperty(string name, System.Windows.Media.Color color) {
+        public ILazyDataProvider CreateLazyTagTypeProvider(int batchSize) {
+            return new LazyDataProvider<TagType>(this, batchSize);
+        }
+
+        public async Task UpdateTagType(string typeName, System.Windows.Media.Color color) {
             await Database.Connection.UpdateAsync<TagType>(
                 new {
-                    Name = name,
+                    Name = typeName,
                     Color = Mapper.Map<Color>(color)
                 }
             );

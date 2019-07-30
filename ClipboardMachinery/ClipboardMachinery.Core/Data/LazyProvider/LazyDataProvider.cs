@@ -11,6 +11,8 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
 
         #region Properties
 
+        public int BatchSize { get; }
+
         public int Offset { get; set; }
 
         #endregion
@@ -18,7 +20,6 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
         #region Fields
 
         private readonly DataRepository dataRepository;
-        private readonly int batchSize;
         private readonly Func<IDbConnection, IList<T>, Task> onBatchLoaded;
 
         private string filteredTagName;
@@ -28,8 +29,8 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
 
         internal LazyDataProvider(DataRepository dataRepository, int batchSize, Func<IDbConnection, IList<T>, Task> onBatchLoaded = null) {
             this.dataRepository = dataRepository;
-            this.batchSize = batchSize;
             this.onBatchLoaded = onBatchLoaded;
+            BatchSize = batchSize;
         }
 
         #region Logic
@@ -42,6 +43,7 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
 
             // Apply filter
             // NOTE: This is only experimental, more in-depth implementation will be needed once we start working on search.
+            //       Currently this is used to filter favorite clips.
             if (typeof(T).IsAssignableFrom(typeof(Clip))) {
                 if (!string.IsNullOrEmpty(filteredTagName) && !string.IsNullOrEmpty(filteredTagValue)) {
                     query
@@ -51,7 +53,7 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
                 }
             }
 
-            query.OrderByDescending(1).Limit(batchSize);
+            query.OrderByDescending(1).Limit(BatchSize);
             query.Offset = Offset;
 
             // Load entries of type T

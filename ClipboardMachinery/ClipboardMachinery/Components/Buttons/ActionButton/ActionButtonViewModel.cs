@@ -79,6 +79,22 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
             }
         }
 
+        public SolidColorBrush DisabledColor {
+            get => disabledColor;
+            set {
+                if (Equals(disabledColor, value)) {
+                    return;
+                }
+
+                disabledColor = value;
+                NotifyOfPropertyChange();
+
+                if (!IsEnabled) {
+                    NotifyOfPropertyChange(() => Color);
+                }
+            }
+        }
+
         public bool IsEnabled {
             get => isEnabled;
             set {
@@ -120,7 +136,7 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
         public SolidColorBrush Color {
             get {
                 if (!IsEnabled) {
-                    return disabledColor;
+                    return DisabledColor;
                 }
 
                 return IsFocused
@@ -136,13 +152,14 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
 
         #region Fields
 
-        protected static readonly SolidColorBrush panelDefaultColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
-        protected static readonly SolidColorBrush panelHoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
-        protected static readonly SolidColorBrush disabledColor = Brushes.DimGray;
+        protected static readonly SolidColorBrush defaultForegroundColor = Application.Current.FindResource("PanelControlBrush") as SolidColorBrush;
+        protected static readonly SolidColorBrush defaultHoverColor = Application.Current.FindResource("PanelHoverBrush") as SolidColorBrush;
+        protected static readonly SolidColorBrush defaultDisabledColor = Brushes.DimGray;
 
+        private SolidColorBrush defaultColor = defaultForegroundColor;
+        private SolidColorBrush hoverColor = defaultHoverColor;
+        private SolidColorBrush disabledColor = defaultDisabledColor;
         protected Func<ActionButtonViewModel, Task> clickHandler;
-        protected SolidColorBrush defaultColor = panelDefaultColor;
-        protected SolidColorBrush hoverColor = panelHoverColor;
         protected bool isEnabled = true;
         protected bool isFocused;
         protected Geometry icon;

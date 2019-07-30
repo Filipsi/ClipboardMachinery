@@ -1,0 +1,56 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Pages.TagTypes.TagTypesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:Interactions="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
+    mc:Ignorable="d" d:DesignWidth="512"
+    Background="{StaticResource BodyBackgroundBrush}">
+
+    <Grid MinHeight="128">
+
+        <!-- Watermark -->
+        <Border x:Name="WatermarkIsVisible">
+            <Border.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
+                </Style>
+            </Border.Resources>
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock>Strange, there are no tag types yet.</TextBlock>
+                <Path
+                    Width="32"
+                    Data="{StaticResource IconTag}"
+                    Fill="{StaticResource PanelControlBrush}"
+                    Stretch="Uniform"
+                    Margin="0,16,0,0" />
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            CanContentScroll="True">
+
+            <Interactions:Interaction.Behaviors>
+                <behaviors:ScrollControlBehavior
+                    RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}"
+                    VerticalOffset="{Binding VerticalScrollOffset}" />
+            </Interactions:Interaction.Behaviors>
+
+            <ItemsControl x:Name="Items">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+

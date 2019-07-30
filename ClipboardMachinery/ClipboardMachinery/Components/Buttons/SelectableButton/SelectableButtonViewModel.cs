@@ -41,7 +41,7 @@ namespace ClipboardMachinery.Components.Buttons.SelectableButton {
         public new SolidColorBrush Color {
             get {
                 if (!IsEnabled) {
-                    return disabledColor;
+                    return DisabledColor;
                 }
 
                 return IsSelected

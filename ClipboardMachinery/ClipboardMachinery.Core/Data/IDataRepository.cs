@@ -63,12 +63,19 @@ namespace ClipboardMachinery.Core.Data {
         Task DeleteTag(int id);
 
         /// <summary>
+        /// Create tag type provider that can be used to restive batches of tag types sored by descending creation date.
+        /// </summary>
+        /// <param name="batchSize">Size of a batch of tag types</param>
+        /// <returns>A instance of lazy tag type provider</returns>
+        ILazyDataProvider CreateLazyTagTypeProvider(int batchSize);
+
+        /// <summary>
         /// Updates TagType with corresponding name (primary key).
         /// TagType name is equivalent to TagModel#Name.
         /// </summary>
-        /// <param name="name">Id of TagType aka TagModel#Name</param>
+        /// <param name="typeName">Id of TagType aka TagModel#Name</param>
         /// <param name="color">New color of TagType</param>
-        Task UpdateTagProperty(string name, Color color);
+        Task UpdateTagType(string typeName, Color color);
 
     }
 

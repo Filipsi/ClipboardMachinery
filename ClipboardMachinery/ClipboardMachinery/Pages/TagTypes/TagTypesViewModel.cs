@@ -1,17 +1,17 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Navigator;
 
-namespace ClipboardMachinery.Pages.Search {
+namespace ClipboardMachinery.Pages.TagTypes {
 
-    public class SearchViewModel : Screen, IScreenPage {
+    public class TagTypesViewModel : Screen, IScreenPage {
 
         #region IScreenPage
 
         public string Title
-            => "Search";
+            => "Tag types";
 
         public string Icon
-            => "IconSearch";
+            => "IconTag";
 
         public byte Order
             => 3;

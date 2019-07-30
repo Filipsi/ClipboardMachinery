@@ -7,7 +7,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="Resources/Styles/LiteTextBox.xaml" />
                 <ResourceDictionary Source="Resources/Icons.xaml" />
+
                 <ResourceDictionary>
                     <plumbing:AppBootstrapper x:Key="Bootstrapper" />
                 </ResourceDictionary>

@@ -6,16 +6,21 @@ namespace ClipboardMachinery.Core.Data.LazyProvider {
     public interface ILazyDataProvider {
 
         /// <summary>
+        /// Number of items that are provided when retrieving data.
+        /// </summary>
+        int BatchSize { get; }
+
+        /// <summary>
         /// Offset counter pointing to the current point in history.
         /// </summary>
         int Offset { get; set; }
 
         /// <summary>
-        /// Query database for a batch of clips with internal offset to retrieve history items.
+        /// Query database for a batch of entries with internal offset to retrieve history items.
         /// After successful query moves offset counter by batch size.
         /// </summary>
         /// <typeparam name="TM">Type of model that the query instance should be mapped to and returned back</typeparam>
-        /// <returns>An enumerable of queried clips mapped to M model</returns>
+        /// <returns>An enumerable of queried entries mapped to M model</returns>
         Task<IEnumerable<TM>> GetNextBatchAsync<TM>();
 
         /// <summary>

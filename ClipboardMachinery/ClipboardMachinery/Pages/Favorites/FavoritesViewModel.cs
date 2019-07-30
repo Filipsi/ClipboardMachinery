@@ -1,12 +1,13 @@
-﻿using ClipboardMachinery.Components.Navigator;
+﻿using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Data;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.Favorites {
 
-    public class FavoritesViewModel : LazyClipHolder, IScreenPage {
+    public class FavoritesViewModel : ClipPageBase, IScreenPage {
 
-        #region IPage
+        #region IScreenPage
 
         public string Title
             => "Favorites";
@@ -20,10 +21,20 @@ namespace ClipboardMachinery.Pages.Favorites {
         #endregion
 
         public FavoritesViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(15, dataRepository, clipVmFactory) {
-            allowAddingClipsFromKeyboard = false;
-            clearAllItemsOnDeactivate = true;
-            lazyClipProvider.ApplyTagFilter("category", "favorite");
+            DataProvider.ApplyTagFilter("category", "favorite");
         }
+
+        #region Logic
+
+        protected override bool IsAllowedAddClipsFromKeyboard(ClipEvent message) {
+            return false;
+        }
+
+        protected override bool IsClearingItemsWhenDeactivating(bool close) {
+            return true;
+        }
+
+        #endregion
 
     }
 

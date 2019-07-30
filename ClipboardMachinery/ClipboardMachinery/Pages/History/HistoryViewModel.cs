@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.Data;
@@ -7,9 +8,9 @@ using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.History {
 
-    public class HistoryViewModel : LazyClipHolder, IScreenPage {
+    public class HistoryViewModel : ClipPageBase, IScreenPage {
 
-        #region IPage
+        #region IScreenPage
 
         public string Title
             => "History";
@@ -25,6 +26,18 @@ namespace ClipboardMachinery.Pages.History {
         public HistoryViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(15, dataRepository, clipVmFactory) {
         }
 
+        #region Logic
+
+        protected override bool IsAllowedAddClipsFromKeyboard(ClipEvent message) {
+            return true;
+        }
+
+        protected override bool IsClearingItemsWhenDeactivating(bool close) {
+            return false;
+        }
+
+        #endregion
+
         #region Handlers
 
         protected override async void OnKeyboardClipAdded(ClipViewModel newClip) {
@@ -32,7 +45,7 @@ namespace ClipboardMachinery.Pages.History {
 
             // When new clip is added and user is not scrolling, we try to keep loaded clip count at size of one batch
             // This prevents from having too many items slowing down deactivation and switching between pages
-            if (Items.Count <= batchSize || !(Math.Abs(VerticalScrollOffset) < 4)) {
+            if (Items.Count <= DataProvider.BatchSize || !(Math.Abs(VerticalScrollOffset) < 4)) {
                 return;
             }
 
