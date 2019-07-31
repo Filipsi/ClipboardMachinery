@@ -109,6 +109,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
+    <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />
     <Compile Include="Common\Converters\EqualityConverter.cs" />
     <Compile Include="Common\Events\PopupEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />
@@ -132,13 +133,18 @@
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
+    <Compile Include="Components\TagType\TagTypeModel.cs" />
+    <Compile Include="Components\TagType\TagTypeView.xaml.cs">
+      <DependentUpon>TagTypeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TagType\TagTypeViewModel.cs" />
     <Compile Include="Pages\ClipPageBase.cs" />
     <Compile Include="Pages\LazyPageBase.cs" />
     <Compile Include="Pages\TagTypes\TagTypesView.xaml.cs">
       <DependentUpon>TagTypesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TagTypes\TagTypesViewModel.cs" />
-    <Compile Include="Plumbing\Factories\IClipViewModelFactory.cs" />
+    <Compile Include="Plumbing\Factories\IViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
     <Compile Include="Popup\Manager\IPopupExtendedControls.cs" />
@@ -250,6 +256,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Buttons\ToggleButton\ToggleButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\TagType\TagTypeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

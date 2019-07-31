@@ -3,6 +3,7 @@
     <!-- Fonts -->
     <FontFamily x:Key="LatoRegular">pack://application:,,,/Resources/Fonts/#Lato Regular</FontFamily>
     <FontFamily x:Key="LatoThin">pack://application:,,,/Resources/Fonts/#Lato Thin</FontFamily>
+    <FontFamily x:Key="LatoLight">pack://application:,,,/Resources/Fonts/#Lato Light</FontFamily>
     <FontFamily x:Key="LatoBold">pack://application:,,,/Resources/Fonts/#Lato Bold</FontFamily>
 
     <!-- Styles -->

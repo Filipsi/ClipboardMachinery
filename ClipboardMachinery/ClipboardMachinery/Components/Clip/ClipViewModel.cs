@@ -31,7 +31,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         public ClipModel Model {
             get => model;
-            set {
+            private set {
                 if (model == value) {
                     return;
                 }

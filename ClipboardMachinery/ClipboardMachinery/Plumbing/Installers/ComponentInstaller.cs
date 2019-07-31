@@ -30,7 +30,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
-                    .For<IClipViewModelFactory>()
+                    .For<IViewModelFactory>()
                     .AsFactory()
                     .LifestyleTransient()
             );

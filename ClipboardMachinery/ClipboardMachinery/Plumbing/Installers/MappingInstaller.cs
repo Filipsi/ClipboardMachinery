@@ -4,6 +4,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.Data.Schema;
 
 namespace ClipboardMachinery.Plumbing.Installers {
@@ -30,6 +31,9 @@ namespace ClipboardMachinery.Plumbing.Installers {
                         opt.MapFrom(source => source.Type.Color);
                         opt.AllowNull();
                     });
+
+                config
+                    .CreateMap<TagType, TagTypeModel>();
 
                 // Mappings from view to database
                 // NOTE: Experimental

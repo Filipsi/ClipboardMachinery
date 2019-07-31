@@ -23,7 +23,7 @@ namespace ClipboardMachinery.Pages.History {
 
         #endregion
 
-        public HistoryViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(15, dataRepository, clipVmFactory) {
+        public HistoryViewModel(IDataRepository dataRepository, IViewModelFactory vmFactory) : base(15, dataRepository, vmFactory) {
         }
 
         #region Logic
@@ -51,7 +51,7 @@ namespace ClipboardMachinery.Pages.History {
 
             ClipViewModel lastClip = Items.Last();
             await lastClip.TryCloseAsync();
-            clipVmFactory.Release(lastClip);
+            vmFactory.Release(lastClip);
         }
 
         #endregion

@@ -20,7 +20,7 @@ namespace ClipboardMachinery.Pages.Favorites {
 
         #endregion
 
-        public FavoritesViewModel(IDataRepository dataRepository, IClipViewModelFactory clipVmFactory) : base(15, dataRepository, clipVmFactory) {
+        public FavoritesViewModel(IDataRepository dataRepository, IViewModelFactory vmFactory) : base(15, dataRepository, vmFactory) {
             DataProvider.ApplyTagFilter("category", "favorite");
         }
 

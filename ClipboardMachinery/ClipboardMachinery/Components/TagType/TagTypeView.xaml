@@ -1,0 +1,56 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.TagType.TagTypeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
+    mc:Ignorable="d" d:DesignWidth="256"
+    Height="48">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="UseLayoutRounding" Value="True" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border
+        Background="{StaticResource BodyBackgroundBrush}"
+        BorderBrush="#E0E0E0"
+        BorderThickness="0,0,0,1">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Path
+                Grid.Column="0"
+                Margin="10"
+                Data="{StaticResource IconTag}"
+                Fill="{Binding Model.Color, Converter={converters:ColorToSolidBrushConverter}, FallbackValue={StaticResource BodyControlBrush}}"
+                Opacity="0.65"
+                Stretch="Uniform" />
+
+            <StackPanel
+                Grid.Column="1"
+                Orientation="Vertical"
+                VerticalAlignment="Center">
+
+                <TextBlock
+                    Text="{Binding Model.Name}" />
+
+                <TextBlock
+                    Foreground="#7F8C8d"
+                    FontFamily="{StaticResource LatoLight}"
+                    Text="{Binding Model.KindName}" />
+            </StackPanel>
+
+
+        </Grid>
+    </Border>
+</UserControl>

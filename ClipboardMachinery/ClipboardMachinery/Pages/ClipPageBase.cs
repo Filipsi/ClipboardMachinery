@@ -12,30 +12,30 @@ using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class ClipPageBase : LazyPage<ClipViewModel, ClipModel>, IHandle<ClipEvent> {
+    public abstract class ClipPageBase : LazyPageBase<ClipViewModel, ClipModel>, IHandle<ClipEvent> {
 
         #region Fields
 
         protected readonly IDataRepository dataRepository;
-        protected readonly IClipViewModelFactory clipVmFactory;
+        protected readonly IViewModelFactory vmFactory;
 
         #endregion
 
-        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IClipViewModelFactory clipVmFactory)
+        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IViewModelFactory vmFactory)
             : base(dataRepository.CreateLazyClipProvider(batchSize)) {
 
             this.dataRepository = dataRepository;
-            this.clipVmFactory = clipVmFactory;
+            this.vmFactory = vmFactory;
         }
 
         #region Logic
 
         protected override ClipViewModel CreateItem(ClipModel model) {
-            return clipVmFactory.Create(model);
+            return vmFactory.CreateClip(model);
         }
 
         protected override void ReleaseItem(ClipViewModel instance) {
-            clipVmFactory.Release(instance);
+            vmFactory.Release(instance);
         }
 
         protected abstract bool IsAllowedAddClipsFromKeyboard(ClipEvent message);
@@ -51,7 +51,7 @@ namespace ClipboardMachinery.Pages {
                         return;
                     }
 
-                    ClipViewModel createdClip = clipVmFactory.Create(message.Source);
+                    ClipViewModel createdClip = vmFactory.CreateClip(message.Source);
                     Items.Insert(0, createdClip);
                     await ActivateItemAsync(createdClip, cancellationToken);
                     OnKeyboardClipAdded(createdClip);
@@ -62,7 +62,7 @@ namespace ClipboardMachinery.Pages {
                     if (clipToRemove != null) {
                         await Task.Run(() => dataRepository.DeleteClip(clipToRemove.Model.Id), cancellationToken);
                         await clipToRemove.TryCloseAsync();
-                        clipVmFactory.Release(clipToRemove);
+                        vmFactory.Release(clipToRemove);
                     }
                     break;
 

@@ -10,7 +10,7 @@ using Nito.Mvvm;
 
 namespace ClipboardMachinery.Pages {
 
-    public abstract class LazyPage<TVM, TM> : Conductor<TVM>.Collection.AllActive where TVM : class, IScreen where TM : class {
+    public abstract class LazyPageBase<TVM, TM> : Conductor<TVM>.Collection.AllActive where TVM : class, IScreen where TM : class {
 
         #region Properties
 
@@ -76,7 +76,7 @@ namespace ClipboardMachinery.Pages {
 
         #endregion
 
-        protected LazyPage(ILazyDataProvider dataProvider) {
+        protected LazyPageBase(ILazyDataProvider dataProvider) {
             Items.CollectionChanged += OnItemsCollectionChanged;
             DataProvider = dataProvider;
         }
