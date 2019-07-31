@@ -50,17 +50,19 @@
                 <ContentControl x:Name="Navigator" />
             </Border>
 
-            <!-- Content -->
-            <Grid
+            <!-- Page -->
+            <Border
                 Grid.Row="1"
-                MaxHeight="{Binding MaxContentHeight, FallbackValue='640'}">
+                MaxHeight="{Binding MaxContentHeight, FallbackValue='640'}"
+                BorderThickness="1,0"
+                BorderBrush="{StaticResource BodyControlBrush}"
+                Background="{StaticResource BodyBackgroundBrush}">
 
-                <!-- Page -->
-                <ContentControl x:Name="ActiveItem" />
-
-                <!-- Popup overlay -->
-                <ContentControl x:Name="Popup" />
-            </Grid>
+                <Grid>
+                    <ContentControl x:Name="ActiveItem"/>
+                    <ContentControl x:Name="Popup" />
+                </Grid>
+            </Border>
 
             <!-- Bottom border -->
             <Border

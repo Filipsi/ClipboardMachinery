@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:Interactions="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
-    mc:Ignorable="d" d:DesignWidth="512"
-    Background="{StaticResource BodyBackgroundBrush}">
+    Background="{StaticResource BodyBackgroundBrush}"
+    mc:Ignorable="d" d:DesignWidth="512">
 
     <Grid MinHeight="128">
 

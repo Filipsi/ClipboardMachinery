@@ -5,8 +5,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
+    xmlns:cal="http://www.caliburnproject.org"
     mc:Ignorable="d" d:DesignWidth="256"
-    Height="48">
+    UseLayoutRounding="True"
+    RenderOptions.BitmapScalingMode="NearestNeighbor"
+    SnapsToDevicePixels="True"
+    RenderOptions.ClearTypeHint="Enabled"
+    BorderThickness="2,0,0,0"
+    BorderBrush="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
+    Height="48"
+    cal:Message.Attach="
+        [Event MouseEnter] = [Action Focus()];
+        [Event MouseLeave] = [Action Unfocus()]">
 
     <UserControl.Resources>
         <Style TargetType="TextBlock">
