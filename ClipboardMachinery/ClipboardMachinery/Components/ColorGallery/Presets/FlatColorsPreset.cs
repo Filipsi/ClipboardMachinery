@@ -8,7 +8,7 @@ namespace ClipboardMachinery.Components.ColorGallery.Presets {
 
         public string Name { get; } = "Flat";
 
-        public Color[] Colors { get; } = new Color[] {
+        public Color[] Colors { get; } = {
             Color.FromArgb(255, 26, 188, 156),
             Color.FromArgb(255, 22, 160, 133),
             Color.FromArgb(255, 46, 204, 113),

@@ -9,29 +9,35 @@
     mc:Ignorable="d" d:DesignWidth="512"
     Background="{StaticResource BodyBackgroundBrush}">
 
-    <Grid MinHeight="128">
+    <UserControl.Resources>
+        <Style
+            x:Key="InfoStyle"
+            TargetType="{x:Type Border}">
 
-        <!-- Watermark -->
-        <Border x:Name="WatermarkIsVisible">
-            <Border.Resources>
-                <Style TargetType="TextBlock">
+            <Setter Property="Background" Value="{StaticResource BodyBackgroundBrush}" />
+
+            <Style.Resources>
+                <Style TargetType="{x:Type StackPanel}">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+
+                <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="HorizontalAlignment" Value="Center" />
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
                 </Style>
-            </Border.Resources>
 
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock>The stars are nowhere to be seen.</TextBlock>
-                <TextBlock>Favorite one of your clips to begin stargazing.</TextBlock>
-                <Path
-                    Width="32"
-                    Data="{StaticResource IconTelescope}"
-                    Fill="{StaticResource PanelControlBrush}"
-                    Stretch="Uniform"
-                    Margin="0,16,0,0" />
-            </StackPanel>
-        </Border>
+                <Style TargetType="{x:Type Path}">
+                    <Setter Property="Width" Value="32" />
+                    <Setter Property="Fill" Value="{StaticResource PanelControlBrush}" />
+                    <Setter Property="Stretch" Value="Uniform" />
+                    <Setter Property="Margin" Value="0,16,0,0" />
+                </Style>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid MinHeight="128">
 
         <!-- Content -->
         <ScrollViewer
@@ -52,6 +58,18 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </ScrollViewer>
+
+        <!-- Watermark -->
+        <Border
+            x:Name="WatermarkIsVisible"
+            Style="{StaticResource InfoStyle}">
+
+            <StackPanel>
+                <TextBlock>The stars are nowhere to be seen.</TextBlock>
+                <TextBlock>Favorite one of your clips to begin stargazing.</TextBlock>
+                <Path Data="{StaticResource IconTelescope}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>
 

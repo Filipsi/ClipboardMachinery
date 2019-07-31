@@ -30,12 +30,20 @@ namespace ClipboardMachinery.Components.Tag {
 
                 model = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => Text);
             }
         }
 
-        public string Text
-            => $"{Model?.Name}: {Model?.Value}";
+        public bool CanEdit {
+            get => canEdit;
+            private set {
+                if (canEdit == value) {
+                    return;
+                }
+
+                canEdit = value;
+                NotifyOfPropertyChange();
+            }
+        }
 
         public SolidColorBrush BackgroundColor
             => model.Color.HasValue
@@ -50,6 +58,7 @@ namespace ClipboardMachinery.Components.Tag {
         private readonly IPopupFactory popupFactory;
 
         private TagModel model;
+        private bool canEdit = true;
 
         #endregion
 
@@ -62,10 +71,8 @@ namespace ClipboardMachinery.Components.Tag {
 
         public void Edit() {
             TagEditorViewModel tagEditor = popupFactory.CreateTagEditor(model);
-            tagEditor.Deactivated += (sender, args) => {
-                popupFactory.Release(tagEditor);
-            };
-
+            tagEditor.Deactivated += OnTagEditorDeactivated;
+            CanEdit = false;
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagEditor));
         }
 
@@ -73,16 +80,16 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Handlers
 
-        private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            switch (e.PropertyName) {
-                case nameof(TagModel.Name):
-                case nameof(TagModel.Value):
-                    NotifyOfPropertyChange(() => Text);
-                    return;
+        private void OnTagEditorDeactivated(object sender, DeactivationEventArgs e) {
+            TagEditorViewModel tagEditor = (TagEditorViewModel)sender;
+            tagEditor.Deactivated -= OnTagEditorDeactivated;
+            popupFactory.Release(tagEditor);
+            CanEdit = true;
+        }
 
-                case nameof(TagModel.Color):
-                    NotifyOfPropertyChange(() => BackgroundColor);
-                    return;
+        private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(TagModel.Color)) {
+                NotifyOfPropertyChange(() => BackgroundColor);
             }
         }
 
@@ -91,7 +98,7 @@ namespace ClipboardMachinery.Components.Tag {
                 Model = null;
             }
 
-            return base.OnDeactivateAsync(close, cancellationToken);
+            return Task.CompletedTask;
         }
 
         #endregion

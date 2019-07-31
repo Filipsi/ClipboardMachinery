@@ -32,7 +32,7 @@ namespace ClipboardMachinery.Pages.History {
             return true;
         }
 
-        protected override bool IsClearingItemsWhenDeactivating(bool close) {
+        protected override bool IsClearingItemsWhenDeactivating() {
             return false;
         }
 

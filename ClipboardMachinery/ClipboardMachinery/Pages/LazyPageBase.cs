@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using ClipboardMachinery.Core.Data.LazyProvider;
+using Nito.Mvvm;
 
 namespace ClipboardMachinery.Pages {
 
@@ -27,8 +28,8 @@ namespace ClipboardMachinery.Pages {
                 // Handle infinite scrolling
                 // Load new batch of item when user scrolls to the bottom of a page.
                 // Initial load is handed by OnActivate method.
-                if (IsActive && !IsLoadingBatch && remainingScrollableHeight < 16) {
-                    loadBatchTask = Task.Run(LoadDataBatch);
+                if (IsActive && DataLoading?.IsNotCompleted != true && remainingScrollableHeight < 16) {
+                    DataLoading = NotifyTask.Create(Task.Run(LoadDataBatch));
                 }
             }
         }
@@ -46,12 +47,21 @@ namespace ClipboardMachinery.Pages {
             }
         }
 
+        public NotifyTask DataLoading {
+            get => dataLoading;
+            set {
+                if (dataLoading != value) {
+                    return;
+                }
+
+                dataLoading = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         protected ILazyDataProvider DataProvider {
             get;
         }
-
-        private bool IsLoadingBatch
-            => loadBatchTask?.IsCompleted == false;
 
         public bool WatermarkIsVisible
             => Items.Count == 0;
@@ -62,7 +72,7 @@ namespace ClipboardMachinery.Pages {
 
         private double remainingScrollableHeight;
         private double verticalScrollOffset;
-        private Task loadBatchTask;
+        private NotifyTask dataLoading;
 
         #endregion
 
@@ -83,19 +93,20 @@ namespace ClipboardMachinery.Pages {
 
         protected abstract void ReleaseItem(TVM instance);
 
-        protected abstract bool IsClearingItemsWhenDeactivating(bool close);
-
+        protected abstract bool IsClearingItemsWhenDeactivating();
 
         #endregion
 
         #region Handlers
 
-        protected override async Task OnActivateAsync(CancellationToken cancellationToken) {
+        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
             // Initial item load after page activates.
             // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
-            if (!IsLoadingBatch && Items.Count == 0) {
-                await Task.Run(LoadDataBatch, cancellationToken);
+            if (DataLoading?.IsNotCompleted != true && Items.Count == 0) {
+                DataLoading = NotifyTask.Create(Task.Run(LoadDataBatch, cancellationToken));
             }
+
+            return Task.CompletedTask;
         }
 
         protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
@@ -106,7 +117,7 @@ namespace ClipboardMachinery.Pages {
             // This is done mainly for optimization and reset when pages are switched
             // to prevent from having outdated clips or large amounts of then lingering on the page
             // Also used when screen is closed to release all clips
-            IEnumerable<TVM> itemsToRemove = close || IsClearingItemsWhenDeactivating(close)
+            IEnumerable<TVM> itemsToRemove = close || IsClearingItemsWhenDeactivating()
                 ? Items
                 : Items.Skip(DataProvider.BatchSize);
 
@@ -130,5 +141,6 @@ namespace ClipboardMachinery.Pages {
         }
 
         #endregion
+
     }
 }

@@ -30,7 +30,7 @@ namespace ClipboardMachinery.Pages.Favorites {
             return false;
         }
 
-        protected override bool IsClearingItemsWhenDeactivating(bool close) {
+        protected override bool IsClearingItemsWhenDeactivating() {
             return true;
         }
 

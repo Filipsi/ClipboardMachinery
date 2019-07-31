@@ -6,7 +6,7 @@ namespace ClipboardMachinery.Components.ColorGallery.Presets {
 
         public string Name { get; } = "Material";
 
-        public Color[] Colors { get; } = new Color[] {
+        public Color[] Colors { get; } = {
             Color.FromArgb(255, 244, 67, 54),
             Color.FromArgb(255, 233, 30, 99),
             Color.FromArgb(255, 156, 39, 176),

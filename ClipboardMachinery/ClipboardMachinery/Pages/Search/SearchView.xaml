@@ -8,14 +8,38 @@
     Background="{StaticResource BodyBackgroundBrush}">
 
     <Grid MinHeight="128">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
-            Unfortunately, this feature is not yet implemented.
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Foreground="{StaticResource BodyControlBrush}">
+                Unfortunately, this feature is not yet implemented.
             </TextBlock>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource BodyControlBrush}">
-            Support my work on this passion project by <Hyperlink NavigateUri="https://www.paypal.me/Filipsi/30" RequestNavigate="OnRequestNavigate" Foreground="{StaticResource BodyControlBrush}">buying me</Hyperlink> a cup coffee.
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Foreground="{StaticResource BodyControlBrush}">
+
+                Support my work on this passion project by
+                <Hyperlink
+                    NavigateUri="https://www.paypal.me/Filipsi/30"
+                    RequestNavigate="OnRequestNavigate"
+                    Foreground="{StaticResource BodyControlBrush}">
+                    buying me
+                </Hyperlink>
+                a cup coffee.
             </TextBlock>
-            <Path Width="32" Data="{StaticResource IconCoffee}" Fill="{StaticResource PanelControlBrush}" Stretch="Uniform" Margin="0,16,0,0" />
+
+            <Path
+                Width="32"
+                Data="{StaticResource IconCoffee}"
+                Fill="{StaticResource PanelControlBrush}"
+                Stretch="Uniform"
+                Margin="0,16,0,0" />
         </StackPanel>
     </Grid>
 </UserControl>

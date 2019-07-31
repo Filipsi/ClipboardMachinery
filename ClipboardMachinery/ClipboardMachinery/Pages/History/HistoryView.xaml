@@ -11,6 +11,26 @@
 
     <Grid MinHeight="128">
 
+        <!-- Content -->
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            CanContentScroll="True">
+
+            <i:Interaction.Behaviors>
+                <behaviors:ScrollControlBehavior
+                    RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}"
+                    VerticalOffset="{Binding VerticalScrollOffset}" />
+            </i:Interaction.Behaviors>
+
+            <ItemsControl x:Name="Items">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+
         <!-- Watermark -->
         <Border x:Name="WatermarkIsVisible">
             <Border.Resources>
@@ -39,27 +59,8 @@
                     Tip: Hot key CTRL+H hides the application.
                 </TextBlock>
             </StackPanel>
-         </Border>
+        </Border>
 
-        <!-- Content -->
-        <ScrollViewer
-            VerticalScrollBarVisibility="Auto"
-            CanContentScroll="True">
-
-            <i:Interaction.Behaviors>
-                <behaviors:ScrollControlBehavior
-                    RemainingScrollableHeight="{Binding RemainingScrollableHeight, Mode=OneWayToSource}"
-                    VerticalOffset="{Binding VerticalScrollOffset}" />
-            </i:Interaction.Behaviors>
-
-            <ItemsControl x:Name="Items">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
     </Grid>
 </UserControl>
 
