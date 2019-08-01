@@ -156,6 +156,10 @@
       <DependentUpon>TagEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Popup\TagEditor\TagEditorViewModel.cs" />
+    <Compile Include="Popup\TagTypeEditor\TagTypeEditorView.xaml.cs">
+      <DependentUpon>TagTypeEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Popup\TagTypeEditor\TagTypeEditorViewModel.cs" />
     <Compile Include="Windows\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
@@ -272,6 +276,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Popup\TagEditor\TagEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Popup\TagTypeEditor\TagTypeEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -66,7 +66,7 @@ namespace ClipboardMachinery.Popup.TagEditor {
 
             // Setup color gallery
             ColorGallery = colorGalleryVm;
-            if(Model.Color.HasValue) {
+            if (Model.Color.HasValue) {
                 ColorGallery.SelectColor(Model.Color.Value);
             }
 
@@ -75,7 +75,7 @@ namespace ClipboardMachinery.Popup.TagEditor {
             removeButton.ToolTip = "Remove";
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
-            removeButton.ClickAction = HandleRemoveClick;
+            removeButton.ClickAction = OnRemoveClick;
             removeButton.ConductWith(this);
             ExtensionControls.Add(removeButton);
 
@@ -83,20 +83,20 @@ namespace ClipboardMachinery.Popup.TagEditor {
             saveButton.ToolTip = "Save";
             saveButton.Icon = (Geometry)Application.Current.FindResource("IconSave");
             saveButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
-            saveButton.ClickAction = HandleSaveClick;
+            saveButton.ClickAction = OnSaveClick;
             saveButton.ConductWith(this);
             ExtensionControls.Add(saveButton);
         }
 
         #region Handlers
 
-        private async Task HandleRemoveClick(ActionButtonViewModel button) {
+        private async Task OnRemoveClick(ActionButtonViewModel button) {
             await dataRepository.DeleteTag(Model.Id);
             await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(Model, TagEventType.Remove));
             await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 
-        private async Task HandleSaveClick(ActionButtonViewModel button) {
+        private async Task OnSaveClick(ActionButtonViewModel button) {
             // Update value of changed
             if (Model.Value != Value) {
                 Model.Value = Value;

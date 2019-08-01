@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -12,7 +13,14 @@ namespace ClipboardMachinery.Plumbing.Installers {
     public class MappingInstaller : IWindsorInstaller {
 
         public void Install(IWindsorContainer container, IConfigurationStore store) {
-            MapperConfiguration configuration = new MapperConfiguration(config => {
+            container.Register(
+                Component.For<IMapper>().Instance(
+                    new MapperConfiguration(ConfigureMapper).CreateMapper()
+                )
+            );
+        }
+
+        private static void ConfigureMapper(IMapperConfigurationExpression config) {
                 // Mappings from database to view
                 config
                     .CreateMap<Clip, ClipModel>();
@@ -36,7 +44,8 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .CreateMap<TagType, TagTypeModel>();
 
                 // Mappings from view to database
-                // NOTE: Experimental
+                config
+                    .CreateMap<System.Windows.Media.Color, Color>();
 
                 /*
                 config
@@ -48,22 +57,13 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     });
 
                 config
-                    .CreateMap<System.Windows.Media.Color, Color>();
-
-                config
                     .CreateMap<TagModel, Tag>()
                     .ForMember(dest => dest.TypeName, opt => opt.MapFrom(source => source.Name))
                     .ForPath(dest => dest.Type.Name, opt => opt.MapFrom(source => source.Name))
                     .ForPath(dest => dest.Type.Color, opt => opt.MapFrom(source => source.Color))
                     .ForPath(dest => dest.Type.Type, opt => opt.MapFrom(source => source.Value.GetType()));
                 */
-            });
-
-            container.Register(
-                Component.For<IMapper>().Instance(configuration.CreateMapper())
-            );
         }
 
     }
-
 }

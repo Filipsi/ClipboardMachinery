@@ -16,7 +16,7 @@
     Height="48"
     cal:Message.Attach="
         [Event MouseEnter] = [Action Focus()];
-        [Event MouseLeave] = [Action Unfocus()]">
+        [Event MouseLeave] = [Action Unfocus()];">
 
     <UserControl.Resources>
         <Style TargetType="TextBlock">
@@ -32,7 +32,10 @@
         BorderBrush="#E0E0E0"
         BorderThickness="0,0,0,1">
 
-        <Grid>
+        <Grid
+            cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Edit()]"
+            Background="Transparent">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

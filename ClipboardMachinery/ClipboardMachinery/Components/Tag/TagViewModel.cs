@@ -67,17 +67,6 @@ namespace ClipboardMachinery.Components.Tag {
             this.popupFactory = popupFactory;
         }
 
-        #region Actions
-
-        public void Edit() {
-            TagEditorViewModel tagEditor = popupFactory.CreateTagEditor(model);
-            tagEditor.Deactivated += OnTagEditorDeactivated;
-            CanEdit = false;
-            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagEditor));
-        }
-
-        #endregion
-
         #region Handlers
 
         private void OnTagEditorDeactivated(object sender, DeactivationEventArgs e) {
@@ -99,6 +88,17 @@ namespace ClipboardMachinery.Components.Tag {
             }
 
             return Task.CompletedTask;
+        }
+
+        #endregion
+
+        #region Actions
+
+        public void Edit() {
+            TagEditorViewModel tagEditor = popupFactory.CreateTagEditor(Model);
+            tagEditor.Deactivated += OnTagEditorDeactivated;
+            CanEdit = false;
+            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagEditor));
         }
 
         #endregion

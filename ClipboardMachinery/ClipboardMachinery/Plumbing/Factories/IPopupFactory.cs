@@ -1,5 +1,7 @@
 ﻿using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Popup.TagEditor;
+using ClipboardMachinery.Popup.TagTypeEditor;
 
 namespace ClipboardMachinery.Plumbing.Factories {
 
@@ -7,7 +9,12 @@ namespace ClipboardMachinery.Plumbing.Factories {
 
         TagEditorViewModel CreateTagEditor(TagModel tagModel);
 
-        void Release(TagEditorViewModel clipVm);
+        TagTypeEditorViewModel CreateTagTypeEditor(TagTypeModel tagTypeModel);
+
+        void Release(TagEditorViewModel tagEditor);
+
+        void Release(TagTypeEditorViewModel tagTypeEditor);
 
     }
+
 }
