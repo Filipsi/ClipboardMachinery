@@ -23,7 +23,7 @@
                 Data="{StaticResource IconTag}">
 
                 <Path.Fill>
-                    <SolidColorBrush Color="{Binding ColorGallery.SelectedColor, FallbackValue={StaticResource BodyControlColor}}" />
+                    <SolidColorBrush Color="{Binding Model.Color, FallbackValue={StaticResource BodyControlColor}}" />
                 </Path.Fill>
             </Path>
         </Grid>
@@ -34,7 +34,7 @@
                     Tag="Tag"
                     IsReadOnly="True"
                     Style="{StaticResource LiteTextBoxStyle}"
-                    Text="{Binding Model.Name}" />
+                    Text="{Binding Model.TypeName}" />
 
                 <TextBox
                     Tag="Value"

@@ -25,7 +25,7 @@
             TextAlignment="Left"
             VerticalAlignment="Center"
             Foreground="#2e3131"
-            Text="{Binding Model.Name, FallbackValue='tag'}"
+            Text="{Binding Model.TypeName, FallbackValue='tag'}"
             FontFamily="Calibri" FontWeight="Bold" TextDecorations="{x:Null}" />
 
         <Border

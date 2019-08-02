@@ -1,6 +1,4 @@
-﻿using ClipboardMachinery.Components.Tag;
-
-namespace ClipboardMachinery.Common.Events {
+﻿namespace ClipboardMachinery.Common.Events {
 
     public class TagEvent {
 
@@ -11,13 +9,25 @@ namespace ClipboardMachinery.Common.Events {
             ValueChange
         }
 
-        public TagModel Source { get; }
-
         public TagEventType EventType { get; }
 
-        public TagEvent(TagModel source, TagEventType eventType) {
-            Source = source;
+        public int? TagId { get; }
+
+        public string TagTypeName { get; }
+
+        public object Argument { get; }
+
+        public TagEvent(TagEventType eventType, int tagId, string tagTypeName, object argument = null) {
             EventType = eventType;
+            TagId = tagId;
+            TagTypeName = tagTypeName;
+            Argument = argument;
+        }
+
+        public TagEvent(TagEventType eventType, string tagTypeName, object argument = null) {
+            EventType = eventType;
+            TagTypeName = tagTypeName;
+            Argument = argument;
         }
 
     }

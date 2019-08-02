@@ -91,9 +91,9 @@ namespace ClipboardMachinery.Popup.Manager {
 
         protected override async Task ChangeActiveItemAsync(IScreen newItem, bool closePrevious, CancellationToken cancellationToken) {
             if (ActiveItem is IPopupExtendedControls oldControls) {
-                oldControls.ExtensionControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
+                oldControls.PopupControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
-                    sender: oldControls.ExtensionControls,
+                    sender: oldControls.PopupControls,
                     e: new NotifyCollectionChangedEventArgs(
                         action: NotifyCollectionChangedAction.Reset
                     )
@@ -103,12 +103,12 @@ namespace ClipboardMachinery.Popup.Manager {
             await base.ChangeActiveItemAsync(newItem, closePrevious, cancellationToken);
 
             if (newItem is IPopupExtendedControls newControls) {
-                newControls.ExtensionControls.CollectionChanged += OnExtensionControlsCollectionChanged;
+                newControls.PopupControls.CollectionChanged += OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
-                    sender: newControls.ExtensionControls,
+                    sender: newControls.PopupControls,
                     e: new NotifyCollectionChangedEventArgs(
                         action: NotifyCollectionChangedAction.Add,
-                        changedItems: newControls.ExtensionControls.ToArray()
+                        changedItems: newControls.PopupControls.ToArray()
                     )
                 );
             }

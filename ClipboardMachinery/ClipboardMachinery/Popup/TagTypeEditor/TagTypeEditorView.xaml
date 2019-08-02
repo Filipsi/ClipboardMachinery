@@ -8,6 +8,30 @@
     Height="256">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="128" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="96" />
+        </Grid.ColumnDefinitions>
 
+        <Grid Grid.Column="0">
+            <Path
+                Width="96"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Stretch="Uniform"
+                Data="{StaticResource IconTag}">
+
+                <Path.Fill>
+                    <SolidColorBrush Color="{Binding ColorGallery.SelectedColor, FallbackValue={StaticResource BodyControlColor}}" />
+                </Path.Fill>
+            </Path>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <ContentControl
+                MinHeight="112"
+                x:Name="ColorGallery" />
+        </Grid>
     </Grid>
 </UserControl>

@@ -220,31 +220,33 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => Content);
                 NotifyOfPropertyChange(() => Type);
                 NotifyOfPropertyChange(() => Icon);
-                // ReSharper disable once RedundantJumpStatement
-                return;
             }
         }
 
-        public async Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
+        public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch(message.EventType) {
                 case TagEventType.Remove:
-                    foreach(TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.Source.Id).ToArray()) {
-                        await DeactivateItemAsync(tagToRemove, true, cancellationToken);
+                    foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.TagId).ToArray()) {
+                        Model.Tags.Remove(tagToRemove.Model);
                     }
                     break;
 
                 case TagEventType.ColorChange:
-                    foreach (TagViewModel vm in Items.Where(vm => vm.Model.Name == message.Source.Name)) {
-                        vm.Model.Color = message.Source.Color;
+                    foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
+                        vm.Model.Color = (Color)message.Argument;
                     }
                     break;
 
                 case TagEventType.ValueChange:
-                    if (Items.Any(tag => tag.Model == message.Source)) {
+                    TagViewModel tagWithChangedValue = Items.FirstOrDefault(tag => tag.Model.Id == message.TagId);
+                    if (tagWithChangedValue != null) {
+                        tagWithChangedValue.Model.Value = message.Argument;
                         UpdateControlsState();
                     }
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
         private void HandleModelChange() {
@@ -320,7 +322,7 @@ namespace ClipboardMachinery.Components.Clip {
                 favoriteButton.IsToggled = false;
             } else {
                 favoriteButton.IsToggled = Model.Tags.Any(
-                    tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+                    tag => tag.TypeName == "category" && tag.Value.ToString() == "favorite"
                 );
             }
         }

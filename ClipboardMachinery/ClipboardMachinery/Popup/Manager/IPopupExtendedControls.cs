@@ -5,7 +5,7 @@ namespace ClipboardMachinery.Popup.Manager {
 
     internal interface IPopupExtendedControls {
 
-        BindableCollection<ActionButtonViewModel> ExtensionControls { get; }
+        BindableCollection<ActionButtonViewModel> PopupControls { get; }
 
     }
 

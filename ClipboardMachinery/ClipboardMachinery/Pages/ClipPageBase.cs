@@ -71,7 +71,7 @@ namespace ClipboardMachinery.Pages {
                     if (clipVm != null) {
                         ClipModel clip = clipVm.Model;
                         TagModel favoriteTag = clip.Tags.FirstOrDefault(
-                            tag => tag.Name == "category" && tag.Value.ToString() == "favorite"
+                            tag => tag.TypeName == "category" && tag.Value.ToString() == "favorite"
                         );
 
                         if (favoriteTag == null) {

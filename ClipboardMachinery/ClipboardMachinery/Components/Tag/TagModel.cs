@@ -20,14 +20,14 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
-        public string Name {
-            get => name;
+        public string TypeName {
+            get => typeName;
             set {
-                if (name == value) {
+                if (typeName == value) {
                     return;
                 }
 
-                name = value;
+                typeName = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -72,7 +72,7 @@ namespace ClipboardMachinery.Components.Tag {
         );
 
         private int id;
-        private string name;
+        private string typeName;
         private object val;
         private Color? color = defaultColor;
 
