@@ -39,6 +39,10 @@
             <!-- Icon -->
             <Path
                 Grid.Column="0"
+                VerticalAlignment="Top"
+                UseLayoutRounding="True"
+                RenderOptions.BitmapScalingMode="NearestNeighbor"
+                RenderOptions.ClearTypeHint="Enabled"
                 Margin="8,0"
                 Data="{Binding Icon, FallbackValue={StaticResource IconTextFile}}"
                 Fill="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"

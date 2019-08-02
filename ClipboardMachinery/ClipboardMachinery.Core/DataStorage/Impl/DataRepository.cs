@@ -116,7 +116,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     new TagType {
                         Name = type,
                         Kind = value.GetType(),
-                        // No need to set color here, default is used if none is set
+                        Color = SystemTagTypes.DefaultColor
                     }
                 );
             }
