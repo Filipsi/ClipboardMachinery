@@ -3,7 +3,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.DataStorage;
 using System;
 using System.Threading.Tasks;
 using System.Windows;

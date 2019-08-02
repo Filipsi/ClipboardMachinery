@@ -13,7 +13,7 @@
     RenderOptions.ClearTypeHint="Enabled"
     BorderThickness="2,0,0,0"
     BorderBrush="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
-    Height="48"
+    Height="64"
     cal:Message.Attach="
         [Event MouseEnter] = [Action Focus()];
         [Event MouseLeave] = [Action Unfocus()];">
@@ -43,7 +43,7 @@
 
             <Path
                 Grid.Column="0"
-                Margin="10"
+                Margin="16"
                 Data="{StaticResource IconTag}"
                 Fill="{Binding Model.Color, Converter={converters:ColorToSolidBrushConverter}, FallbackValue={StaticResource BodyControlBrush}}"
                 Opacity="0.65"
@@ -51,18 +51,24 @@
 
             <StackPanel
                 Grid.Column="1"
-                Orientation="Vertical"
                 VerticalAlignment="Center">
 
-                <TextBlock
-                    Text="{Binding Model.Name}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        FontFamily="{StaticResource LatoBold}"
+                        Text="{Binding Model.Name}" />
+
+                    <TextBlock
+                        Margin="4,0"
+                        VerticalAlignment="Bottom"
+                        FontSize="12"
+                        Text="{Binding Model.DisplayKindLabel, StringFormat='tag {0}'}" />
+                </StackPanel>
 
                 <TextBlock
                     Foreground="#7F8C8d"
-                    FontFamily="{StaticResource LatoLight}"
-                    Text="{Binding Model.KindName}" />
+                    Text="{Binding Model.Description}" />
             </StackPanel>
-
 
         </Grid>
     </Border>

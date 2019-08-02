@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace ClipboardMachinery.Core.Data {
+namespace ClipboardMachinery.Core.DataStorage {
 
     public interface IDatabaseAdapter : IDisposable {
 

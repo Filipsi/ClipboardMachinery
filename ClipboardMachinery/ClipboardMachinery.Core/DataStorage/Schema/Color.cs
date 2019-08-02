@@ -1,4 +1,4 @@
-﻿namespace ClipboardMachinery.Core.Data.Schema {
+﻿namespace ClipboardMachinery.Core.DataStorage.Schema {
 
     public class Color {
 

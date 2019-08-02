@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using ServiceStack.OrmLite;
-using System.Threading.Tasks;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using ClipboardMachinery.Core.Data.Schema;
+using System.Threading.Tasks;
+using ClipboardMachinery.Core.DataStorage.Schema;
+using ServiceStack.OrmLite;
 
-namespace ClipboardMachinery.Core.Data.LazyProvider {
+namespace ClipboardMachinery.Core.DataStorage.Impl {
 
     public class LazyDataProvider<T> : ILazyDataProvider {
 

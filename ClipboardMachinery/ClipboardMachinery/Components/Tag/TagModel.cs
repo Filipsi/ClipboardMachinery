@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using System.Windows.Media;
+using ClipboardMachinery.Core.DataStorage;
 
 namespace ClipboardMachinery.Components.Tag {
 
@@ -63,7 +64,12 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Fields
 
-        private static readonly Color defaultColor = System.Windows.Media.Color.FromArgb(255, 96, 125, 139);
+        private static readonly Color defaultColor = System.Windows.Media.Color.FromArgb(
+            SystemTagTypes.DefaultColor.A,
+            SystemTagTypes.DefaultColor.R,
+            SystemTagTypes.DefaultColor.G,
+            SystemTagTypes.DefaultColor.B
+        );
 
         private int id;
         private string name;

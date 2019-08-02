@@ -1,7 +1,8 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.DataStorage.Impl;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 

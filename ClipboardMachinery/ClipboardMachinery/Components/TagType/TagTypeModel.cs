@@ -31,7 +31,19 @@ namespace ClipboardMachinery.Components.TagType {
 
                 kind = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => KindName);
+                NotifyOfPropertyChange(() => DisplayKindLabel);
+            }
+        }
+
+        public string Description {
+            get => description;
+            set {
+                if (description == value) {
+                    return;
+                }
+
+                description = value;
+                NotifyOfPropertyChange();
             }
         }
 
@@ -47,8 +59,8 @@ namespace ClipboardMachinery.Components.TagType {
             }
         }
 
-        public string KindName
-            => KindNameMap[Kind];
+        public string DisplayKindLabel
+            => $"with {KindNameMap[Kind]} value";
 
         #endregion
 
@@ -64,6 +76,7 @@ namespace ClipboardMachinery.Components.TagType {
 
         private string name;
         private Type kind;
+        private string description;
         private Color color;
 
         #endregion

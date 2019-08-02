@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using ClipboardMachinery.Core.Data.LazyProvider;
 
-namespace ClipboardMachinery.Core.Data {
+namespace ClipboardMachinery.Core.DataStorage {
 
     public interface IDataRepository : IDisposable {
 

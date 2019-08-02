@@ -10,7 +10,7 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;

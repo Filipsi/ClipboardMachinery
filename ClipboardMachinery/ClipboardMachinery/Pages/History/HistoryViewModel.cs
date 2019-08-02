@@ -3,7 +3,7 @@ using System.Linq;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.History {

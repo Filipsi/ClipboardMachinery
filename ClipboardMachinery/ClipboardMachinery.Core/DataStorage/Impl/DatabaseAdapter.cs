@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
-using ClipboardMachinery.Core.Data.Schema;
+using ClipboardMachinery.Core.DataStorage.Schema;
 using ServiceStack.OrmLite;
 
-namespace ClipboardMachinery.Core.Data {
+namespace ClipboardMachinery.Core.DataStorage.Impl {
 
     public class DatabaseAdapter : IDatabaseAdapter {
 
@@ -45,6 +45,13 @@ namespace ClipboardMachinery.Core.Data {
             Connection.CreateTableIfNotExists<Clip>();
             Connection.CreateTableIfNotExists<Tag>();
             Connection.CreateTableIfNotExists<TagType>();
+
+            // Make sure that there are all system owned tag types
+            foreach (TagType systemTagType in SystemTagTypes.TagTypes) {
+                if (!Connection.Exists<TagType>(new { systemTagType.Name })) {
+                    Connection.Insert(systemTagType);
+                }
+            }
         }
 
         #region IDisposable

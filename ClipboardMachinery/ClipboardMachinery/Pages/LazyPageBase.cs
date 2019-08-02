@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using ClipboardMachinery.Core.Data.LazyProvider;
+using ClipboardMachinery.Core.DataStorage;
 using Nito.Mvvm;
 
 namespace ClipboardMachinery.Pages {

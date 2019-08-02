@@ -6,7 +6,7 @@ using Castle.Windsor;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagType;
-using ClipboardMachinery.Core.Data.Schema;
+using ClipboardMachinery.Core.DataStorage.Schema;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 

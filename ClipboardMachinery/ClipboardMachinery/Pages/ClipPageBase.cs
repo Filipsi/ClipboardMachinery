@@ -2,7 +2,7 @@
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;
 using System.Linq;
 using System.Threading;

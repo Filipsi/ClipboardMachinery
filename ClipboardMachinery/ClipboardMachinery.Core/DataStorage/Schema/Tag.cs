@@ -1,6 +1,6 @@
 ﻿using ServiceStack.DataAnnotations;
 
-namespace ClipboardMachinery.Core.Data.Schema {
+namespace ClipboardMachinery.Core.DataStorage.Schema {
 
     public class Tag {
 

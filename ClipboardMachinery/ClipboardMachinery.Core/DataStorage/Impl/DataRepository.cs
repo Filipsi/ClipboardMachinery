@@ -1,13 +1,12 @@
-﻿using AutoMapper;
-using ServiceStack.OrmLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ClipboardMachinery.Core.Data.LazyProvider;
-using ClipboardMachinery.Core.Data.Schema;
+using AutoMapper;
+using ClipboardMachinery.Core.DataStorage.Schema;
+using ServiceStack.OrmLite;
 
-namespace ClipboardMachinery.Core.Data {
+namespace ClipboardMachinery.Core.DataStorage.Impl {
 
     public class DataRepository : IDataRepository {
 
@@ -72,7 +71,7 @@ namespace ClipboardMachinery.Core.Data {
                         new TagType {
                             Name = tag.TypeName,
                             Kind = tag.Value.GetType(),
-                            // No need to set color here, default is used if none is set
+                            Color = SystemTagTypes.DefaultColor
                         }
                     );
                 }

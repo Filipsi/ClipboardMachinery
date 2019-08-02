@@ -1,6 +1,6 @@
 ﻿using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
-using ClipboardMachinery.Core.Data;
+using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.TagTypes {
