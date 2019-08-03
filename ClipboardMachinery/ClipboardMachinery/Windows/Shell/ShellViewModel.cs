@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
@@ -81,7 +82,7 @@ namespace ClipboardMachinery.Windows.Shell {
             Popup.ConductWith(this);
 
             // HotKeys
-            hotKeyService.Register(System.Windows.Input.Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
+            hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
 
             // Clipboard
             clipboardService.ClipboardChanged += OnClipboardChanged;
@@ -154,7 +155,7 @@ namespace ClipboardMachinery.Windows.Shell {
                 created: DateTime.UtcNow,
                 tags: new[] {
                     // TODO: Add config option to disable this
-                    new KeyValuePair<string, object>("source", source)
+                    new KeyValuePair<string, object>(SystemTagTypes.SourceTagType.Name, source)
                 }
             );
 

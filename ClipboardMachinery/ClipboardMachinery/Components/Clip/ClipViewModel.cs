@@ -18,6 +18,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Core.DataStorage;
 using Microsoft.Win32;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using static ClipboardMachinery.Common.Events.TagEvent;
@@ -322,7 +323,7 @@ namespace ClipboardMachinery.Components.Clip {
                 favoriteButton.IsToggled = false;
             } else {
                 favoriteButton.IsToggled = Model.Tags.Any(
-                    tag => tag.TypeName == "category" && tag.Value.ToString() == "favorite"
+                    tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name && tag.Value.ToString() == "favorite"
                 );
             }
         }

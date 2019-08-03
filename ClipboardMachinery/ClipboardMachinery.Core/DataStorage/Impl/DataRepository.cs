@@ -71,7 +71,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                         new TagType {
                             Name = tag.TypeName,
                             Kind = tag.Value.GetType(),
-                            Color = SystemTagTypes.DefaultColor
+                            Color = SystemTagTypes.DefaultDBColor
                         }
                     );
                 }
@@ -116,7 +116,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     new TagType {
                         Name = type,
                         Kind = value.GetType(),
-                        Color = SystemTagTypes.DefaultColor
+                        Color = SystemTagTypes.DefaultDBColor
                     }
                 );
             }

@@ -9,7 +9,7 @@ namespace ClipboardMachinery.Plumbing.Factories {
 
         TagEditorViewModel CreateTagEditor(TagModel tagModel);
 
-        TagTypeEditorViewModel CreateTagTypeEditor(TagTypeModel tagTypeModel);
+        TagTypeEditorViewModel CreateTagTypeEditor(TagTypeModel tagTypeModel, bool isCreatingNew = false);
 
         void Release(TagEditorViewModel tagEditor);
 
