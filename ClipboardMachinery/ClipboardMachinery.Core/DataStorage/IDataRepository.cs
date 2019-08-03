@@ -76,6 +76,14 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <param name="color">New color of TagType</param>
         Task UpdateTagType(string typeName, Color color);
 
+        /// <summary>
+        /// Updates TagType with corresponding name (primary key).
+        /// TagType name is equivalent to TagModel#Name.
+        /// </summary>
+        /// <param name="typeName">Id of TagType aka TagModel#Name</param>
+        /// <param name="description">New description of TagType</param>
+        Task UpdateTagType(string typeName, string description);
+
     }
 
 }

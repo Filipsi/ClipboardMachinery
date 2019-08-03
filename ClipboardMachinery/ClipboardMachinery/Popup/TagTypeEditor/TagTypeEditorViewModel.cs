@@ -26,6 +26,19 @@ namespace ClipboardMachinery.Popup.TagTypeEditor {
             get;
         }
 
+        public string Description {
+            get => description;
+            set {
+                if (description == value) {
+                    return;
+                }
+
+                description = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+
         public ColorGalleryViewModel ColorGallery {
             get;
         }
@@ -42,6 +55,8 @@ namespace ClipboardMachinery.Popup.TagTypeEditor {
         private readonly IDataRepository dataRepository;
         private readonly bool isCreatingNew;
 
+        private string description;
+
         #endregion
 
         public TagTypeEditorViewModel(
@@ -49,6 +64,7 @@ namespace ClipboardMachinery.Popup.TagTypeEditor {
             Func<ActionButtonViewModel> actionButtonFactory) {
 
             Model = tagTypeModel;
+            Description = Model.Description;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
             PopupControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
@@ -88,8 +104,16 @@ namespace ClipboardMachinery.Popup.TagTypeEditor {
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
             if (isCreatingNew) {
-                // TODO: Implement this
+                Model.Color = ColorGallery.SelectedColor;
+                Model.Description = Description;
             } else {
+                // Update description if changed
+                if (Model.Description != Description) {
+                    Model.Description = Description;
+                    await dataRepository.UpdateTagType(Model.Name, Description);
+                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEventType.DescriptionChange, Model.Name, Description));
+                }
+
                 // Update color if changed
                 if (Model.Color != ColorGallery.SelectedColor) {
                     Model.Color = ColorGallery.SelectedColor;

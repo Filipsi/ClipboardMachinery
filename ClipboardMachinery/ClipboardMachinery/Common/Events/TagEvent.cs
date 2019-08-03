@@ -6,6 +6,7 @@
             Add,
             Remove,
             ColorChange,
+            DescriptionChange,
             ValueChange
         }
 

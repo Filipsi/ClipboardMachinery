@@ -44,6 +44,18 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
+        public string Description {
+            get => description;
+            set {
+                if (description == value) {
+                    return;
+                }
+
+                description = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         public Color? Color {
             get => color;
             set {
@@ -75,6 +87,7 @@ namespace ClipboardMachinery.Components.Tag {
         private string typeName;
         private object val;
         private Color? color = defaultColor;
+        private string description;
 
         #endregion
 

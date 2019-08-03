@@ -158,6 +158,15 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             );
         }
 
+        public async Task UpdateTagType(string typeName, string description) {
+            await Database.Connection.UpdateAsync<TagType>(
+                new {
+                    Name = typeName,
+                    Description = description
+                }
+            );
+        }
+
         #endregion
 
         #region Helpers

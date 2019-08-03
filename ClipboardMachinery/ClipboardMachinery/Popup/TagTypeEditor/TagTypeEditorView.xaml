@@ -29,9 +29,22 @@
         </Grid>
 
         <Grid Grid.Column="1">
-            <ContentControl
-                MinHeight="112"
-                x:Name="ColorGallery" />
+            <StackPanel VerticalAlignment="Center">
+                <TextBox
+                    Tag="Name"
+                    IsReadOnly="True"
+                    Style="{StaticResource LiteTextBoxStyle}"
+                    Text="{Binding Model.Name}" />
+
+                <TextBox
+                    Tag="Description"
+                    Style="{StaticResource LiteTextBoxStyle}"
+                    Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
+
+                <ContentControl
+                    MinHeight="112"
+                    x:Name="ColorGallery" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

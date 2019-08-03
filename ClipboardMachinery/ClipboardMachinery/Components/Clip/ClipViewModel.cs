@@ -238,6 +238,12 @@ namespace ClipboardMachinery.Components.Clip {
                     }
                     break;
 
+                case TagEventType.DescriptionChange:
+                    foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
+                        vm.Model.Description = (string)message.Argument;
+                    }
+                    break;
+
                 case TagEventType.ValueChange:
                     TagViewModel tagWithChangedValue = Items.FirstOrDefault(tag => tag.Model.Id == message.TagId);
                     if (tagWithChangedValue != null) {

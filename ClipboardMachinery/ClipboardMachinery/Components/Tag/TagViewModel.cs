@@ -45,6 +45,9 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
+        public bool HasDescription
+            => !string.IsNullOrWhiteSpace(Model.Description);
+
         public SolidColorBrush BackgroundColor
             => model.Color.HasValue
                 ? new SolidColorBrush(Color.FromArgb(40, model.Color.Value.R, model.Color.Value.G, model.Color.Value.B))
@@ -77,8 +80,14 @@ namespace ClipboardMachinery.Components.Tag {
         }
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName == nameof(TagModel.Color)) {
-                NotifyOfPropertyChange(() => BackgroundColor);
+            switch (e.PropertyName) {
+                case nameof(TagModel.Color):
+                    NotifyOfPropertyChange(() => BackgroundColor);
+                    break;
+
+                case nameof(TagModel.Description):
+                    NotifyOfPropertyChange(() => HasDescription);
+                    break;
             }
         }
 
