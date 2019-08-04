@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -39,6 +40,18 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             }
         }
 
+        public ITagKindSchema SelectedTagKind {
+            get => selectedTagKind;
+            set {
+                if (selectedTagKind == value) {
+                    return;
+                }
+
+                selectedTagKind = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         public ITagKindHandler TagKindHandler {
             get;
         }
@@ -51,15 +64,19 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             get;
         }
 
+        public bool IsCreatingNew {
+            get;
+        }
+
         #endregion
 
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
-        private readonly bool isCreatingNew;
 
         private string description;
+        private ITagKindSchema selectedTagKind;
 
         #endregion
 
@@ -74,7 +91,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             PopupControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
-            this.isCreatingNew = isCreatingNew;
+            IsCreatingNew = isCreatingNew;
 
             // Setup color gallery
             ColorGallery = colorGallery;
@@ -103,14 +120,20 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
 
         #region Handlers
 
+        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+            SelectedTagKind = TagKindHandler.FromType(Model.Kind);
+            return base.OnActivateAsync(cancellationToken);
+        }
+
         private Task OnRemoveClick(ActionButtonViewModel button) {
             return Task.CompletedTask;
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
-            if (isCreatingNew) {
+            if (IsCreatingNew) {
                 Model.Color = ColorGallery.SelectedColor;
                 Model.Description = Description;
+                Model.Kind = SelectedTagKind.Type;
             } else {
                 // Update description if changed
                 if (Model.Description != Description) {

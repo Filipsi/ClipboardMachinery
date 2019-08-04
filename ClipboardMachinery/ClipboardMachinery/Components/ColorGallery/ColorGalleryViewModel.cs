@@ -1,6 +1,5 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Buttons.ActionButton;
-using ClipboardMachinery.Components.ColorGallery.Presets;
 using ClipboardMachinery.Plumbing.Factories;
 using System;
 using System.Linq;

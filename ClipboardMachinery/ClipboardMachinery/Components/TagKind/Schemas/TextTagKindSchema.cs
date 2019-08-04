@@ -2,7 +2,7 @@
 
 namespace ClipboardMachinery.Components.TagKind.Schemas {
 
-    public class StringTagKindSchema : ITagKindSchema {
+    public class TextTagKindSchema : ITagKindSchema {
 
         #region Properties
 
@@ -10,7 +10,7 @@ namespace ClipboardMachinery.Components.TagKind.Schemas {
 
         public string Name { get; } = "Text";
 
-        public string Description { get; } = "Allows holding a text value and provides text based searching functions.";
+        public string Description { get; } = "Allows holding a text value and provides text based searching options.";
 
         public string Icon { get; } = "IconText";
 

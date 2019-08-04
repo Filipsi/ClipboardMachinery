@@ -55,7 +55,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 Classes
                     .FromThisAssembly()
                     .BasedOn<ITagKindSchema>()
-                    .WithServiceBase()
+                    .WithServiceDefaultInterfaces()
                     .LifestyleSingleton()
             );
 

@@ -6,7 +6,7 @@ namespace ClipboardMachinery.Plumbing.Factories {
 
         ITagKindSchema[] GetAllSchemas();
 
-        TagKindViewModel CreateTagKind(ITagKindSchema tagKindSchema);
+        TagKindViewModel CreateTagKind(ITagKindSchema schema);
 
     }
 

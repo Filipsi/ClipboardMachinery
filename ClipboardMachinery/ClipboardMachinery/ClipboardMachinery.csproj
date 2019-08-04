@@ -136,7 +136,8 @@
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
     <Compile Include="Components\TagKind\ITagKindSchema.cs" />
     <Compile Include="Components\TagKind\ITagKindHandler.cs" />
-    <Compile Include="Components\TagKind\Schemas\StringTagKindSchema.cs" />
+    <Compile Include="Components\TagKind\Schemas\NumericTagKindSchema.cs" />
+    <Compile Include="Components\TagKind\Schemas\TextTagKindSchema.cs" />
     <Compile Include="Components\TagKind\TagKindHandler.cs" />
     <Compile Include="Components\TagKind\TagKindView.xaml.cs">
       <DependentUpon>TagKindView.xaml</DependentUpon>

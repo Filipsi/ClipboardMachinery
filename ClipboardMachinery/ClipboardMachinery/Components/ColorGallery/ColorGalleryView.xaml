@@ -96,11 +96,9 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
-                        <Rectangle Margin="1">
-                            <Rectangle.Fill>
-                                <SolidColorBrush Color="{Binding}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
+                        <Rectangle
+                            Margin="1"
+                            Fill="{Binding ., Converter={converters:ColorToSolidBrushConverter}}"/>
 
                     </Border>
                 </DataTemplate>

@@ -16,8 +16,16 @@ namespace ClipboardMachinery.Components.TagKind {
         #endregion
 
         public TagKindHandler(ITagKindFactory tagKindFactory) {
-            Schemas = Array.AsReadOnly(tagKindFactory.GetAllSchemas());
-            TagKinds = Array.AsReadOnly(Schemas.Select(tagKindFactory.CreateTagKind).ToArray());
+            Schemas = Array.AsReadOnly(
+                tagKindFactory.GetAllSchemas()
+            );
+
+            TagKinds = Array.AsReadOnly(
+                Schemas
+                    .Select(tagKindFactory.CreateTagKind)
+                    .Reverse()
+                    .ToArray()
+            );
         }
 
         #region Logic

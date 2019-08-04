@@ -44,8 +44,11 @@
                     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
 
                 <ComboBox
-                    Padding="4"
-                    ItemsSource="{Binding TagKindHandler.TagKinds}">
+                    IsEnabled="{Binding IsCreatingNew}"
+                    ItemsSource="{Binding TagKindHandler.TagKinds}"
+                    SelectedValue="{Binding SelectedTagKind, Mode=TwoWay}"
+                    SelectedValuePath="Schema"
+                    Padding="4">
 
                     <ComboBox.ItemTemplateSelector>
                         <c:ComboBoxItemTemplateSelector>

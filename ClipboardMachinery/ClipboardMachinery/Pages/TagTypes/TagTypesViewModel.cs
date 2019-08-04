@@ -79,7 +79,10 @@ namespace ClipboardMachinery.Pages.TagTypes {
         #region Actions
 
         public void CreateNew() {
-            TagTypeModel newTagType = new TagTypeModel();
+            TagTypeModel newTagType = new TagTypeModel {
+                Kind = typeof(string)
+            };
+
             TagTypeEditorViewModel tagTypeEditor = popupFactory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
             tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
             CanCreateNew = false;
