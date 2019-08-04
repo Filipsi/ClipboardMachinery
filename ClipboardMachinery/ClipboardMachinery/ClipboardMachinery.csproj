@@ -109,6 +109,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
+    <Compile Include="Common\ComboBoxItemTemplateSelector.cs" />
     <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />
     <Compile Include="Common\Converters\EqualityConverter.cs" />
     <Compile Include="Common\Events\PopupEvent.cs" />
@@ -123,7 +124,7 @@
     </Compile>
     <Compile Include="Components\ColorGallery\ColorGalleryViewModel.cs" />
     <Compile Include="Components\ColorGallery\Presets\FlatColorsPreset.cs" />
-    <Compile Include="Components\ColorGallery\Presets\IColorPalette.cs" />
+    <Compile Include="Components\ColorGallery\IColorPalette.cs" />
     <Compile Include="Components\ColorGallery\Presets\MaterialColorsPreset.cs" />
     <Compile Include="Components\Buttons\SelectableButton\SelectableButtonView.xaml.cs">
       <DependentUpon>SelectableButtonView.xaml</DependentUpon>
@@ -133,6 +134,14 @@
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
+    <Compile Include="Components\TagKind\ITagKindSchema.cs" />
+    <Compile Include="Components\TagKind\ITagKindHandler.cs" />
+    <Compile Include="Components\TagKind\Schemas\StringTagKindSchema.cs" />
+    <Compile Include="Components\TagKind\TagKindHandler.cs" />
+    <Compile Include="Components\TagKind\TagKindView.xaml.cs">
+      <DependentUpon>TagKindView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TagKind\TagKindViewModel.cs" />
     <Compile Include="Components\TagType\TagTypeModel.cs" />
     <Compile Include="Components\TagType\TagTypeView.xaml.cs">
       <DependentUpon>TagTypeView.xaml</DependentUpon>
@@ -144,22 +153,23 @@
       <DependentUpon>TagTypesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TagTypes\TagTypesViewModel.cs" />
+    <Compile Include="Plumbing\Factories\ITagKindFactory.cs" />
     <Compile Include="Plumbing\Factories\IViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
-    <Compile Include="Popup\Manager\IPopupExtendedControls.cs" />
-    <Compile Include="Popup\Manager\PopupManagerView.xaml.cs">
+    <Compile Include="Components\Popup\IPopupExtendedControls.cs" />
+    <Compile Include="Components\Popup\PopupManagerView.xaml.cs">
       <DependentUpon>PopupManagerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\Manager\PopupManagerViewModel.cs" />
-    <Compile Include="Popup\TagEditor\TagEditorView.xaml.cs">
+    <Compile Include="Components\Popup\PopupManagerViewModel.cs" />
+    <Compile Include="Popups\TagEditor\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\TagEditor\TagEditorViewModel.cs" />
-    <Compile Include="Popup\TagTypeEditor\TagTypeEditorView.xaml.cs">
+    <Compile Include="Popups\TagEditor\TagEditorViewModel.cs" />
+    <Compile Include="Popups\TagTypeEditor\TagTypeEditorView.xaml.cs">
       <DependentUpon>TagTypeEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popup\TagTypeEditor\TagTypeEditorViewModel.cs" />
+    <Compile Include="Popups\TagTypeEditor\TagTypeEditorViewModel.cs" />
     <Compile Include="Windows\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
@@ -263,6 +273,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\TagKind\TagKindView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\TagType\TagTypeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -271,15 +285,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\Manager\PopupManagerView.xaml">
+    <Page Include="Components\Popup\PopupManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\TagEditor\TagEditorView.xaml">
+    <Page Include="Popups\TagEditor\TagEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popup\TagTypeEditor\TagTypeEditorView.xaml">
+    <Page Include="Popups\TagTypeEditor\TagTypeEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

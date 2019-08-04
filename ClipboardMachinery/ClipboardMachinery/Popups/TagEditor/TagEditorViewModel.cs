@@ -7,10 +7,10 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using ClipboardMachinery.Popup.Manager;
+using ClipboardMachinery.Components.Popup;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
-namespace ClipboardMachinery.Popup.TagEditor {
+namespace ClipboardMachinery.Popups.TagEditor {
 
     public class TagEditorViewModel : Screen, IPopupExtendedControls {
 
@@ -19,7 +19,6 @@ namespace ClipboardMachinery.Popup.TagEditor {
         public BindableCollection<ActionButtonViewModel> PopupControls {
             get;
         }
-
 
         public TagModel Model {
             get;

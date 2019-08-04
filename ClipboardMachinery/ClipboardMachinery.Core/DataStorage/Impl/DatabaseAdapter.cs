@@ -34,10 +34,10 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #endregion
 
-        public DatabaseAdapter(string dataSourcePath) {
+        public DatabaseAdapter(string databasePath, string databaseVersion) {
             // Create connection factory in order to connect to the database
             dbFactory = new OrmLiteConnectionFactory(
-                connectionString: $"Data Source={dataSourcePath};Version=3;",
+                connectionString: $"Data Source={databasePath};Version={databaseVersion};",
                 dialectProvider: SqliteDialect.Provider
             );
 

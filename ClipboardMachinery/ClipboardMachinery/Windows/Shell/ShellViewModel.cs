@@ -11,11 +11,11 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Components.Popup;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
 using ClipboardMachinery.Plumbing;
-using ClipboardMachinery.Popup.Manager;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Windows.Shell {

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClipboardMachinery.Popup.TagTypeEditor
+namespace ClipboardMachinery.Popups.TagTypeEditor
 {
     /// <summary>
     /// Interaction logic for TagTypeEditorView.xaml

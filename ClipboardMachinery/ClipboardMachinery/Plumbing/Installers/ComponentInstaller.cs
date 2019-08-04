@@ -2,8 +2,10 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.ColorGallery.Presets;
 using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Plumbing.Installers {
@@ -29,32 +31,50 @@ namespace ClipboardMachinery.Plumbing.Installers {
             );
 
             container.Register(
-                Component
-                    .For<IViewModelFactory>()
-                    .AsFactory()
-                    .LifestyleTransient()
-            );
-
-            container.Register(
-                Component
-                    .For<IPopupFactory>()
-                    .AsFactory()
-                    .LifestyleTransient()
-            );
-
-            container.Register(
                 Classes
                     .FromThisAssembly()
                     .BasedOn<IColorPalette>()
                     .WithServiceBase()
-                    .LifestyleTransient()
+                    .LifestyleSingleton()
             );
 
             container.Register(
                 Component
                     .For<IColorGalleryFactory>()
                     .AsFactory()
-                    .LifestyleTransient()
+            );
+
+            container.Register(
+                Component
+                    .For<ITagKindHandler>()
+                    .ImplementedBy<TagKindHandler>()
+                    .LifestyleSingleton()
+            );
+
+            container.Register(
+                Classes
+                    .FromThisAssembly()
+                    .BasedOn<ITagKindSchema>()
+                    .WithServiceBase()
+                    .LifestyleSingleton()
+            );
+
+            container.Register(
+                Component
+                    .For<ITagKindFactory>()
+                    .AsFactory()
+            );
+
+            container.Register(
+                Component
+                    .For<IViewModelFactory>()
+                    .AsFactory()
+            );
+
+            container.Register(
+                Component
+                    .For<IPopupFactory>()
+                    .AsFactory()
             );
         }
 

@@ -6,8 +6,8 @@ using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popup.TagEditor;
-using ClipboardMachinery.Popup.TagTypeEditor;
+using ClipboardMachinery.Popups.TagEditor;
+using ClipboardMachinery.Popups.TagTypeEditor;
 
 namespace ClipboardMachinery.Pages.TagTypes {
 

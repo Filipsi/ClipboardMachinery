@@ -1,4 +1,4 @@
-﻿using ClipboardMachinery.Components.ColorGallery.Presets;
+﻿using ClipboardMachinery.Components.ColorGallery;
 
 namespace ClipboardMachinery.Plumbing.Factories {
 

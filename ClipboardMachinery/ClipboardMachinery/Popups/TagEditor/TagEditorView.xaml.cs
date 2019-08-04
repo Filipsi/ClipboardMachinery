@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Popup.TagEditor {
+namespace ClipboardMachinery.Popups.TagEditor {
 
     /// <summary>
     /// Interaction logic for TagEditorView.xaml

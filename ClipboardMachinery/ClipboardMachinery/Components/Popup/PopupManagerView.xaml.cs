@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.Popup.Manager {
+namespace ClipboardMachinery.Components.Popup {
 
     public partial class PopupManagerView : UserControl {
 

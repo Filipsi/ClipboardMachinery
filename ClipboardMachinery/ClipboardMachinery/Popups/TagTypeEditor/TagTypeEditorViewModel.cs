@@ -7,12 +7,13 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
+using ClipboardMachinery.Components.Popup;
+using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
-using ClipboardMachinery.Popup.Manager;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
-namespace ClipboardMachinery.Popup.TagTypeEditor {
+namespace ClipboardMachinery.Popups.TagTypeEditor {
 
     public class TagTypeEditorViewModel : Screen, IPopupExtendedControls {
 
@@ -38,6 +39,9 @@ namespace ClipboardMachinery.Popup.TagTypeEditor {
             }
         }
 
+        public ITagKindHandler TagKindHandler {
+            get;
+        }
 
         public ColorGalleryViewModel ColorGallery {
             get;
@@ -61,10 +65,11 @@ namespace ClipboardMachinery.Popup.TagTypeEditor {
 
         public TagTypeEditorViewModel(
             TagTypeModel tagTypeModel, bool isCreatingNew, ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
-            Func<ActionButtonViewModel> actionButtonFactory) {
+            ITagKindHandler tagKindHandler, Func<ActionButtonViewModel> actionButtonFactory) {
 
             Model = tagTypeModel;
             Description = Model.Description;
+            TagKindHandler = tagKindHandler;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
             PopupControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;

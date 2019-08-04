@@ -1,7 +1,4 @@
-﻿using Caliburn.Micro;
-using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Components.Buttons.ActionButton;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -9,9 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using static ClipboardMachinery.Common.Events.PopupEvent;
+using Caliburn.Micro;
+using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Components.Buttons.ActionButton;
 
-namespace ClipboardMachinery.Popup.Manager {
+namespace ClipboardMachinery.Components.Popup {
 
     public class PopupManagerViewModel : Conductor<IScreen>, IHandle<PopupEvent> {
 
@@ -79,11 +78,11 @@ namespace ClipboardMachinery.Popup.Manager {
 
         public async Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
-                case PopupEventType.Show:
+                case PopupEvent.PopupEventType.Show:
                     await ChangeActiveItemAsync(message.Popup, true, cancellationToken);
                     break;
 
-                case PopupEventType.Close:
+                case PopupEvent.PopupEventType.Close:
                     await ChangeActiveItemAsync(null, true, cancellationToken);
                     break;
             }

@@ -1,10 +1,13 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popup.TagTypeEditor;
+using ClipboardMachinery.Popups.TagTypeEditor;
 
 namespace ClipboardMachinery.Components.TagType {
 
@@ -13,15 +16,7 @@ namespace ClipboardMachinery.Components.TagType {
         #region Properties
 
         public TagTypeModel Model {
-            get => model;
-            private set {
-                if (model == value) {
-                    return;
-                }
-
-                model = value;
-                NotifyOfPropertyChange();
-            }
+            get;
         }
 
         public bool IsFocused {
@@ -52,26 +47,50 @@ namespace ClipboardMachinery.Components.TagType {
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
 
+        public string KindLabel {
+            get {
+                ITagKindSchema tagKind = tagKindHandler.FromType(Model.Kind);
+                return tagKind == null ? string.Empty : $"with {tagKind.Name.ToLowerInvariant()} value";
+            }
+        }
+
         #endregion
 
         #region Fields
 
+        private readonly ITagKindHandler tagKindHandler;
         private readonly IEventAggregator eventAggregator;
         private readonly IPopupFactory popupFactory;
 
-        private TagTypeModel model;
         private bool isFocused;
         private bool canEdit = true;
 
         #endregion
 
-        public TagTypeViewModel(TagTypeModel model, IEventAggregator eventAggregator, IPopupFactory popupFactory) {
+        public TagTypeViewModel(TagTypeModel model, ITagKindHandler tagKindHandler, IEventAggregator eventAggregator, IPopupFactory popupFactory) {
             Model = model;
+            this.tagKindHandler = tagKindHandler;
             this.eventAggregator = eventAggregator;
             this.popupFactory = popupFactory;
         }
 
         #region Handlers
+
+        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+            Model.PropertyChanged += OnModelPropertyChanged;
+            return base.OnActivateAsync(cancellationToken);
+        }
+
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            Model.PropertyChanged -= OnModelPropertyChanged;
+            return base.OnDeactivateAsync(close, cancellationToken);
+        }
+
+        private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
+            if (e.PropertyName == nameof(TagTypeModel.Kind)) {
+                NotifyOfPropertyChange(() => KindLabel);
+            }
+        }
 
         private void OnTagTypeEditorDeactivated(object sender, DeactivationEventArgs e) {
             TagTypeEditorViewModel tagTypeEditor = (TagTypeEditorViewModel)sender;

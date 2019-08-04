@@ -62,7 +62,7 @@
                         Margin="4,0"
                         VerticalAlignment="Bottom"
                         FontSize="12"
-                        Text="{Binding Model.DisplayKindLabel, StringFormat='tag {0}'}" />
+                        Text="{Binding KindLabel, StringFormat='tag {0}'}" />
                 </StackPanel>
 
                 <TextBlock

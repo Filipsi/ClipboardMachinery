@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace ClipboardMachinery.Components.ColorGallery.Presets {
+namespace ClipboardMachinery.Components.ColorGallery {
 
     public interface IColorPalette {
 

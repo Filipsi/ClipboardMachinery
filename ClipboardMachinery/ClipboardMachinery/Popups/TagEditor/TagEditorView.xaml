@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="ClipboardMachinery.Popup.TagEditor.TagEditorView"
+    x:Class="ClipboardMachinery.Popups.TagEditor.TagEditorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -28,23 +28,20 @@
             </Path>
         </Grid>
 
-        <Grid Grid.Column="1">
-            <StackPanel VerticalAlignment="Center">
-                <TextBox
-                    Tag="Tag"
-                    IsReadOnly="True"
-                    Style="{StaticResource LiteTextBoxStyle}"
-                    Text="{Binding Model.TypeName}" />
+        <StackPanel
+            Grid.Column="1"
+            Margin="0,32,0,0">
 
-                <TextBox
-                    Tag="Value"
-                    Style="{StaticResource LiteTextBoxStyle}"
-                    Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox
+                Tag="Tag"
+                IsReadOnly="True"
+                Style="{StaticResource LiteTextBoxStyle}"
+                Text="{Binding Model.TypeName}" />
 
-                <ContentControl
-                    MinHeight="112"
-                    x:Name="ColorGallery" />
-            </StackPanel>
-        </Grid>
+            <TextBox
+                Tag="Value"
+                Style="{StaticResource LiteTextBoxStyle}"
+                Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
     </Grid>
 </UserControl>

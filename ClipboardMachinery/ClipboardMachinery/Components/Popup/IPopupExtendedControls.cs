@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 
-namespace ClipboardMachinery.Popup.Manager {
+namespace ClipboardMachinery.Components.Popup {
 
     internal interface IPopupExtendedControls {
 

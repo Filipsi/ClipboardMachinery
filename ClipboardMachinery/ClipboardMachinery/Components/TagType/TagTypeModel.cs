@@ -31,7 +31,6 @@ namespace ClipboardMachinery.Components.TagType {
 
                 kind = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => DisplayKindLabel);
             }
         }
 
@@ -59,20 +58,9 @@ namespace ClipboardMachinery.Components.TagType {
             }
         }
 
-        public string DisplayKindLabel
-            => $"with {KindNameMap[Kind]} value";
-
         #endregion
 
         #region Fields
-
-        private static readonly IReadOnlyDictionary<Type, string> KindNameMap = new ReadOnlyDictionary<Type, string>(
-            new Dictionary<Type, string> {
-                { typeof(string), "text"    },
-                { typeof(int),    "numeric" },
-                { typeof(double), "decimal" },
-            }
-        );
 
         private string name;
         private Type kind;

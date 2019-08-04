@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popup.TagEditor;
+using ClipboardMachinery.Popups.TagEditor;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;

@@ -20,7 +20,10 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 Component
                     .For<IDatabaseAdapter>()
                     .ImplementedBy<DatabaseAdapter>()
-                    .DependsOn(Dependency.OnConfigValue("dataSourcePath", "storage.sqlite"))
+                    .DependsOn(
+                        Dependency.OnConfigValue("databasePath", "storage.sqlite"),
+                        Dependency.OnConfigValue("databaseVersion", "3")
+                    )
                     .LifestyleBoundToNearest<IDataRepository>()
             );
 

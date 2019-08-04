@@ -1,9 +1,11 @@
 ﻿<UserControl
-    x:Class="ClipboardMachinery.Popup.TagTypeEditor.TagTypeEditorView"
+    x:Class="ClipboardMachinery.Popups.TagTypeEditor.TagTypeEditorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:c="clr-namespace:ClipboardMachinery.Common"
     mc:Ignorable="d" d:DesignWidth="800"
     Height="256">
 
@@ -41,10 +43,40 @@
                     Style="{StaticResource LiteTextBoxStyle}"
                     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
 
+                <ComboBox
+                    Padding="4"
+                    ItemsSource="{Binding TagKindHandler.TagKinds}">
+
+                    <ComboBox.ItemTemplateSelector>
+                        <c:ComboBoxItemTemplateSelector>
+                            <c:ComboBoxItemTemplateSelector.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl
+                                        cal:View.Model="{Binding .}" />
+                                </DataTemplate>
+                            </c:ComboBoxItemTemplateSelector.ItemTemplate>
+
+                            <c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Text="{Binding Schema.Name}"/>
+                                </DataTemplate>
+                            </c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
+                        </c:ComboBoxItemTemplateSelector>
+                    </ComboBox.ItemTemplateSelector>
+                </ComboBox>
+
                 <ContentControl
-                    MinHeight="112"
-                    x:Name="ColorGallery" />
+                    x:Name="ColorGallery"
+                    MinHeight="112" />
             </StackPanel>
         </Grid>
     </Grid>
 </UserControl>
+
+
+
+
+
+
+
