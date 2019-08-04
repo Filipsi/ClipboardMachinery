@@ -149,19 +149,25 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return new LazyDataProvider<TagType>(this, batchSize);
         }
 
-        public async Task UpdateTagType(string typeName, System.Windows.Media.Color color) {
+        public async Task<bool> TagTypeExists(string name) {
+            return await Database.Connection.ExistsAsync<TagType>(
+                tagType => tagType.Name == name
+            );
+        }
+
+        public async Task UpdateTagType(string name, System.Windows.Media.Color color) {
             await Database.Connection.UpdateAsync<TagType>(
                 new {
-                    Name = typeName,
+                    Name = name,
                     Color = Mapper.Map<Color>(color)
                 }
             );
         }
 
-        public async Task UpdateTagType(string typeName, string description) {
+        public async Task UpdateTagType(string name, string description) {
             await Database.Connection.UpdateAsync<TagType>(
                 new {
-                    Name = typeName,
+                    Name = name,
                     Description = description
                 }
             );

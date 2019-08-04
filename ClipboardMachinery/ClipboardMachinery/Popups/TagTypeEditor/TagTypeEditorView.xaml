@@ -7,7 +7,22 @@
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:c="clr-namespace:ClipboardMachinery.Common"
     mc:Ignorable="d" d:DesignWidth="800"
-    Height="256">
+    MinHeight="288">
+
+    <UserControl.Resources>
+        <Style x:Key="FieldStyle" TargetType="Control">
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
+        </Style>
+
+        <Style x:Key="FieldHeaderStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,2" />
+            <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
+        </Style>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -30,50 +45,68 @@
             </Path>
         </Grid>
 
-        <Grid Grid.Column="1">
-            <StackPanel VerticalAlignment="Center">
-                <TextBox
-                    Tag="Name"
-                    IsReadOnly="True"
-                    Style="{StaticResource LiteTextBoxStyle}"
-                    Text="{Binding Model.Name}" />
+        <StackPanel
+            Grid.Column="1"
+            Margin="0,32,0,0"
+            VerticalAlignment="Center">
 
-                <TextBox
-                    Tag="Description"
-                    Style="{StaticResource LiteTextBoxStyle}"
-                    Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
+            <TextBlock
+                Text="Name"
+                Style="{StaticResource FieldHeaderStyle}" />
 
-                <ComboBox
-                    IsEnabled="{Binding IsCreatingNew}"
-                    ItemsSource="{Binding TagKindHandler.TagKinds}"
-                    SelectedValue="{Binding SelectedTagKind, Mode=TwoWay}"
-                    SelectedValuePath="Schema"
-                    Padding="4">
+            <TextBox
+                IsEnabled="{Binding IsCreatingNew}"
+                Text="{Binding Name, ValidatesOnNotifyDataErrors=True}"
+                Style="{StaticResource FieldStyle}"/>
 
-                    <ComboBox.ItemTemplateSelector>
-                        <c:ComboBoxItemTemplateSelector>
-                            <c:ComboBoxItemTemplateSelector.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl
-                                        cal:View.Model="{Binding .}" />
-                                </DataTemplate>
-                            </c:ComboBoxItemTemplateSelector.ItemTemplate>
+            <TextBlock
+                Text="Description"
+                Style="{StaticResource FieldHeaderStyle}" />
 
-                            <c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        Text="{Binding Schema.Name}"/>
-                                </DataTemplate>
-                            </c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
-                        </c:ComboBoxItemTemplateSelector>
-                    </ComboBox.ItemTemplateSelector>
-                </ComboBox>
+            <TextBox
+                Tag="Description"
+                TextWrapping="Wrap"
+                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                Style="{StaticResource FieldStyle}"/>
 
-                <ContentControl
-                    x:Name="ColorGallery"
-                    MinHeight="112" />
-            </StackPanel>
-        </Grid>
+            <TextBlock
+                Text="Value type"
+                Style="{StaticResource FieldHeaderStyle}" />
+
+            <ComboBox
+                IsEnabled="{Binding IsCreatingNew}"
+                ItemsSource="{Binding TagKindHandler.TagKinds}"
+                SelectedValue="{Binding SelectedTagKind, Mode=TwoWay}"
+                SelectedValuePath="Schema"
+                Style="{StaticResource FieldStyle}">
+
+                <ComboBox.ItemTemplateSelector>
+                    <c:ComboBoxItemTemplateSelector>
+                        <c:ComboBoxItemTemplateSelector.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl
+                                    cal:View.Model="{Binding .}" />
+                            </DataTemplate>
+                        </c:ComboBoxItemTemplateSelector.ItemTemplate>
+
+                        <c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding Schema.Name}"/>
+                            </DataTemplate>
+                        </c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
+                    </c:ComboBoxItemTemplateSelector>
+                </ComboBox.ItemTemplateSelector>
+            </ComboBox>
+
+            <TextBlock
+                Text="Color"
+                Style="{StaticResource FieldHeaderStyle}" />
+
+            <ContentControl
+                x:Name="ColorGallery"
+                MinHeight="112" />
+        </StackPanel>
     </Grid>
 </UserControl>
 

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +30,18 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
 
         public TagTypeModel Model {
             get;
+        }
+
+        public string Name {
+            get => name;
+            set {
+                if (name == value) {
+                    return;
+                }
+
+                name = value;
+                NotifyOfPropertyChange();
+            }
         }
 
         public string Description {
@@ -75,6 +91,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
 
+        private string name;
         private string description;
         private ITagKindSchema selectedTagKind;
 
@@ -85,6 +102,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             ITagKindHandler tagKindHandler, Func<ActionButtonViewModel> actionButtonFactory) {
 
             Model = tagTypeModel;
+            Name = Model.Name;
             Description = Model.Description;
             TagKindHandler = tagKindHandler;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
@@ -131,9 +149,10 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
             if (IsCreatingNew) {
-                Model.Color = ColorGallery.SelectedColor;
+                Model.Name = name;
                 Model.Description = Description;
                 Model.Kind = SelectedTagKind.Type;
+                Model.Color = ColorGallery.SelectedColor;
             } else {
                 // Update description if changed
                 if (Model.Description != Description) {

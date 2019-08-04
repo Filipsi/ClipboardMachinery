@@ -69,20 +69,27 @@ namespace ClipboardMachinery.Core.DataStorage {
         ILazyDataProvider CreateLazyTagTypeProvider(int batchSize);
 
         /// <summary>
-        /// Updates TagType with corresponding name (primary key).
-        /// TagType name is equivalent to TagModel#Name.
+        /// Determinants whenever there is a tag type with givan name.
         /// </summary>
-        /// <param name="typeName">Id of TagType aka TagModel#Name</param>
-        /// <param name="color">New color of TagType</param>
-        Task UpdateTagType(string typeName, Color color);
+        /// <param name="name">Id of TagType aka TagModel#Name</param>
+        /// <returns>True if there is a tag type with specified name</returns>
+        Task<bool> TagTypeExists(string name);
 
         /// <summary>
         /// Updates TagType with corresponding name (primary key).
         /// TagType name is equivalent to TagModel#Name.
         /// </summary>
-        /// <param name="typeName">Id of TagType aka TagModel#Name</param>
+        /// <param name="name">Id of TagType aka TagModel#Name</param>
+        /// <param name="color">New color of TagType</param>
+        Task UpdateTagType(string name, Color color);
+
+        /// <summary>
+        /// Updates TagType with corresponding name (primary key).
+        /// TagType name is equivalent to TagModel#Name.
+        /// </summary>
+        /// <param name="name">Id of TagType aka TagModel#Name</param>
         /// <param name="description">New description of TagType</param>
-        Task UpdateTagType(string typeName, string description);
+        Task UpdateTagType(string name, string description);
 
     }
 
