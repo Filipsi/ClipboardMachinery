@@ -3,7 +3,7 @@ using ClipboardMachinery.Components.Buttons.ActionButton;
 
 namespace ClipboardMachinery.Components.Popup {
 
-    internal interface IPopupExtendedControls {
+    internal interface IPopupControlsProvider {
 
         BindableCollection<ActionButtonViewModel> PopupControls { get; }
 

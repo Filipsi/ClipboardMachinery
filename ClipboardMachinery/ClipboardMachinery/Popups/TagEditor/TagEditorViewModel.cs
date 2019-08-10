@@ -12,7 +12,7 @@ using static ClipboardMachinery.Common.Events.TagEvent;
 
 namespace ClipboardMachinery.Popups.TagEditor {
 
-    public class TagEditorViewModel : Screen, IPopupExtendedControls {
+    public class TagEditorViewModel : Screen, IPopupControlsProvider {
 
         #region Properties
 

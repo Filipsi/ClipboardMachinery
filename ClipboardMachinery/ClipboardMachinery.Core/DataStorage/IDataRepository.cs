@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.Core.DataStorage {
 
@@ -69,9 +70,20 @@ namespace ClipboardMachinery.Core.DataStorage {
         ILazyDataProvider CreateLazyTagTypeProvider(int batchSize);
 
         /// <summary>
-        /// Determinants whenever there is a tag type with givan name.
+        /// Create a new tag type with given properties.
         /// </summary>
-        /// <param name="name">Id of TagType aka TagModel#Name</param>
+        /// <typeparam name="T"> type of data model that created tag instance will be mapped to and returned back.</typeparam>
+        /// <param name="name">A name of newly created tag type.</param>
+        /// <param name="description">Description for newly created tag type.</param>
+        /// <param name="kind">A type of values that can be accepted by this tag type, the actual parsing logic is handled by corresponding <see cref="ITagKindSchema"/> implementation.</param>
+        /// <param name="color">A color of newly created tag type, if color is not specified a default color will be used <see cref="SystemTagTypes.DefaultColor"/>.</param>
+        /// <returns>An instance of created tag type mapped to T model</returns>
+        Task<T> CreateTagType<T>(string name, string description, Type kind, Color? color = null);
+
+        /// <summary>
+        /// Determinants whenever there is a tag type with given name.
+        /// </summary>
+        /// <param name="name">Name of a tag type</param>
         /// <returns>True if there is a tag type with specified name</returns>
         Task<bool> TagTypeExists(string name);
 

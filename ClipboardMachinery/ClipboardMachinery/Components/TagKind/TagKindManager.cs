@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ClipboardMachinery.Core.TagKind;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Components.TagKind {
 
-    public class TagKindHandler : ITagKindHandler {
+    public class TagKindManager : ITagKindManager {
 
         #region Properties
-
-        internal IReadOnlyCollection<ITagKindSchema> Schemas { get; }
 
         public IReadOnlyCollection<TagKindViewModel> TagKinds { get; }
 
         #endregion
 
-        public TagKindHandler(ITagKindFactory tagKindFactory) {
-            Schemas = Array.AsReadOnly(
+        #region Fields
+
+        private readonly IReadOnlyCollection<ITagKindSchema> schemas;
+
+        #endregion
+
+        public TagKindManager(ITagKindFactory tagKindFactory) {
+            schemas = Array.AsReadOnly(
                 tagKindFactory.GetAllSchemas()
             );
 
             TagKinds = Array.AsReadOnly(
-                Schemas
+                schemas
                     .Select(tagKindFactory.CreateTagKind)
                     .Reverse()
                     .ToArray()
@@ -30,13 +35,13 @@ namespace ClipboardMachinery.Components.TagKind {
 
         #region Logic
 
-        public ITagKindSchema FromType(Type kindType) {
-            return Schemas.FirstOrDefault(schema => schema.Type == kindType);
+        public ITagKindSchema GetSchemaFor(Type kindType) {
+            return schemas.FirstOrDefault(schema => schema.Type == kindType);
         }
 
         public bool TryParse(Type kindType, string input, out object result) {
             result = null;
-            ITagKindSchema tagKindSchema = FromType(kindType);
+            ITagKindSchema tagKindSchema = GetSchemaFor(kindType);
             return tagKindSchema != null && tagKindSchema.TryParse(input, out result);
         }
 

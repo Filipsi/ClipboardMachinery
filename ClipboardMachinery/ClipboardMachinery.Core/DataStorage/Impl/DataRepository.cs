@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using ServiceStack.OrmLite;
+using Color = ClipboardMachinery.Core.DataStorage.Schema.Color;
+using MediaColor = System.Windows.Media.Color;
 
 namespace ClipboardMachinery.Core.DataStorage.Impl {
 
@@ -149,13 +151,37 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return new LazyDataProvider<TagType>(this, batchSize);
         }
 
+        public async Task<T> CreateTagType<T>(string name, string description, Type kind, MediaColor? color = null) {
+            // Check if there is already tag type with this name
+            if (await TagTypeExists(name)) {
+                // TODO: Log this
+                return default(T);
+            }
+
+            // Create new tag type
+            TagType tagType = new TagType {
+                Name = name,
+                Description = description,
+                Kind = kind,
+                Color = color.HasValue
+                    ? new Color {A = color.Value.A, R = color.Value.R, G = color.Value.G, B = color.Value.B}
+                    : SystemTagTypes.DefaultDBColor
+            };
+
+            // Save newly created tag type
+            await Database.Connection.InsertAsync(tagType);
+
+            // Map it to the desired model
+            return Mapper.Map<T>(tagType);
+        }
+
         public async Task<bool> TagTypeExists(string name) {
             return await Database.Connection.ExistsAsync<TagType>(
                 tagType => tagType.Name == name
             );
         }
 
-        public async Task UpdateTagType(string name, System.Windows.Media.Color color) {
+        public async Task UpdateTagType(string name, MediaColor color) {
             await Database.Connection.UpdateAsync<TagType>(
                 new {
                     Name = name,

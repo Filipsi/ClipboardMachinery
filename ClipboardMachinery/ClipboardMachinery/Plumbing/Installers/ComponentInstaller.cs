@@ -6,6 +6,7 @@ using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.ColorGallery.Presets;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagKind;
+using ClipboardMachinery.Core.TagKind;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Plumbing.Installers {
@@ -46,14 +47,14 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
-                    .For<ITagKindHandler>()
-                    .ImplementedBy<TagKindHandler>()
+                    .For<ITagKindManager>()
+                    .ImplementedBy<TagKindManager>()
                     .LifestyleSingleton()
             );
 
             container.Register(
                 Classes
-                    .FromThisAssembly()
+                    .FromAssemblyContaining(typeof(ITagKindSchema))
                     .BasedOn<ITagKindSchema>()
                     .WithServiceDefaultInterfaces()
                     .LifestyleSingleton()

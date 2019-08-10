@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.Components.TagKind {
 
-    public interface ITagKindHandler {
+    public interface ITagKindManager {
 
         IReadOnlyCollection<TagKindViewModel> TagKinds { get; }
 
-        ITagKindSchema FromType(Type kindType);
+        ITagKindSchema GetSchemaFor(Type kindType);
 
         bool TryParse(Type kindType, string input, out object result);
 

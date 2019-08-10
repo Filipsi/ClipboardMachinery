@@ -6,6 +6,7 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.TagKind;
+using ClipboardMachinery.Core.TagKind;
 using ClipboardMachinery.Plumbing.Factories;
 using ClipboardMachinery.Popups.TagTypeEditor;
 
@@ -49,7 +50,7 @@ namespace ClipboardMachinery.Components.TagType {
 
         public string KindLabel {
             get {
-                ITagKindSchema tagKind = tagKindHandler.FromType(Model.Kind);
+                ITagKindSchema tagKind = tagKindManager.GetSchemaFor(Model.Kind);
                 return tagKind == null ? string.Empty : $"with {tagKind.Name.ToLowerInvariant()} value";
             }
         }
@@ -58,7 +59,7 @@ namespace ClipboardMachinery.Components.TagType {
 
         #region Fields
 
-        private readonly ITagKindHandler tagKindHandler;
+        private readonly ITagKindManager tagKindManager;
         private readonly IEventAggregator eventAggregator;
         private readonly IPopupFactory popupFactory;
 
@@ -67,9 +68,9 @@ namespace ClipboardMachinery.Components.TagType {
 
         #endregion
 
-        public TagTypeViewModel(TagTypeModel model, ITagKindHandler tagKindHandler, IEventAggregator eventAggregator, IPopupFactory popupFactory) {
+        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager, IEventAggregator eventAggregator, IPopupFactory popupFactory) {
             Model = model;
-            this.tagKindHandler = tagKindHandler;
+            this.tagKindManager = tagKindManager;
             this.eventAggregator = eventAggregator;
             this.popupFactory = popupFactory;
         }

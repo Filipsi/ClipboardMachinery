@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.Components.TagKind.Schemas {
 

@@ -16,11 +16,12 @@ using ClipboardMachinery.Components.Popup;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.TagKind;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
 namespace ClipboardMachinery.Popups.TagTypeEditor {
 
-    public class TagTypeEditorViewModel : Screen, IPopupExtendedControls {
+    public class TagTypeEditorViewModel : Screen, IPopupControlsProvider {
 
         #region Properties
 
@@ -68,7 +69,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             }
         }
 
-        public ITagKindHandler TagKindHandler {
+        public ITagKindManager TagKindManager {
             get;
         }
 
@@ -99,12 +100,12 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
 
         public TagTypeEditorViewModel(
             TagTypeModel tagTypeModel, bool isCreatingNew, ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
-            ITagKindHandler tagKindHandler, Func<ActionButtonViewModel> actionButtonFactory) {
+            ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory) {
 
             Model = tagTypeModel;
             Name = Model.Name;
             Description = Model.Description;
-            TagKindHandler = tagKindHandler;
+            TagKindManager = tagKindManager;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
             PopupControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
@@ -139,7 +140,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
         #region Handlers
 
         protected override Task OnActivateAsync(CancellationToken cancellationToken) {
-            SelectedTagKind = TagKindHandler.FromType(Model.Kind);
+            SelectedTagKind = TagKindManager.GetSchemaFor(Model.Kind);
             return base.OnActivateAsync(cancellationToken);
         }
 
@@ -168,7 +169,6 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
                     await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEventType.ColorChange, Model.Name, ColorGallery.SelectedColor));
                 }
             }
-
 
             await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }

@@ -1,4 +1,5 @@
 ﻿using ClipboardMachinery.Components.TagKind;
+using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.Plumbing.Factories {
 

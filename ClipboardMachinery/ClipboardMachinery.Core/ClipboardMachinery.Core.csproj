@@ -113,6 +113,9 @@
     <Compile Include="Services\HotKeys\IHotKeyService.cs" />
     <Compile Include="Services\HotKeys\KeyModifiers.cs" />
     <Compile Include="DataStorage\SystemTagTypes.cs" />
+    <Compile Include="TagKind\ITagKindSchema.cs" />
+    <Compile Include="TagKind\Schemas\NumericTagKindSchema.cs" />
+    <Compile Include="TagKind\Schemas\TextTagKindSchema.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

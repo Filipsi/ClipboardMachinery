@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ClipboardMachinery.Components.TagKind {
+namespace ClipboardMachinery.Core.TagKind {
 
     public interface ITagKindSchema {
 
