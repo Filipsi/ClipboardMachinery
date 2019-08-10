@@ -1,5 +1,6 @@
 ﻿<UserControl
     x:Class="ClipboardMachinery.Popups.TagTypeEditor.TagTypeEditorView"
+    x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,17 +11,31 @@
     MinHeight="288">
 
     <UserControl.Resources>
-        <Style x:Key="FieldStyle" TargetType="Control">
+        <Style
+            x:Key="FieldStyle"
+            TargetType="Control">
+
             <Setter Property="Padding" Value="6" />
-            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Margin" Value="0,0,0,16" />
             <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
         </Style>
 
-        <Style x:Key="FieldHeaderStyle" TargetType="TextBlock">
+        <Style
+            x:Key="FieldHeaderStyle"
+            TargetType="TextBlock">
+
             <Setter Property="Margin" Value="0,0,0,2" />
             <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Style.BasedOn>
+                <c:MergedStyles
+                    BasedOn="{StaticResource ValidationStyle}"
+                    MergeStyle="{StaticResource FieldStyle}"/>
+            </Style.BasedOn>
         </Style>
     </UserControl.Resources>
 
@@ -56,8 +71,7 @@
 
             <TextBox
                 IsEnabled="{Binding IsCreatingNew}"
-                Text="{Binding Name, ValidatesOnNotifyDataErrors=True}"
-                Style="{StaticResource FieldStyle}"/>
+                Text="{Binding Name, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
             <TextBlock
                 Text="Description"
@@ -66,8 +80,7 @@
             <TextBox
                 Tag="Description"
                 TextWrapping="Wrap"
-                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
-                Style="{StaticResource FieldStyle}"/>
+                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
 
             <TextBlock
                 Text="Value type"

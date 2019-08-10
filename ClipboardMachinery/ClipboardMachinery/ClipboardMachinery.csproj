@@ -74,6 +74,7 @@
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
@@ -114,6 +115,8 @@
     <Compile Include="Common\Converters\EqualityConverter.cs" />
     <Compile Include="Common\Events\PopupEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />
+    <Compile Include="Common\MergedStylesExtension.cs" />
+    <Compile Include="Common\ValidationScreenBase.cs" />
     <Compile Include="Components\Buttons\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>
@@ -296,6 +299,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Styles\LiteTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\Validation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

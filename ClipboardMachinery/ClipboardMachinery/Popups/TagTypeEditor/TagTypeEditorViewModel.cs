@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using ClipboardMachinery.Common;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
@@ -21,7 +19,7 @@ using static ClipboardMachinery.Common.Events.TagEvent;
 
 namespace ClipboardMachinery.Popups.TagTypeEditor {
 
-    public class TagTypeEditorViewModel : Screen, IPopupControlsProvider {
+    public class TagTypeEditorViewModel : ValidationScreenBase, IPopupControlsProvider {
 
         #region Properties
 
@@ -33,6 +31,9 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             get;
         }
 
+        [Display(Name = "Name")]
+        [Required]
+        [StringLength(20)]
         public string Name {
             get => name;
             set {
@@ -41,6 +42,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
                 }
 
                 name = value;
+                ValidateProperty(value);
                 NotifyOfPropertyChange();
             }
         }
@@ -149,6 +151,14 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
+            // Validate all properties
+            Validate();
+
+            // Prevent saving changes if there are data errors
+            if (HasErrors) {
+                return;
+            }
+
             if (IsCreatingNew) {
                 Model.Name = name;
                 Model.Description = Description;

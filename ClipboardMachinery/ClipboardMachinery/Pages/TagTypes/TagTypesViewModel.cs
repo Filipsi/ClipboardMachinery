@@ -1,12 +1,9 @@
-﻿using System;
-using System.Windows;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popups.TagEditor;
 using ClipboardMachinery.Popups.TagTypeEditor;
 
 namespace ClipboardMachinery.Pages.TagTypes {

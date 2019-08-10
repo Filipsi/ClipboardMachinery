@@ -48,10 +48,11 @@
                 <!-- Popup content -->
                 <ContentControl
                     x:Name="ActiveItem"
+                    Validation.ErrorTemplate="{x:Null}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"/>
+                    VerticalContentAlignment="Stretch" />
             </Grid>
         </Border>
     </Grid>
