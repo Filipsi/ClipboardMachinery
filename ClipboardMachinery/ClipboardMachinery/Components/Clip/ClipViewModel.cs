@@ -226,25 +226,25 @@ namespace ClipboardMachinery.Components.Clip {
 
         public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch(message.EventType) {
-                case TagEventType.Remove:
+                case TagEventType.TagRemoved:
                     foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.TagId).ToArray()) {
                         Model.Tags.Remove(tagToRemove.Model);
                     }
                     break;
 
-                case TagEventType.ColorChange:
+                case TagEventType.TypeColorChanged:
                     foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
                         vm.Model.Color = (Color)message.Argument;
                     }
                     break;
 
-                case TagEventType.DescriptionChange:
+                case TagEventType.TypeDescriptionChanged:
                     foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
                         vm.Model.Description = (string)message.Argument;
                     }
                     break;
 
-                case TagEventType.ValueChange:
+                case TagEventType.TagValueChanged:
                     TagViewModel tagWithChangedValue = Items.FirstOrDefault(tag => tag.Model.Id == message.TagId);
                     if (tagWithChangedValue != null) {
                         tagWithChangedValue.Model.Value = message.Argument;

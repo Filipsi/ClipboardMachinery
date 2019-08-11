@@ -110,13 +110,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
-    <Compile Include="Common\ComboBoxItemTemplateSelector.cs" />
+    <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
     <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />
     <Compile Include="Common\Converters\EqualityConverter.cs" />
-    <Compile Include="Common\Events\PopupEvent.cs" />
+    <Compile Include="Common\Events\DialogOverlayEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />
-    <Compile Include="Common\MergedStylesExtension.cs" />
-    <Compile Include="Common\ValidationScreenBase.cs" />
+    <Compile Include="Common\Helpers\MergedStylesExtension.cs" />
+    <Compile Include="Common\Helpers\ValidationScreenBase.cs" />
     <Compile Include="Components\Buttons\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>

@@ -2,10 +2,10 @@
 
 namespace ClipboardMachinery.Common.Events {
 
-    public class PopupEvent {
+    public class DialogOverlayEvent {
 
         public enum PopupEventType {
-            Show,
+            Open,
             Close
         }
 
@@ -17,20 +17,20 @@ namespace ClipboardMachinery.Common.Events {
 
         #endregion
 
-        private PopupEvent() {
+        private DialogOverlayEvent() {
         }
 
         #region Factory
 
-        public static PopupEvent Show(IScreen popup) {
-            return new PopupEvent {
-                EventType = PopupEventType.Show,
+        public static DialogOverlayEvent Open(IScreen popup) {
+            return new DialogOverlayEvent {
+                EventType = PopupEventType.Open,
                 Popup = popup
             };
         }
 
-        public static PopupEvent Close() {
-            return new PopupEvent {
+        public static DialogOverlayEvent Close() {
+            return new DialogOverlayEvent {
                 EventType = PopupEventType.Close
             };
         }

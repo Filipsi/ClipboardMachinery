@@ -108,7 +108,7 @@ namespace ClipboardMachinery.Components.TagType {
             TagTypeEditorViewModel tagTypeEditor = dialogOverlayFactory.CreateTagTypeEditor(Model);
             tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
             CanEdit = false;
-            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagTypeEditor));
+            eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Open(tagTypeEditor));
         }
 
         public void Focus() {

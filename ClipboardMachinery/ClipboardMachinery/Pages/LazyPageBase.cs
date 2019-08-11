@@ -81,6 +81,21 @@ namespace ClipboardMachinery.Pages {
             DataProvider = dataProvider;
         }
 
+        #region Exposed logic
+
+        protected abstract TVM CreateItem(TM model);
+
+        protected abstract void ReleaseItem(TVM instance);
+
+        protected abstract bool IsClearingItemsWhenDeactivating();
+
+        protected async Task Reset() {
+            await ClearAllItems(true);
+            StartLoadingBatch(CancellationToken.None);
+        }
+
+        #endregion
+
         #region Logic
 
         private async Task LoadDataBatch() {
@@ -89,31 +104,13 @@ namespace ClipboardMachinery.Pages {
             }
         }
 
-        protected abstract TVM CreateItem(TM model);
-
-        protected abstract void ReleaseItem(TVM instance);
-
-        protected abstract bool IsClearingItemsWhenDeactivating();
-
-        #endregion
-
-        #region Handlers
-
-        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
-            // Initial item load after page activates.
-            // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
+        private void StartLoadingBatch(CancellationToken cancellationToken) {
             if (DataLoading?.IsNotCompleted != true && Items.Count == 0) {
                 DataLoading = NotifyTask.Create(Task.Run(LoadDataBatch, cancellationToken));
             }
-
-            return Task.CompletedTask;
         }
 
-        protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
-            if (close) {
-                Items.CollectionChanged -= OnItemsCollectionChanged;
-            }
-
+        private async Task ClearAllItems(bool close) {
             // This is done mainly for optimization and reset when pages are switched
             // to prevent from having outdated clips or large amounts of then lingering on the page
             // Also used when screen is closed to release all clips
@@ -128,6 +125,25 @@ namespace ClipboardMachinery.Pages {
 
             DataProvider.Offset = Items.Count;
             VerticalScrollOffset = 0;
+        }
+
+        #endregion
+
+        #region Handlers
+
+        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+            // Initial item load after page activates.
+            // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
+            StartLoadingBatch(cancellationToken);
+            return Task.CompletedTask;
+        }
+
+        protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            if (close) {
+                Items.CollectionChanged -= OnItemsCollectionChanged;
+            }
+
+            await ClearAllItems(close);
         }
 
         private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {

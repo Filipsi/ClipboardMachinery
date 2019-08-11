@@ -78,19 +78,19 @@ namespace ClipboardMachinery.DialogOverlays.TagEditor {
 
         private async Task OnRemoveClick(ActionButtonViewModel button) {
             await dataRepository.DeleteTag(Model.Id);
-            await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.Remove, Model.Id, Model.TypeName));
-            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+            await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagRemovedEvent(Model));
+            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
             // Update value of changed
             if (Model.Value != Value) {
-                // NOTE: No need to update value directly, it should be handled by the ValueChange tag event
+                Model.Value = Value;
                 await dataRepository.UpdateTag(Model.Id, Value);
-                await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.ValueChange, Model.Id, Model.TypeName, Value));
+                await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagValueChangedEvent(Model));
             }
 
-            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
         }
 
         #endregion

@@ -10,11 +10,11 @@ using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.SelectableButton;
-using static ClipboardMachinery.Common.Events.PopupEvent;
+using static ClipboardMachinery.Common.Events.DialogOverlayEvent;
 
 namespace ClipboardMachinery.Components.Navigator {
 
-    public class NavigatorViewModel : Screen, IHandle<PopupEvent> {
+    public class NavigatorViewModel : Screen, IHandle<DialogOverlayEvent> {
 
         #region Properties
 
@@ -95,8 +95,8 @@ namespace ClipboardMachinery.Components.Navigator {
             return Task.CompletedTask;
         }
 
-        public Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
-            if (message.EventType != PopupEventType.Show && message.EventType != PopupEventType.Close) {
+        public Task HandleAsync(DialogOverlayEvent message, CancellationToken cancellationToken) {
+            if (message.EventType != PopupEventType.Open && message.EventType != PopupEventType.Close) {
                 return Task.CompletedTask;
             }
 

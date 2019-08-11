@@ -8,6 +8,7 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using ClipboardMachinery.Common;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Helpers;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.DialogOverlay;
@@ -28,7 +29,16 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
         }
 
         public TagTypeModel Model {
-            get;
+            get => model;
+            private set {
+                if (model == value) {
+                    return;
+                }
+
+                model = value;
+                ValidateProperty(value);
+                NotifyOfPropertyChange();
+            }
         }
 
         [Required]
@@ -99,6 +109,7 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
         private readonly IDataRepository dataRepository;
         private readonly ActionButtonViewModel saveButton;
 
+        private TagTypeModel model;
         private string name;
         private string description;
         private ITagKindSchema selectedTagKind;
@@ -180,27 +191,26 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
             }
 
             if (IsCreatingNew) {
-                Model.Name = name;
-                Model.Description = Description;
-                Model.Kind = SelectedTagKind.Type;
-                Model.Color = ColorGallery.SelectedColor;
+                Model = await dataRepository.CreateTagType<TagTypeModel>(Name, Description, SelectedTagKind.Type, ColorGallery.SelectedColor);
+                await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeAddedEvent(Model));
+
             } else {
                 // Update description if changed
                 if (Model.Description != Description) {
                     Model.Description = Description;
                     await dataRepository.UpdateTagType(Model.Name, Description);
-                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.DescriptionChange, Model.Name, Description));
+                    await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeDescriptionChangedEvent(Model));
                 }
 
                 // Update color if changed
                 if (Model.Color != ColorGallery.SelectedColor) {
                     Model.Color = ColorGallery.SelectedColor;
                     await dataRepository.UpdateTagType(Model.Name, Model.Color);
-                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.ColorChange, Model.Name, ColorGallery.SelectedColor));
+                    await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeColorChangedEvent(Model));
                 }
             }
 
-            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
         }
 
         #endregion

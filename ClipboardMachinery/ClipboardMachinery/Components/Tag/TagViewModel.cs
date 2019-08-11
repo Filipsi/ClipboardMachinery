@@ -107,7 +107,7 @@ namespace ClipboardMachinery.Components.Tag {
             TagEditorViewModel tagEditor = dialogOverlayFactory.CreateTagEditor(Model);
             tagEditor.Deactivated += OnTagEditorDeactivated;
             CanEdit = false;
-            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagEditor));
+            eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Open(tagEditor));
         }
 
         #endregion

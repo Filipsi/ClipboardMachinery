@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:c="clr-namespace:ClipboardMachinery.Common"
+    xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers"
     mc:Ignorable="d" d:DesignWidth="800"
     MinHeight="288">
 
@@ -32,7 +33,7 @@
 
         <Style TargetType="TextBox">
             <Style.BasedOn>
-                <c:MergedStyles
+                <helpers:MergedStyles
                     BasedOn="{StaticResource ValidationStyle}"
                     MergeStyle="{StaticResource FieldStyle}"/>
             </Style.BasedOn>
@@ -94,21 +95,21 @@
                 Style="{StaticResource FieldStyle}">
 
                 <ComboBox.ItemTemplateSelector>
-                    <c:ComboBoxItemTemplateSelector>
-                        <c:ComboBoxItemTemplateSelector.ItemTemplate>
+                    <helpers:ComboBoxItemTemplateSelector>
+                        <helpers:ComboBoxItemTemplateSelector.ItemTemplate>
                             <DataTemplate>
                                 <ContentControl
                                     cal:View.Model="{Binding .}" />
                             </DataTemplate>
-                        </c:ComboBoxItemTemplateSelector.ItemTemplate>
+                        </helpers:ComboBoxItemTemplateSelector.ItemTemplate>
 
-                        <c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
+                        <helpers:ComboBoxItemTemplateSelector.SelectedItemTemplate>
                             <DataTemplate>
                                 <TextBlock
                                     Text="{Binding Schema.Name}"/>
                             </DataTemplate>
-                        </c:ComboBoxItemTemplateSelector.SelectedItemTemplate>
-                    </c:ComboBoxItemTemplateSelector>
+                        </helpers:ComboBoxItemTemplateSelector.SelectedItemTemplate>
+                    </helpers:ComboBoxItemTemplateSelector>
                 </ComboBox.ItemTemplateSelector>
             </ComboBox>
 
@@ -122,6 +123,14 @@
         </StackPanel>
     </Grid>
 </UserControl>
+
+
+
+
+
+
+
+
 
 
 

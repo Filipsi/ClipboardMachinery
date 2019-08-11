@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +12,7 @@ using Nito.Mvvm;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 using Action = System.Action;
 
-namespace ClipboardMachinery.Common {
+namespace ClipboardMachinery.Common.Helpers {
 
     public abstract class ValidationScreenBase : Screen, INotifyDataErrorInfo {
 

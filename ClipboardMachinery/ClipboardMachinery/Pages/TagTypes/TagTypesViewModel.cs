@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
@@ -8,7 +10,7 @@ using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.TagTypes {
 
-    public class TagTypesViewModel : LazyPageBase<TagTypeViewModel, TagTypeModel>, IScreenPage {
+    public class TagTypesViewModel : LazyPageBase<TagTypeViewModel, TagTypeModel>, IScreenPage, IHandle<TagEvent> {
 
         #region IScreenPage
 
@@ -83,7 +85,7 @@ namespace ClipboardMachinery.Pages.TagTypes {
             TagTypeEditorViewModel tagTypeEditor = dialogOverlayFactory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
             tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
             CanCreateNew = false;
-            eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagTypeEditor));
+            eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Open(tagTypeEditor));
         }
 
         #endregion
@@ -95,6 +97,14 @@ namespace ClipboardMachinery.Pages.TagTypes {
             tagTypeEditor.Deactivated -= OnTagTypeEditorDeactivated;
             dialogOverlayFactory.Release(tagTypeEditor);
             CanCreateNew = true;
+        }
+
+        public async Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
+            if (message.EventType != TagEvent.TagEventType.TypeAdded) {
+                return;
+            }
+
+            await Reset();
         }
 
         #endregion

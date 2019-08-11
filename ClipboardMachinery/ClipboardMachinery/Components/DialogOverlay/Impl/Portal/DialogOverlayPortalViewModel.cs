@@ -12,7 +12,7 @@ using ClipboardMachinery.Components.Buttons.ActionButton;
 
 namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
 
-    public class DialogOverlayPortalViewModel : Conductor<IScreen>, IHandle<PopupEvent> {
+    public class DialogOverlayPortalViewModel : Conductor<IScreen>, IHandle<DialogOverlayEvent> {
 
         #region Properties
 
@@ -73,16 +73,16 @@ namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
         }
 
         private async Task HandleCloseClick(ActionButtonViewModel button) {
-            await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
+            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
         }
 
-        public async Task HandleAsync(PopupEvent message, CancellationToken cancellationToken) {
+        public async Task HandleAsync(DialogOverlayEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
-                case PopupEvent.PopupEventType.Show:
+                case DialogOverlayEvent.PopupEventType.Open:
                     await ChangeActiveItemAsync(message.Popup, true, cancellationToken);
                     break;
 
-                case PopupEvent.PopupEventType.Close:
+                case DialogOverlayEvent.PopupEventType.Close:
                     await ChangeActiveItemAsync(null, true, cancellationToken);
                     break;
             }

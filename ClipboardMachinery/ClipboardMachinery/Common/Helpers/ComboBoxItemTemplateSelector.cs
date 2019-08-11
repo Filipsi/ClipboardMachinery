@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace ClipboardMachinery.Common {
+namespace ClipboardMachinery.Common.Helpers {
 
     /// <inheritdoc />
     /// <summary>
