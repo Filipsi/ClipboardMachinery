@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="DataStorage\IDatabaseAdapter.cs" />
     <Compile Include="DataStorage\Impl\DatabaseAdapter.cs" />
+    <Compile Include="DataStorage\Validation\DataRepositoryCheckAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataStorage\Impl\DataRepository.cs" />
     <Compile Include="DataStorage\IDataRepository.cs" />

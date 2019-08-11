@@ -14,6 +14,7 @@ using ClipboardMachinery.Components.Popup;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
 using static ClipboardMachinery.Common.Events.TagEvent;
 
@@ -31,9 +32,11 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             get;
         }
 
-        [Display(Name = "Name")]
         [Required]
         [StringLength(20)]
+        [DataRepositoryCheck(
+            nameof(IDataRepository.TagTypeExists), InvertResult = true,
+            ErrorMessage = "This name is already used by another tag type.")]
         public string Name {
             get => name;
             set {
@@ -47,6 +50,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             }
         }
 
+        [StringLength(75)]
         public string Description {
             get => description;
             set {
@@ -55,6 +59,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
                 }
 
                 description = value;
+                ValidateProperty(value);
                 NotifyOfPropertyChange();
             }
         }
@@ -93,6 +98,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
 
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
+        private readonly ActionButtonViewModel saveButton;
 
         private string name;
         private string description;
@@ -114,6 +120,11 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             this.dataRepository = dataRepository;
             IsCreatingNew = isCreatingNew;
 
+            // If in edit mode, disable validation specific to creation mode
+            if (!IsCreatingNew) {
+                DisablePropertyValidation(nameof(Name));
+            }
+
             // Setup color gallery
             ColorGallery = colorGallery;
             ColorGallery.SelectColor(isCreatingNew ? SystemTagTypes.DefaultColor : Model.Color);
@@ -130,7 +141,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
                 PopupControls.Add(removeButton);
             }
 
-            ActionButtonViewModel saveButton = actionButtonFactory.Invoke();
+            saveButton = actionButtonFactory.Invoke();
             saveButton.ToolTip = "Save";
             saveButton.Icon = (Geometry) Application.Current.FindResource("IconSave");
             saveButton.HoverColor = (SolidColorBrush) Application.Current.FindResource("ElementSelectBrush");
@@ -146,16 +157,26 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             return base.OnActivateAsync(cancellationToken);
         }
 
+        internal override void OnValidationProcessCompleted() {
+            base.OnValidationProcessCompleted();
+            saveButton.IsEnabled = IsValid;
+        }
+
         private Task OnRemoveClick(ActionButtonViewModel button) {
             return Task.CompletedTask;
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
+            // Prevent saving if validation is still running
+            if (ValidationProcess?.IsNotCompleted == true) {
+                return;
+            }
+
             // Validate all properties
             Validate();
 
             // Prevent saving changes if there are data errors
-            if (HasErrors) {
+            if (!IsValid) {
                 return;
             }
 
