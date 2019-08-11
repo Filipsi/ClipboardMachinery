@@ -1,11 +1,11 @@
 ﻿using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popups.TagEditor;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using ClipboardMachinery.DialogOverlays.TagEditor;
 
 namespace ClipboardMachinery.Components.Tag {
 
@@ -58,16 +58,16 @@ namespace ClipboardMachinery.Components.Tag {
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
-        private readonly IPopupFactory popupFactory;
+        private readonly IDialogOverlayFactory dialogOverlayFactory;
 
         private TagModel model;
         private bool canEdit = true;
 
         #endregion
 
-        public TagViewModel(IEventAggregator eventAggregator, IPopupFactory popupFactory) {
+        public TagViewModel(IEventAggregator eventAggregator, IDialogOverlayFactory dialogOverlayFactory) {
             this.eventAggregator = eventAggregator;
-            this.popupFactory = popupFactory;
+            this.dialogOverlayFactory = dialogOverlayFactory;
         }
 
         #region Handlers
@@ -75,7 +75,7 @@ namespace ClipboardMachinery.Components.Tag {
         private void OnTagEditorDeactivated(object sender, DeactivationEventArgs e) {
             TagEditorViewModel tagEditor = (TagEditorViewModel)sender;
             tagEditor.Deactivated -= OnTagEditorDeactivated;
-            popupFactory.Release(tagEditor);
+            dialogOverlayFactory.Release(tagEditor);
             CanEdit = true;
         }
 
@@ -104,7 +104,7 @@ namespace ClipboardMachinery.Components.Tag {
         #region Actions
 
         public void Edit() {
-            TagEditorViewModel tagEditor = popupFactory.CreateTagEditor(Model);
+            TagEditorViewModel tagEditor = dialogOverlayFactory.CreateTagEditor(Model);
             tagEditor.Deactivated += OnTagEditorDeactivated;
             CanEdit = false;
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagEditor));

@@ -10,8 +10,8 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Navigator;
-using ClipboardMachinery.Components.Popup;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;
@@ -40,7 +40,7 @@ namespace ClipboardMachinery.Windows.Shell {
             get;
         }
 
-        public PopupManagerViewModel Popup {
+        public IScreen DialogOverlay {
             get;
         }
 
@@ -67,7 +67,7 @@ namespace ClipboardMachinery.Windows.Shell {
         #endregion
 
         public ShellViewModel(
-            IEventAggregator eventAggregator, NavigatorViewModel navigator, PopupManagerViewModel popupWrapperVm,
+            IEventAggregator eventAggregator, NavigatorViewModel navigator, IDialogOverlayManager dialogOverlayManager,
             IHotKeyService hotKeyService, IClipboardService clipboardService, IDataRepository dataRepository)  {
 
             this.eventAggregator = eventAggregator;
@@ -77,9 +77,9 @@ namespace ClipboardMachinery.Windows.Shell {
             this.dataRepository = dataRepository;
             lastAcceptedClipContent = dataRepository.LastClipContent;
 
-            // Popup wrapper
-            Popup = popupWrapperVm;
-            Popup.ConductWith(this);
+            // DialogOverlay wrapper
+            DialogOverlay = dialogOverlayManager.DialogOverlay;
+            DialogOverlay.ConductWith(this);
 
             // HotKeys
             hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);

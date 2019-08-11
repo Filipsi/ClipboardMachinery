@@ -7,8 +7,8 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.TagKind;
+using ClipboardMachinery.DialogOverlays.TagTypeEditor;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popups.TagTypeEditor;
 
 namespace ClipboardMachinery.Components.TagType {
 
@@ -61,18 +61,18 @@ namespace ClipboardMachinery.Components.TagType {
 
         private readonly ITagKindManager tagKindManager;
         private readonly IEventAggregator eventAggregator;
-        private readonly IPopupFactory popupFactory;
+        private readonly IDialogOverlayFactory dialogOverlayFactory;
 
         private bool isFocused;
         private bool canEdit = true;
 
         #endregion
 
-        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager, IEventAggregator eventAggregator, IPopupFactory popupFactory) {
+        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager, IEventAggregator eventAggregator, IDialogOverlayFactory dialogOverlayFactory) {
             Model = model;
             this.tagKindManager = tagKindManager;
             this.eventAggregator = eventAggregator;
-            this.popupFactory = popupFactory;
+            this.dialogOverlayFactory = dialogOverlayFactory;
         }
 
         #region Handlers
@@ -96,7 +96,7 @@ namespace ClipboardMachinery.Components.TagType {
         private void OnTagTypeEditorDeactivated(object sender, DeactivationEventArgs e) {
             TagTypeEditorViewModel tagTypeEditor = (TagTypeEditorViewModel)sender;
             tagTypeEditor.Deactivated -= OnTagTypeEditorDeactivated;
-            popupFactory.Release(tagTypeEditor);
+            dialogOverlayFactory.Release(tagTypeEditor);
             CanEdit = true;
         }
 
@@ -105,7 +105,7 @@ namespace ClipboardMachinery.Components.TagType {
         #region Actions
 
         public void Edit() {
-            TagTypeEditorViewModel tagTypeEditor = popupFactory.CreateTagTypeEditor(Model);
+            TagTypeEditorViewModel tagTypeEditor = dialogOverlayFactory.CreateTagTypeEditor(Model);
             tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
             CanEdit = false;
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagTypeEditor));

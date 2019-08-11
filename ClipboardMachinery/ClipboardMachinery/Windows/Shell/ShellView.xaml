@@ -60,7 +60,7 @@
 
                 <Grid>
                     <ContentControl x:Name="ActiveItem"/>
-                    <ContentControl x:Name="Popup" />
+                    <ContentControl x:Name="DialogOverlay" />
                 </Grid>
             </Border>
 

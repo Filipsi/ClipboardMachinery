@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -10,9 +10,9 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 
-namespace ClipboardMachinery.Components.Popup {
+namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
 
-    public class PopupManagerViewModel : Conductor<IScreen>, IHandle<PopupEvent> {
+    public class DialogOverlayPortalViewModel : Conductor<IScreen>, IHandle<PopupEvent> {
 
         #region Properties
 
@@ -20,7 +20,7 @@ namespace ClipboardMachinery.Components.Popup {
             get;
         }
 
-        public bool HasPopupOverlay
+        public bool HasActiveDialog
             => ActiveItem != null;
 
         #endregion
@@ -31,7 +31,7 @@ namespace ClipboardMachinery.Components.Popup {
 
         #endregion
 
-        public PopupManagerViewModel(IEventAggregator eventAggregator, Func<ActionButtonViewModel> actionButtonFactory) {
+        public DialogOverlayPortalViewModel(IEventAggregator eventAggregator, Func<ActionButtonViewModel> actionButtonFactory) {
             this.eventAggregator = eventAggregator;
 
             Controls = new BindableCollection<ActionButtonViewModel>();
@@ -89,10 +89,10 @@ namespace ClipboardMachinery.Components.Popup {
         }
 
         protected override async Task ChangeActiveItemAsync(IScreen newItem, bool closePrevious, CancellationToken cancellationToken) {
-            if (ActiveItem is IPopupControlsProvider oldControls) {
-                oldControls.PopupControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
+            if (ActiveItem is IDialogOverlayControlsProvider oldControls) {
+                oldControls.DialogControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
-                    sender: oldControls.PopupControls,
+                    sender: oldControls.DialogControls,
                     e: new NotifyCollectionChangedEventArgs(
                         action: NotifyCollectionChangedAction.Reset
                     )
@@ -101,18 +101,18 @@ namespace ClipboardMachinery.Components.Popup {
 
             await base.ChangeActiveItemAsync(newItem, closePrevious, cancellationToken);
 
-            if (newItem is IPopupControlsProvider newControls) {
-                newControls.PopupControls.CollectionChanged += OnExtensionControlsCollectionChanged;
+            if (newItem is IDialogOverlayControlsProvider newControls) {
+                newControls.DialogControls.CollectionChanged += OnExtensionControlsCollectionChanged;
                 OnExtensionControlsCollectionChanged(
-                    sender: newControls.PopupControls,
+                    sender: newControls.DialogControls,
                     e: new NotifyCollectionChangedEventArgs(
                         action: NotifyCollectionChangedAction.Add,
-                        changedItems: newControls.PopupControls.ToArray()
+                        changedItems: newControls.DialogControls.ToArray()
                     )
                 );
             }
 
-            NotifyOfPropertyChange(() => HasPopupOverlay);
+            NotifyOfPropertyChange(() => HasActiveDialog);
         }
 
         #endregion

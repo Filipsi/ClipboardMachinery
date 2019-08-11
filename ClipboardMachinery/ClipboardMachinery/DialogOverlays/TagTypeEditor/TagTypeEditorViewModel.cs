@@ -10,21 +10,20 @@ using ClipboardMachinery.Common;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
-using ClipboardMachinery.Components.Popup;
+using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
-using static ClipboardMachinery.Common.Events.TagEvent;
 
-namespace ClipboardMachinery.Popups.TagTypeEditor {
+namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
 
-    public class TagTypeEditorViewModel : ValidationScreenBase, IPopupControlsProvider {
+    public class TagTypeEditorViewModel : ValidationScreenBase, IDialogOverlayControlsProvider {
 
         #region Properties
 
-        public BindableCollection<ActionButtonViewModel> PopupControls {
+        public BindableCollection<ActionButtonViewModel> DialogControls {
             get;
         }
 
@@ -115,7 +114,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             Description = Model.Description;
             TagKindManager = tagKindManager;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
-            PopupControls = new BindableCollection<ActionButtonViewModel>();
+            DialogControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
             IsCreatingNew = isCreatingNew;
@@ -138,7 +137,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
                 removeButton.HoverColor = (SolidColorBrush) Application.Current.FindResource("DangerousActionBrush");
                 removeButton.ClickAction = OnRemoveClick;
                 removeButton.ConductWith(this);
-                PopupControls.Add(removeButton);
+                DialogControls.Add(removeButton);
             }
 
             saveButton = actionButtonFactory.Invoke();
@@ -147,7 +146,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             saveButton.HoverColor = (SolidColorBrush) Application.Current.FindResource("ElementSelectBrush");
             saveButton.ClickAction = OnSaveClick;
             saveButton.ConductWith(this);
-            PopupControls.Add(saveButton);
+            DialogControls.Add(saveButton);
         }
 
         #region Handlers
@@ -173,7 +172,7 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
             }
 
             // Validate all properties
-            Validate();
+            await Validate();
 
             // Prevent saving changes if there are data errors
             if (!IsValid) {
@@ -190,14 +189,14 @@ namespace ClipboardMachinery.Popups.TagTypeEditor {
                 if (Model.Description != Description) {
                     Model.Description = Description;
                     await dataRepository.UpdateTagType(Model.Name, Description);
-                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEventType.DescriptionChange, Model.Name, Description));
+                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.DescriptionChange, Model.Name, Description));
                 }
 
                 // Update color if changed
                 if (Model.Color != ColorGallery.SelectedColor) {
                     Model.Color = ColorGallery.SelectedColor;
                     await dataRepository.UpdateTagType(Model.Name, Model.Color);
-                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEventType.ColorChange, Model.Name, ColorGallery.SelectedColor));
+                    await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.ColorChange, Model.Name, ColorGallery.SelectedColor));
                 }
             }
 

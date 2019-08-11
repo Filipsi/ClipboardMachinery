@@ -1,11 +1,11 @@
 ﻿using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagType;
-using ClipboardMachinery.Popups.TagEditor;
-using ClipboardMachinery.Popups.TagTypeEditor;
+using ClipboardMachinery.DialogOverlays.TagEditor;
+using ClipboardMachinery.DialogOverlays.TagTypeEditor;
 
 namespace ClipboardMachinery.Plumbing.Factories {
 
-    public interface IPopupFactory {
+    public interface IDialogOverlayFactory {
 
         TagEditorViewModel CreateTagEditor(TagModel tagModel);
 

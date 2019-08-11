@@ -3,8 +3,8 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.DialogOverlays.TagTypeEditor;
 using ClipboardMachinery.Plumbing.Factories;
-using ClipboardMachinery.Popups.TagTypeEditor;
 
 namespace ClipboardMachinery.Pages.TagTypes {
 
@@ -43,18 +43,18 @@ namespace ClipboardMachinery.Pages.TagTypes {
 
         private readonly IEventAggregator eventAggregator;
         private readonly IViewModelFactory vmFactory;
-        private readonly IPopupFactory popupFactory;
+        private readonly IDialogOverlayFactory dialogOverlayFactory;
 
         private bool canCreateNew = true;
 
         #endregion
 
-        public TagTypesViewModel(IEventAggregator eventAggregator, IDataRepository dataRepository, IViewModelFactory vmFactory, IPopupFactory popupFactory)
+        public TagTypesViewModel(IEventAggregator eventAggregator, IDataRepository dataRepository, IViewModelFactory vmFactory, IDialogOverlayFactory dialogOverlayFactory)
             : base(dataRepository.CreateLazyTagTypeProvider(15)) {
 
             this.eventAggregator = eventAggregator;
             this.vmFactory = vmFactory;
-            this.popupFactory = popupFactory;
+            this.dialogOverlayFactory = dialogOverlayFactory;
         }
 
         #region Logic
@@ -80,7 +80,7 @@ namespace ClipboardMachinery.Pages.TagTypes {
                 Kind = typeof(string)
             };
 
-            TagTypeEditorViewModel tagTypeEditor = popupFactory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
+            TagTypeEditorViewModel tagTypeEditor = dialogOverlayFactory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
             tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
             CanCreateNew = false;
             eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Show(tagTypeEditor));
@@ -93,7 +93,7 @@ namespace ClipboardMachinery.Pages.TagTypes {
         private void OnTagTypeEditorDeactivated(object sender, DeactivationEventArgs e) {
             TagTypeEditorViewModel tagTypeEditor = (TagTypeEditorViewModel)sender;
             tagTypeEditor.Deactivated -= OnTagTypeEditorDeactivated;
-            popupFactory.Release(tagTypeEditor);
+            dialogOverlayFactory.Release(tagTypeEditor);
             CanCreateNew = true;
         }
 

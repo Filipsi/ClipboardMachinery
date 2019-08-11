@@ -94,12 +94,12 @@ namespace ClipboardMachinery.Common {
             }
         }
 
-        public void ValidateProperty(object value, [CallerMemberName] string propertyName = null) {
-            StartValidationProcess(() => HandlePropertyValidation(value, propertyName), CancellationToken.None);
+        public Task ValidateProperty(object value, [CallerMemberName] string propertyName = null) {
+            return StartValidationProcess(() => HandlePropertyValidation(value, propertyName), CancellationToken.None);
         }
 
-        public void Validate() {
-            StartValidationProcess(HandleValidation, CancellationToken.None);
+        public Task Validate() {
+            return StartValidationProcess(HandleValidation, CancellationToken.None);
         }
 
         #endregion
@@ -206,9 +206,9 @@ namespace ClipboardMachinery.Common {
 
         #region Helpers
 
-        private void StartValidationProcess(Action validationAction, CancellationToken cancellationToken) {
+        private Task StartValidationProcess(Action validationAction, CancellationToken cancellationToken) {
             if (ValidationProcess?.IsNotCompleted == true) {
-                return;
+                return ValidationProcess.Task;
             }
 
             if (ValidationProcess != null) {
@@ -218,6 +218,7 @@ namespace ClipboardMachinery.Common {
             NotifyTask validationTask = NotifyTask.Create(Task.Run(validationAction, cancellationToken));
             validationTask.PropertyChanged += OnValidationProcessPropertyChanged;
             ValidationProcess = validationTask;
+            return ValidationProcess.Task;
         }
 
         protected void NotifyOfErrorsChange([CallerMemberName] string propertyName = null) {

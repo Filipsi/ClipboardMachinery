@@ -1,22 +1,21 @@
-﻿using Caliburn.Micro;
-using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Components.Buttons.ActionButton;
-using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core.DataStorage;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using ClipboardMachinery.Components.Popup;
-using static ClipboardMachinery.Common.Events.TagEvent;
+using Caliburn.Micro;
+using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Components.Buttons.ActionButton;
+using ClipboardMachinery.Components.DialogOverlay;
+using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Core.DataStorage;
 
-namespace ClipboardMachinery.Popups.TagEditor {
+namespace ClipboardMachinery.DialogOverlays.TagEditor {
 
-    public class TagEditorViewModel : Screen, IPopupControlsProvider {
+    public class TagEditorViewModel : Screen, IDialogOverlayControlsProvider {
 
         #region Properties
 
-        public BindableCollection<ActionButtonViewModel> PopupControls {
+        public BindableCollection<ActionButtonViewModel> DialogControls {
             get;
         }
 
@@ -53,7 +52,7 @@ namespace ClipboardMachinery.Popups.TagEditor {
 
             Model = tagModel;
             Value = Model.Value;
-            PopupControls = new BindableCollection<ActionButtonViewModel>();
+            DialogControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
 
@@ -64,7 +63,7 @@ namespace ClipboardMachinery.Popups.TagEditor {
             removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
             removeButton.ClickAction = OnRemoveClick;
             removeButton.ConductWith(this);
-            PopupControls.Add(removeButton);
+            DialogControls.Add(removeButton);
 
             ActionButtonViewModel saveButton = actionButtonFactory.Invoke();
             saveButton.ToolTip = "Save";
@@ -72,14 +71,14 @@ namespace ClipboardMachinery.Popups.TagEditor {
             saveButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
             saveButton.ClickAction = OnSaveClick;
             saveButton.ConductWith(this);
-            PopupControls.Add(saveButton);
+            DialogControls.Add(saveButton);
         }
 
         #region Handlers
 
         private async Task OnRemoveClick(ActionButtonViewModel button) {
             await dataRepository.DeleteTag(Model.Id);
-            await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEventType.Remove, Model.Id, Model.TypeName));
+            await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.Remove, Model.Id, Model.TypeName));
             await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());
         }
 
@@ -88,7 +87,7 @@ namespace ClipboardMachinery.Popups.TagEditor {
             if (Model.Value != Value) {
                 // NOTE: No need to update value directly, it should be handled by the ValueChange tag event
                 await dataRepository.UpdateTag(Model.Id, Value);
-                await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEventType.ValueChange, Model.Id, Model.TypeName, Value));
+                await eventAggregator.PublishOnCurrentThreadAsync(new TagEvent(TagEvent.TagEventType.ValueChange, Model.Id, Model.TypeName, Value));
             }
 
             await eventAggregator.PublishOnCurrentThreadAsync(PopupEvent.Close());

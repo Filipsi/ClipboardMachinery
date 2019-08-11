@@ -137,6 +137,8 @@
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
+    <Compile Include="Components\DialogOverlay\IDialogOverlayManager.cs" />
+    <Compile Include="Components\DialogOverlay\Impl\DialogOverlayManager.cs" />
     <Compile Include="Components\TagKind\ITagKindManager.cs" />
     <Compile Include="Components\TagKind\TagKindManager.cs" />
     <Compile Include="Components\TagKind\TagKindView.xaml.cs">
@@ -157,20 +159,20 @@
     <Compile Include="Plumbing\Factories\ITagKindFactory.cs" />
     <Compile Include="Plumbing\Factories\IViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
-    <Compile Include="Plumbing\Factories\IPopupFactory.cs" />
-    <Compile Include="Components\Popup\IPopupControlsProvider.cs" />
-    <Compile Include="Components\Popup\PopupManagerView.xaml.cs">
-      <DependentUpon>PopupManagerView.xaml</DependentUpon>
+    <Compile Include="Plumbing\Factories\IDialogOverlayFactory.cs" />
+    <Compile Include="Components\DialogOverlay\IDialogOverlayControlsProvider.cs" />
+    <Compile Include="Components\DialogOverlay\Impl\Portal\DialogOverlayPortalView.xaml.cs">
+      <DependentUpon>DialogOverlayPortalView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Popup\PopupManagerViewModel.cs" />
-    <Compile Include="Popups\TagEditor\TagEditorView.xaml.cs">
+    <Compile Include="Components\DialogOverlay\Impl\Portal\DialogOverlayPortalViewModel.cs" />
+    <Compile Include="DialogOverlays\TagEditor\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popups\TagEditor\TagEditorViewModel.cs" />
-    <Compile Include="Popups\TagTypeEditor\TagTypeEditorView.xaml.cs">
+    <Compile Include="DialogOverlays\TagEditor\TagEditorViewModel.cs" />
+    <Compile Include="DialogOverlays\TagTypeEditor\TagTypeEditorView.xaml.cs">
       <DependentUpon>TagTypeEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Popups\TagTypeEditor\TagTypeEditorViewModel.cs" />
+    <Compile Include="DialogOverlays\TagTypeEditor\TagTypeEditorViewModel.cs" />
     <Compile Include="Windows\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
@@ -286,15 +288,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Popup\PopupManagerView.xaml">
+    <Page Include="Components\DialogOverlay\Impl\Portal\DialogOverlayPortalView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popups\TagEditor\TagEditorView.xaml">
+    <Page Include="DialogOverlays\TagEditor\TagEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Popups\TagTypeEditor\TagTypeEditorView.xaml">
+    <Page Include="DialogOverlays\TagTypeEditor\TagTypeEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

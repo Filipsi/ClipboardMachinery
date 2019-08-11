@@ -3,7 +3,8 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.ColorGallery;
-using ClipboardMachinery.Components.ColorGallery.Presets;
+using ClipboardMachinery.Components.DialogOverlay;
+using ClipboardMachinery.Components.DialogOverlay.Impl;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.TagKind;
@@ -19,6 +20,13 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .FromThisAssembly()
                     .BasedOn<IScreenPage>()
                     .WithServiceBase()
+                    .LifestyleSingleton()
+            );
+
+            container.Register(
+                Component
+                    .For<IDialogOverlayManager>()
+                    .ImplementedBy<DialogOverlayManager>()
                     .LifestyleSingleton()
             );
 
@@ -74,7 +82,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
-                    .For<IPopupFactory>()
+                    .For<IDialogOverlayFactory>()
                     .AsFactory()
             );
         }
