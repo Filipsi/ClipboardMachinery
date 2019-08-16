@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
@@ -100,11 +101,12 @@ namespace ClipboardMachinery.Pages.TagTypes {
         }
 
         public async Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
-            if (message.EventType != TagEvent.TagEventType.TypeAdded) {
-                return;
+            switch (message.EventType) {
+                case TagEvent.TagEventType.TypeAdded:
+                case TagEvent.TagEventType.TypeRemoved:
+                    await Reset();
+                    break;
             }
-
-            await Reset();
         }
 
         #endregion

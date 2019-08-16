@@ -61,7 +61,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public object Content
-            => Application.Current.Dispatcher.Invoke(() => WrapContentForType(Type, Model?.Content));
+            => Application.Current.Dispatcher?.Invoke(() => WrapContentForType(Type, Model?.Content));
 
         public EntryType Type {
             get {
@@ -228,6 +228,12 @@ namespace ClipboardMachinery.Components.Clip {
             switch(message.EventType) {
                 case TagEventType.TagRemoved:
                     foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.TagId).ToArray()) {
+                        Model.Tags.Remove(tagToRemove.Model);
+                    }
+                    break;
+
+                case TagEventType.TypeRemoved:
+                    foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.TypeName == message.TagTypeName).ToArray()) {
                         Model.Tags.Remove(tagToRemove.Model);
                     }
                     break;

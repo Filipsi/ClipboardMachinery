@@ -44,7 +44,8 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
         [Required]
         [StringLength(20)]
         [DataRepositoryCheck(
-            nameof(IDataRepository.TagTypeExists), InvertResult = true,
+            nameof(IDataRepository.TagTypeExists),
+            InvertResult = true,
             ErrorMessage = "This name is already used by another tag type.")]
         public string Name {
             get => name;
@@ -172,8 +173,18 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
             saveButton.IsEnabled = IsValid;
         }
 
-        private Task OnRemoveClick(ActionButtonViewModel button) {
-            return Task.CompletedTask;
+        private async Task OnRemoveClick(ActionButtonViewModel button) {
+            if (IsCreatingNew) {
+                return;
+            }
+
+            foreach (ActionButtonViewModel controlButton in DialogControls) {
+                controlButton.IsEnabled = false;
+            }
+
+            await dataRepository.DeleteTagType(Model.Name);
+            await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeRemovedEvent(Model));
+            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {

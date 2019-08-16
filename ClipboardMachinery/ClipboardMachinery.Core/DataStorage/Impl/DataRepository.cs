@@ -199,6 +199,20 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             );
         }
 
+        public async Task DeleteTagType(string name) {
+            if (!await TagTypeExists(name)) {
+                return;
+            }
+
+            await Database.Connection.DeleteAsync<Tag>(
+                tag => tag.TypeName == name
+            );
+
+            await Database.Connection.DeleteAsync<TagType>(
+                tagType => tagType.Name == name
+            );
+        }
+
         #endregion
 
         #region Helpers

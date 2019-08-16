@@ -10,6 +10,7 @@ namespace ClipboardMachinery.Common.Events {
             TagRemoved,
             TagValueChanged,
             TypeAdded,
+            TypeRemoved,
             TypeColorChanged,
             TypeDescriptionChanged
         }
@@ -65,6 +66,13 @@ namespace ClipboardMachinery.Common.Events {
             return new TagEvent(TagEventType.TypeColorChanged) {
                 TagTypeName = tagType.Name,
                 Argument = tagType.Color
+            };
+        }
+
+        public static TagEvent CreateTypeRemovedEvent(TagTypeModel tagType) {
+            return new TagEvent(TagEventType.TypeRemoved) {
+                TagTypeName = tagType.Name,
+                Argument = tagType
             };
         }
 

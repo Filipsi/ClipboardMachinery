@@ -35,6 +35,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// Remove clip with corresponding id and all related tags.
         /// </summary>
         /// <param name="id">Id of a clip to remove</param>
+        /// <returns>A task that will be completed after the operation is performed.</returns>
         Task DeleteClip(int id);
 
         /// <summary>
@@ -53,6 +54,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="id">Id of tag to update</param>
         /// <param name="value">A new value for the tag</param>
+        /// <returns>A task that will be completed after the operation is performed.</returns>
         Task UpdateTag(int id, object value);
 
         /// <summary>
@@ -93,6 +95,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="name">Id of TagType aka TagModel#Name</param>
         /// <param name="color">New color of TagType</param>
+        /// <returns>A task that will be completed after the operation is performed.</returns>
         Task UpdateTagType(string name, Color color);
 
         /// <summary>
@@ -101,7 +104,15 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="name">Id of TagType aka TagModel#Name</param>
         /// <param name="description">New description of TagType</param>
+        /// <returns>A task that will be completed after the operation is performed.</returns>
         Task UpdateTagType(string name, string description);
+
+        /// <summary>
+        /// Removes tag type with given name along with all tags that were using this tag type.
+        /// </summary>
+        /// <param name="name">Id of TagType aka TagModel#Name</param>
+        /// <returns>A task that will be completed after the operation is performed.</returns>
+        Task DeleteTagType(string name);
 
     }
 
