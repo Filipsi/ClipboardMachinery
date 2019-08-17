@@ -9,9 +9,9 @@ using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.DataStorage;
 
-namespace ClipboardMachinery.DialogOverlays.TagEditor {
+namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
-    public class TagEditorViewModel : Screen, IDialogOverlayControlsProvider {
+    public class TagEditorViewModel : Screen, IOverlayDialog {
 
         #region Properties
 
@@ -21,6 +21,30 @@ namespace ClipboardMachinery.DialogOverlays.TagEditor {
 
         public TagModel Model {
             get;
+        }
+
+        public bool IsOpen {
+            get => isOpen;
+            set {
+                if (isOpen == value) {
+                    return;
+                }
+
+                isOpen = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public bool AreControlsVisible {
+            get => areControlsVisible;
+            set {
+                if (areControlsVisible == value) {
+                    return;
+                }
+
+                areControlsVisible = value;
+                NotifyOfPropertyChange();
+            }
         }
 
         public object Value {
@@ -42,6 +66,8 @@ namespace ClipboardMachinery.DialogOverlays.TagEditor {
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
 
+        private bool isOpen;
+        private bool areControlsVisible;
         private object val;
 
         #endregion
@@ -79,7 +105,7 @@ namespace ClipboardMachinery.DialogOverlays.TagEditor {
         private async Task OnRemoveClick(ActionButtonViewModel button) {
             await dataRepository.DeleteTag(Model.Id);
             await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagRemovedEvent(Model));
-            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
+            IsOpen = false;
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
@@ -90,7 +116,7 @@ namespace ClipboardMachinery.DialogOverlays.TagEditor {
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagValueChangedEvent(Model));
             }
 
-            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
+            IsOpen = false;
         }
 
         #endregion

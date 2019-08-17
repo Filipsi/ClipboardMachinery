@@ -1,11 +1,9 @@
 ﻿using Caliburn.Micro;
-using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Plumbing.Factories;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using ClipboardMachinery.DialogOverlays.TagEditor;
+using ClipboardMachinery.Components.DialogOverlay;
 
 namespace ClipboardMachinery.Components.Tag {
 
@@ -33,18 +31,6 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
-        public bool CanEdit {
-            get => canEdit;
-            private set {
-                if (canEdit == value) {
-                    return;
-                }
-
-                canEdit = value;
-                NotifyOfPropertyChange();
-            }
-        }
-
         public bool HasDescription
             => !string.IsNullOrWhiteSpace(Model.Description);
 
@@ -57,27 +43,17 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Fields
 
-        private readonly IEventAggregator eventAggregator;
-        private readonly IDialogOverlayFactory dialogOverlayFactory;
+        private readonly IDialogOverlayManager dialogOverlayManager;
 
         private TagModel model;
-        private bool canEdit = true;
 
         #endregion
 
-        public TagViewModel(IEventAggregator eventAggregator, IDialogOverlayFactory dialogOverlayFactory) {
-            this.eventAggregator = eventAggregator;
-            this.dialogOverlayFactory = dialogOverlayFactory;
+        public TagViewModel(IDialogOverlayManager dialogOverlayManager) {
+            this.dialogOverlayManager = dialogOverlayManager;
         }
 
         #region Handlers
-
-        private void OnTagEditorDeactivated(object sender, DeactivationEventArgs e) {
-            TagEditorViewModel tagEditor = (TagEditorViewModel)sender;
-            tagEditor.Deactivated -= OnTagEditorDeactivated;
-            dialogOverlayFactory.Release(tagEditor);
-            CanEdit = true;
-        }
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
@@ -104,10 +80,10 @@ namespace ClipboardMachinery.Components.Tag {
         #region Actions
 
         public void Edit() {
-            TagEditorViewModel tagEditor = dialogOverlayFactory.CreateTagEditor(Model);
-            tagEditor.Deactivated += OnTagEditorDeactivated;
-            CanEdit = false;
-            eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Open(tagEditor));
+            dialogOverlayManager.OpenDialog(
+                () => dialogOverlayManager.Factory.CreateTagEditor(Model),
+                tagEditor => dialogOverlayManager.Factory.Release(tagEditor)
+            );
         }
 
         #endregion

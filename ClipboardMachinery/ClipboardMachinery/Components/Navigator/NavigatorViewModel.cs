@@ -96,12 +96,12 @@ namespace ClipboardMachinery.Components.Navigator {
         }
 
         public Task HandleAsync(DialogOverlayEvent message, CancellationToken cancellationToken) {
-            if (message.EventType != PopupEventType.Open && message.EventType != PopupEventType.Close) {
+            if (message.EventType != PopupEventType.Opened && message.EventType != PopupEventType.Closed) {
                 return Task.CompletedTask;
             }
 
             foreach (SelectableButtonViewModel navigationButton in Pages) {
-                navigationButton.IsEnabled = message.EventType == PopupEventType.Close;
+                navigationButton.IsEnabled = message.EventType == PopupEventType.Closed;
             }
 
             return Task.CompletedTask;

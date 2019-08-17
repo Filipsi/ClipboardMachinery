@@ -1,12 +1,11 @@
 ﻿<UserControl
-    x:Class="ClipboardMachinery.DialogOverlays.TagTypeEditor.TagTypeEditorView"
+    x:Class="ClipboardMachinery.OverlayDialogs.TagTypeEditor.TagTypeEditorView"
     x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:cal="http://www.caliburnproject.org"
-    xmlns:c="clr-namespace:ClipboardMachinery.Common"
     xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers"
     mc:Ignorable="d" d:DesignWidth="800"
     MinHeight="288">

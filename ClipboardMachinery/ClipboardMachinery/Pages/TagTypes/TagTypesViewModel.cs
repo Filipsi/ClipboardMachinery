@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
-using ClipboardMachinery.DialogOverlays.TagTypeEditor;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.TagTypes {
@@ -44,20 +43,18 @@ namespace ClipboardMachinery.Pages.TagTypes {
 
         #region Fields
 
-        private readonly IEventAggregator eventAggregator;
+        private readonly IDialogOverlayManager dialogOverlayManager;
         private readonly IViewModelFactory vmFactory;
-        private readonly IDialogOverlayFactory dialogOverlayFactory;
 
         private bool canCreateNew = true;
 
         #endregion
 
-        public TagTypesViewModel(IEventAggregator eventAggregator, IDataRepository dataRepository, IViewModelFactory vmFactory, IDialogOverlayFactory dialogOverlayFactory)
+        public TagTypesViewModel(IDialogOverlayManager dialogOverlayManager, IDataRepository dataRepository, IViewModelFactory vmFactory)
             : base(dataRepository.CreateLazyTagTypeProvider(15)) {
 
-            this.eventAggregator = eventAggregator;
+            this.dialogOverlayManager = dialogOverlayManager;
             this.vmFactory = vmFactory;
-            this.dialogOverlayFactory = dialogOverlayFactory;
         }
 
         #region Logic
@@ -79,26 +76,22 @@ namespace ClipboardMachinery.Pages.TagTypes {
         #region Actions
 
         public void CreateNew() {
-            TagTypeModel newTagType = new TagTypeModel {
-                Kind = typeof(string)
-            };
-
-            TagTypeEditorViewModel tagTypeEditor = dialogOverlayFactory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
-            tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
-            CanCreateNew = false;
-            eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Open(tagTypeEditor));
+            dialogOverlayManager.OpenDialog(
+                () => {
+                    CanCreateNew = false;
+                    TagTypeModel newTagType = new TagTypeModel { Kind = typeof(string) };
+                    return dialogOverlayManager.Factory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
+                },
+                (editor) => {
+                    dialogOverlayManager.Factory.Release(editor);
+                    CanCreateNew = true;
+                }
+            );
         }
 
         #endregion
 
         #region Handlers
-
-        private void OnTagTypeEditorDeactivated(object sender, DeactivationEventArgs e) {
-            TagTypeEditorViewModel tagTypeEditor = (TagTypeEditorViewModel)sender;
-            tagTypeEditor.Deactivated -= OnTagTypeEditorDeactivated;
-            dialogOverlayFactory.Release(tagTypeEditor);
-            CanCreateNew = true;
-        }
 
         public async Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {

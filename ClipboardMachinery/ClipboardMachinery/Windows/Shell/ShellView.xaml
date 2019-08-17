@@ -60,7 +60,7 @@
 
                 <Grid>
                     <ContentControl x:Name="ActiveItem"/>
-                    <ContentControl x:Name="DialogOverlay" />
+                    <ContentControl x:Name="DialogOverlayPortal" />
                 </Grid>
             </Border>
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,10 +10,11 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
+using Action = System.Action;
 
 namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
 
-    public class DialogOverlayPortalViewModel : Conductor<IScreen>, IHandle<DialogOverlayEvent> {
+    public class DialogOverlayPortalViewModel : Conductor<IOverlayDialog> {
 
         #region Properties
 
@@ -28,12 +30,12 @@ namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
+        private Action dialogReleaseFn;
 
         #endregion
 
         public DialogOverlayPortalViewModel(IEventAggregator eventAggregator, Func<ActionButtonViewModel> actionButtonFactory) {
             this.eventAggregator = eventAggregator;
-
             Controls = new BindableCollection<ActionButtonViewModel>();
 
             // Create control buttons
@@ -45,9 +47,49 @@ namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
             Controls.Add(button);
         }
 
+        #region Logic
+
+        public async Task OpenDialog(IOverlayDialog dialog) {
+            await CloseDialog();
+            await ChangeActiveItemAsync(dialog, true);
+        }
+
+        public async Task OpenDialog<T>(Func<T> createFn, Action<T> releaseFn) where T : IOverlayDialog {
+            // Close previous dialog if there is any
+            await CloseDialog();
+
+            // Create new dialog with a abound release handle
+            T newDialog = createFn.Invoke();
+            dialogReleaseFn = () => releaseFn(newDialog);
+
+            // Show new dialog
+            await ChangeActiveItemAsync(newDialog, true);
+        }
+
+        public async Task CloseDialog() {
+            if (ActiveItem == null) {
+                return;
+            }
+
+            // Close current dialog
+            await ChangeActiveItemAsync(null, true);
+
+            // Release dialog if it is needed
+            if (dialogReleaseFn != null) {
+                dialogReleaseFn.Invoke();
+                dialogReleaseFn = null;
+            }
+        }
+
+        #endregion
+
         #region Handlers
 
-        private async void OnExtensionControlsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private Task HandleCloseClick(ActionButtonViewModel button) {
+            return CloseDialog();
+        }
+
+        private async void OnDialogControlsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach (ActionButtonViewModel extentionButton in e.NewItems) {
@@ -72,46 +114,53 @@ namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
             }
         }
 
-        private async Task HandleCloseClick(ActionButtonViewModel button) {
-            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
-        }
-
-        public async Task HandleAsync(DialogOverlayEvent message, CancellationToken cancellationToken) {
-            switch (message.EventType) {
-                case DialogOverlayEvent.PopupEventType.Open:
-                    await ChangeActiveItemAsync(message.Popup, true, cancellationToken);
-                    break;
-
-                case DialogOverlayEvent.PopupEventType.Close:
-                    await ChangeActiveItemAsync(null, true, cancellationToken);
+        private async void OnDialogPropertyChanged(object sender, PropertyChangedEventArgs e) {
+            switch (e.PropertyName) {
+                case nameof(IOverlayDialog.IsOpen):
+                    if (!((IOverlayDialog) sender).IsOpen) {
+                        await CloseDialog();
+                    }
                     break;
             }
         }
 
-        protected override async Task ChangeActiveItemAsync(IScreen newItem, bool closePrevious, CancellationToken cancellationToken) {
-            if (ActiveItem is IDialogOverlayControlsProvider oldControls) {
-                oldControls.DialogControls.CollectionChanged -= OnExtensionControlsCollectionChanged;
-                OnExtensionControlsCollectionChanged(
-                    sender: oldControls.DialogControls,
+        protected override async Task ChangeActiveItemAsync(IOverlayDialog newItem, bool closePrevious, CancellationToken cancellationToken) {
+            // Deactivate old dialog if there is any
+            if (ActiveItem != null) {
+                ActiveItem.DialogControls.CollectionChanged -= OnDialogControlsCollectionChanged;
+                OnDialogControlsCollectionChanged(
+                    sender: ActiveItem.DialogControls,
                     e: new NotifyCollectionChangedEventArgs(
                         action: NotifyCollectionChangedAction.Reset
                     )
                 );
+
+                ActiveItem.PropertyChanged -= OnDialogPropertyChanged;
+                ActiveItem.IsOpen = false;
+                await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.CreateClosedEvent(ActiveItem), cancellationToken);
             }
 
+            // Perform base logic
             await base.ChangeActiveItemAsync(newItem, closePrevious, cancellationToken);
 
-            if (newItem is IDialogOverlayControlsProvider newControls) {
-                newControls.DialogControls.CollectionChanged += OnExtensionControlsCollectionChanged;
-                OnExtensionControlsCollectionChanged(
-                    sender: newControls.DialogControls,
+            // Active new dialog if there is any
+            if (newItem != null) {
+                newItem.DialogControls.CollectionChanged += OnDialogControlsCollectionChanged;
+                OnDialogControlsCollectionChanged(
+                    sender: newItem.DialogControls,
                     e: new NotifyCollectionChangedEventArgs(
                         action: NotifyCollectionChangedAction.Add,
-                        changedItems: newControls.DialogControls.ToArray()
+                        changedItems: newItem.DialogControls.ToArray()
                     )
                 );
+
+                ActiveItem.IsOpen = true;
+                ActiveItem.AreControlsVisible = true;
+                newItem.PropertyChanged += OnDialogPropertyChanged;
+                await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.CreateOpenedEvent(ActiveItem), cancellationToken);
             }
 
+            // Notify about change
             NotifyOfPropertyChange(() => HasActiveDialog);
         }
 

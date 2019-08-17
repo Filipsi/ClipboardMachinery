@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
-using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.TagKind;
-using ClipboardMachinery.DialogOverlays.TagTypeEditor;
-using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Components.TagType {
 
@@ -33,18 +31,6 @@ namespace ClipboardMachinery.Components.TagType {
             }
         }
 
-        public bool CanEdit {
-            get => canEdit;
-            private set {
-                if (canEdit == value) {
-                    return;
-                }
-
-                canEdit = value;
-                NotifyOfPropertyChange();
-            }
-        }
-
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
 
@@ -60,19 +46,16 @@ namespace ClipboardMachinery.Components.TagType {
         #region Fields
 
         private readonly ITagKindManager tagKindManager;
-        private readonly IEventAggregator eventAggregator;
-        private readonly IDialogOverlayFactory dialogOverlayFactory;
+        private readonly IDialogOverlayManager dialogOverlayManager;
 
         private bool isFocused;
-        private bool canEdit = true;
 
         #endregion
 
-        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager, IEventAggregator eventAggregator, IDialogOverlayFactory dialogOverlayFactory) {
+        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager, IDialogOverlayManager dialogOverlayManager) {
             Model = model;
             this.tagKindManager = tagKindManager;
-            this.eventAggregator = eventAggregator;
-            this.dialogOverlayFactory = dialogOverlayFactory;
+            this.dialogOverlayManager = dialogOverlayManager;
         }
 
         #region Handlers
@@ -93,22 +76,15 @@ namespace ClipboardMachinery.Components.TagType {
             }
         }
 
-        private void OnTagTypeEditorDeactivated(object sender, DeactivationEventArgs e) {
-            TagTypeEditorViewModel tagTypeEditor = (TagTypeEditorViewModel)sender;
-            tagTypeEditor.Deactivated -= OnTagTypeEditorDeactivated;
-            dialogOverlayFactory.Release(tagTypeEditor);
-            CanEdit = true;
-        }
-
         #endregion
 
         #region Actions
 
         public void Edit() {
-            TagTypeEditorViewModel tagTypeEditor = dialogOverlayFactory.CreateTagTypeEditor(Model);
-            tagTypeEditor.Deactivated += OnTagTypeEditorDeactivated;
-            CanEdit = false;
-            eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Open(tagTypeEditor));
+            dialogOverlayManager.OpenDialog(
+                () => dialogOverlayManager.Factory.CreateTagTypeEditor(Model),
+                (editor) => dialogOverlayManager.Factory.Release(editor)
+            );
         }
 
         public void Focus() {

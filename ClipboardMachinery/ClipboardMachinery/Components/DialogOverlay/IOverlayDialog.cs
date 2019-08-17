@@ -3,7 +3,11 @@ using ClipboardMachinery.Components.Buttons.ActionButton;
 
 namespace ClipboardMachinery.Components.DialogOverlay {
 
-    internal interface IDialogOverlayControlsProvider {
+    public interface IOverlayDialog : IScreen {
+
+        bool IsOpen { get; set; }
+
+        bool AreControlsVisible { get; set; }
 
         BindableCollection<ActionButtonViewModel> DialogControls { get; }
 

@@ -40,7 +40,7 @@ namespace ClipboardMachinery.Windows.Shell {
             get;
         }
 
-        public IScreen DialogOverlay {
+        public IScreen DialogOverlayPortal {
             get;
         }
 
@@ -77,9 +77,9 @@ namespace ClipboardMachinery.Windows.Shell {
             this.dataRepository = dataRepository;
             lastAcceptedClipContent = dataRepository.LastClipContent;
 
-            // DialogOverlay wrapper
-            DialogOverlay = dialogOverlayManager.DialogOverlay;
-            DialogOverlay.ConductWith(this);
+            // Portal wrapper
+            DialogOverlayPortal = dialogOverlayManager.Portal;
+            DialogOverlayPortal.ConductWith(this);
 
             // HotKeys
             hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);

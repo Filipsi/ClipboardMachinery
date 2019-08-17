@@ -23,7 +23,10 @@
 
             <Grid>
                 <!-- Control buttons -->
-                <ItemsControl x:Name="Controls">
+                <ItemsControl
+                    x:Name="Controls"
+                    Visibility="{Binding ActiveItem.AreControlsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel

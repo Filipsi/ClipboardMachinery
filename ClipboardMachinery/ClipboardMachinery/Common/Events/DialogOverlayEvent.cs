@@ -1,17 +1,17 @@
-﻿using Caliburn.Micro;
+﻿using ClipboardMachinery.Components.DialogOverlay;
 
 namespace ClipboardMachinery.Common.Events {
 
     public class DialogOverlayEvent {
 
         public enum PopupEventType {
-            Open,
-            Close
+            Opened,
+            Closed
         }
 
         #region Properties
 
-        public IScreen Popup { get; private set; }
+        public IOverlayDialog OverlayDialog { get; private set; }
 
         public PopupEventType EventType { get; private set; }
 
@@ -22,16 +22,17 @@ namespace ClipboardMachinery.Common.Events {
 
         #region Factory
 
-        public static DialogOverlayEvent Open(IScreen popup) {
+        public static DialogOverlayEvent CreateOpenedEvent(IOverlayDialog overlayDialog) {
             return new DialogOverlayEvent {
-                EventType = PopupEventType.Open,
-                Popup = popup
+                EventType = PopupEventType.Opened,
+                OverlayDialog = overlayDialog
             };
         }
 
-        public static DialogOverlayEvent Close() {
+        public static DialogOverlayEvent CreateClosedEvent(IOverlayDialog overlayDialog) {
             return new DialogOverlayEvent {
-                EventType = PopupEventType.Close
+                EventType = PopupEventType.Closed,
+                OverlayDialog = overlayDialog
             };
         }
 

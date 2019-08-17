@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
+namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
     public partial class TagTypeEditorView : UserControl {
 

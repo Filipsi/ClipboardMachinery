@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
-using ClipboardMachinery.Common;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Helpers;
 using ClipboardMachinery.Components.Buttons.ActionButton;
@@ -18,14 +17,38 @@ using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
 
-namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
+namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
-    public class TagTypeEditorViewModel : ValidationScreenBase, IDialogOverlayControlsProvider {
+    public class TagTypeEditorViewModel : ValidationScreenBase, IOverlayDialog {
 
         #region Properties
 
         public BindableCollection<ActionButtonViewModel> DialogControls {
             get;
+        }
+
+        public bool IsOpen {
+            get => isOpen;
+            set {
+                if (isOpen == value) {
+                    return;
+                }
+
+                isOpen = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public bool AreControlsVisible {
+            get => areControlsVisible;
+            set {
+                if (areControlsVisible == value) {
+                    return;
+                }
+
+                areControlsVisible = value;
+                NotifyOfPropertyChange();
+            }
         }
 
         public TagTypeModel Model {
@@ -110,6 +133,8 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
         private readonly IDataRepository dataRepository;
         private readonly ActionButtonViewModel saveButton;
 
+        private bool isOpen;
+        private bool areControlsVisible;
         private TagTypeModel model;
         private string name;
         private string description;
@@ -178,13 +203,10 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
                 return;
             }
 
-            foreach (ActionButtonViewModel controlButton in DialogControls) {
-                controlButton.IsEnabled = false;
-            }
-
+            AreControlsVisible = false;
             await dataRepository.DeleteTagType(Model.Name);
             await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeRemovedEvent(Model));
-            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
+            IsOpen = false;
         }
 
         private async Task OnSaveClick(ActionButtonViewModel button) {
@@ -221,7 +243,7 @@ namespace ClipboardMachinery.DialogOverlays.TagTypeEditor {
                 }
             }
 
-            await eventAggregator.PublishOnCurrentThreadAsync(DialogOverlayEvent.Close());
+            IsOpen = false;
         }
 
         #endregion

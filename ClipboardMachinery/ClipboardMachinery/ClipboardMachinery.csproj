@@ -160,19 +160,19 @@
     <Compile Include="Plumbing\Factories\IViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
     <Compile Include="Plumbing\Factories\IDialogOverlayFactory.cs" />
-    <Compile Include="Components\DialogOverlay\IDialogOverlayControlsProvider.cs" />
+    <Compile Include="Components\DialogOverlay\IOverlayDialog.cs" />
     <Compile Include="Components\DialogOverlay\Impl\Portal\DialogOverlayPortalView.xaml.cs">
       <DependentUpon>DialogOverlayPortalView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\DialogOverlay\Impl\Portal\DialogOverlayPortalViewModel.cs" />
-    <Compile Include="DialogOverlays\TagEditor\TagEditorView.xaml.cs">
+    <Compile Include="OverlayDialogs\TagEditor\TagEditorView.xaml.cs">
       <DependentUpon>TagEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DialogOverlays\TagEditor\TagEditorViewModel.cs" />
-    <Compile Include="DialogOverlays\TagTypeEditor\TagTypeEditorView.xaml.cs">
+    <Compile Include="OverlayDialogs\TagEditor\TagEditorViewModel.cs" />
+    <Compile Include="OverlayDialogs\TagTypeEditor\TagTypeEditorView.xaml.cs">
       <DependentUpon>TagTypeEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DialogOverlays\TagTypeEditor\TagTypeEditorViewModel.cs" />
+    <Compile Include="OverlayDialogs\TagTypeEditor\TagTypeEditorViewModel.cs" />
     <Compile Include="Windows\Shell\RotatingGear.xaml.cs">
       <DependentUpon>RotatingGear.xaml</DependentUpon>
     </Compile>
@@ -292,11 +292,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DialogOverlays\TagEditor\TagEditorView.xaml">
+    <Page Include="OverlayDialogs\TagEditor\TagEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DialogOverlays\TagTypeEditor\TagTypeEditorView.xaml">
+    <Page Include="OverlayDialogs\TagTypeEditor\TagTypeEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

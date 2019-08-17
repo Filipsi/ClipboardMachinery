@@ -1,7 +1,7 @@
 ﻿using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagType;
-using ClipboardMachinery.DialogOverlays.TagEditor;
-using ClipboardMachinery.DialogOverlays.TagTypeEditor;
+using ClipboardMachinery.OverlayDialogs.TagEditor;
+using ClipboardMachinery.OverlayDialogs.TagTypeEditor;
 
 namespace ClipboardMachinery.Plumbing.Factories {
 
