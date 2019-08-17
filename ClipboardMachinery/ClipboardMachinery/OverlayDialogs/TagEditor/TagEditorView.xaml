@@ -4,10 +4,30 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cal="http://www.caliburnproject.org"
     mc:Ignorable="d" d:DesignWidth="800"
     Height="256">
 
+    <UserControl.Resources>
+        <ResourceDictionary
+            Source="pack://application:,,,/Resources/Styles/EditorFields.xaml" />
+    </UserControl.Resources>
+
     <Grid>
+        <Grid.Resources>
+            <Style
+                x:Key="ValueKindFieldHeaderStyle"
+                BasedOn="{StaticResource FieldHeaderStyle}"
+                TargetType="TextBlock">
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="{StaticResource ElementSelectBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="128" />
             <ColumnDefinition Width="*" />
@@ -32,16 +52,38 @@
             Grid.Column="1"
             Margin="0,32,0,0">
 
-            <TextBox
-                Tag="Tag"
-                IsReadOnly="True"
-                Style="{StaticResource LiteTextBoxStyle}"
-                Text="{Binding Model.TypeName}" />
+            <TextBlock
+                Text="Tag"
+                Style="{StaticResource FieldHeaderStyle}" />
 
             <TextBox
-                Tag="Value"
-                Style="{StaticResource LiteTextBoxStyle}"
+                IsEnabled="False"
+                Text="{Binding Model.TypeName}" />
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    x:Name="ValueKindFieldHeader"
+                    Text="{Binding TagKind.Schema.Name, FallbackValue='Unknown'}"
+                    Style="{StaticResource ValueKindFieldHeaderStyle}"
+                    TextDecorations="Underline"
+                    Margin="0,0,3,0">
+
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            <ContentControl
+                                cal:View.Model="{Binding TagKind}" />
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+
+                <TextBlock
+                    Text="value"
+                    Style="{StaticResource FieldHeaderStyle}" />
+            </StackPanel>
+
+            <TextBox
                 Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+
         </StackPanel>
     </Grid>
 </UserControl>

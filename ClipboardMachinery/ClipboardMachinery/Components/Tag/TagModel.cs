@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System;
+using Caliburn.Micro;
 using System.Windows.Media;
 using ClipboardMachinery.Core.DataStorage;
 

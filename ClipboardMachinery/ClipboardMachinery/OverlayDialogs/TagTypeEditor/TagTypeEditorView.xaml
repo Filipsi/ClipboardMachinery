@@ -11,32 +11,7 @@
     MinHeight="288">
 
     <UserControl.Resources>
-        <Style
-            x:Key="FieldStyle"
-            TargetType="Control">
-
-            <Setter Property="Padding" Value="6" />
-            <Setter Property="Margin" Value="0,0,0,16" />
-            <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
-        </Style>
-
-        <Style
-            x:Key="FieldHeaderStyle"
-            TargetType="TextBlock">
-
-            <Setter Property="Margin" Value="0,0,0,2" />
-            <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
-        </Style>
-
-        <Style TargetType="TextBox">
-            <Style.BasedOn>
-                <helpers:MergedStyles
-                    BasedOn="{StaticResource ValidationStyle}"
-                    MergeStyle="{StaticResource FieldStyle}"/>
-            </Style.BasedOn>
-        </Style>
+        <ResourceDictionary Source="pack://application:,,,/Resources/Styles/EditorFields.xaml" />
     </UserControl.Resources>
 
     <Grid>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -7,7 +8,9 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
@@ -20,6 +23,10 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
         }
 
         public TagModel Model {
+            get;
+        }
+
+        public TagKindViewModel TagKind {
             get;
         }
 
@@ -65,6 +72,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
+        private readonly ITagKindManager tagKindManager;
 
         private bool isOpen;
         private bool areControlsVisible;
@@ -74,13 +82,19 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         public TagEditorViewModel(
             TagModel tagModel, Func<ActionButtonViewModel> actionButtonFactory,
-            IEventAggregator eventAggregator, IDataRepository dataRepository) {
+            IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager) {
 
             Model = tagModel;
             Value = Model.Value;
             DialogControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
+            this.tagKindManager = tagKindManager;
+
+            if (Model.Value != null) {
+                ITagKindSchema tagKindSchema = tagKindManager.GetSchemaFor(Model.Value.GetType());
+                TagKind = tagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
+            }
 
             // Create extension control buttons
             ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
