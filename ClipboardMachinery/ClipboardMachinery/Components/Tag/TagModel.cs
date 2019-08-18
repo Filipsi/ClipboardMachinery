@@ -33,7 +33,7 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
-        public object Value {
+        public string Value {
             get => val;
             set {
                 if (val == value) {
@@ -41,6 +41,18 @@ namespace ClipboardMachinery.Components.Tag {
                 }
 
                 val = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public Type ValueKind {
+            get => valueKind;
+            set {
+                if (valueKind == value) {
+                    return;
+                }
+
+                valueKind = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -86,7 +98,8 @@ namespace ClipboardMachinery.Components.Tag {
 
         private int id;
         private string typeName;
-        private object val;
+        private string val;
+        private Type valueKind;
         private Color? color = defaultColor;
         private string description;
 

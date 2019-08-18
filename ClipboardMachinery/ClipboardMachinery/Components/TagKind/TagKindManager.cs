@@ -16,14 +16,13 @@ namespace ClipboardMachinery.Components.TagKind {
 
         #region Fields
 
-        private readonly IReadOnlyCollection<ITagKindSchema> schemas;
+        private readonly Dictionary<Type, ITagKindSchema> schemaMap;
 
         #endregion
 
         public TagKindManager(ITagKindFactory tagKindFactory) {
-            schemas = Array.AsReadOnly(
-                tagKindFactory.GetAllSchemas()
-            );
+            ITagKindSchema[] schemas = tagKindFactory.GetAllSchemas();
+            schemaMap = schemas.ToDictionary(sch => sch.Kind, sch => sch);
 
             TagKinds = Array.AsReadOnly(
                 schemas
@@ -36,7 +35,13 @@ namespace ClipboardMachinery.Components.TagKind {
         #region Logic
 
         public ITagKindSchema GetSchemaFor(Type kindType) {
-            return schemas.FirstOrDefault(schema => schema.Type == kindType);
+            return schemaMap.ContainsKey(kindType)
+                ? schemaMap[kindType]
+                : null;
+        }
+
+        public bool IsValid(Type kindType, string input) {
+            return TryParse(kindType, input, out object result);
         }
 
         public bool TryParse(Type kindType, string input, out object result) {

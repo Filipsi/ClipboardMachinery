@@ -4,7 +4,7 @@ namespace ClipboardMachinery.Core.TagKind {
 
     public interface ITagKindSchema {
 
-        Type Type { get; }
+        Type Kind { get; }
 
         string Name { get; }
 
@@ -13,6 +13,8 @@ namespace ClipboardMachinery.Core.TagKind {
         string Icon { get; }
 
         bool TryParse(string value, out object result);
+
+        string ToDisplayValue(object value);
 
     }
 

@@ -82,7 +82,7 @@
             </StackPanel>
 
             <TextBox
-                Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Value, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
         </StackPanel>
     </Grid>

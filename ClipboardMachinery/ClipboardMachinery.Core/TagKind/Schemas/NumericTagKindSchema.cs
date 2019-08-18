@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Globalization;
-using ClipboardMachinery.Core.TagKind;
 
-namespace ClipboardMachinery.Components.TagKind.Schemas {
+namespace ClipboardMachinery.Core.TagKind.Schemas {
 
     public class NumericTagKindSchema : ITagKindSchema {
 
         #region Properties
 
-        public Type Type { get; } = typeof(decimal);
+        public Type Kind { get; } = typeof(decimal);
 
         public string Name { get; } = "Numeric";
 
@@ -21,15 +20,21 @@ namespace ClipboardMachinery.Components.TagKind.Schemas {
         #region Logic
 
         public bool TryParse(string value, out object result) {
-            bool isSucessfulyParsed =  decimal.TryParse(
+            bool isSucessfulyParsed = decimal.TryParse(
                 s: value,
                 style: NumberStyles.AllowDecimalPoint | NumberStyles.AllowTrailingWhite,
-                provider: CultureInfo.CurrentUICulture,
+                provider: CultureInfo.InvariantCulture,
                 result: out decimal numericValue
             );
 
             result = numericValue;
             return isSucessfulyParsed;
+        }
+
+        public string ToDisplayValue(object value) {
+            return value is decimal decimalValue
+                ? decimalValue.ToString(CultureInfo.InvariantCulture)
+                : value.ToString();
         }
 
         #endregion

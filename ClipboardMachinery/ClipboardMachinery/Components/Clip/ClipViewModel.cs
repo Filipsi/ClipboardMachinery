@@ -253,7 +253,7 @@ namespace ClipboardMachinery.Components.Clip {
                 case TagEventType.TagValueChanged:
                     TagViewModel tagWithChangedValue = Items.FirstOrDefault(tag => tag.Model.Id == message.TagId);
                     if (tagWithChangedValue != null) {
-                        tagWithChangedValue.Model.Value = message.Argument;
+                        tagWithChangedValue.Model.Value = (string)message.Argument;
                         UpdateControlsState();
                     }
                     break;

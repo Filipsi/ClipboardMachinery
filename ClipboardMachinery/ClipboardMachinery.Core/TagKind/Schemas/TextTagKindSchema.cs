@@ -6,7 +6,7 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
 
         #region Properties
 
-        public Type Type { get; } = typeof(string);
+        public Type Kind { get; } = typeof(string);
 
         public string Name { get; } = "Text";
 
@@ -21,6 +21,10 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
         public bool TryParse(string value, out object result) {
             result = value;
             return true;
+        }
+
+        public string ToDisplayValue(object value) {
+            return value.ToString();
         }
 
         #endregion
