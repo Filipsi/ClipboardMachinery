@@ -1,7 +1,9 @@
 ﻿using Caliburn.Micro;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using ClipboardMachinery.Components.DialogOverlay;
 
@@ -28,11 +30,16 @@ namespace ClipboardMachinery.Components.Tag {
 
                 model = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => HasDescription);
+                NotifyOfPropertyChange(() => IsValueOverflowing);
             }
         }
 
         public bool HasDescription
             => !string.IsNullOrWhiteSpace(Model.Description);
+
+        public bool IsValueOverflowing
+            => MeasureValueString(Model.Value).Width >= 96;
 
         public SolidColorBrush BackgroundColor
             => model.Color.HasValue
@@ -64,6 +71,10 @@ namespace ClipboardMachinery.Components.Tag {
                 case nameof(TagModel.Description):
                     NotifyOfPropertyChange(() => HasDescription);
                     break;
+
+                case nameof(TagModel.Value):
+                    NotifyOfPropertyChange(() => IsValueOverflowing);
+                    break;
             }
         }
 
@@ -84,6 +95,25 @@ namespace ClipboardMachinery.Components.Tag {
                 () => dialogOverlayManager.Factory.CreateTagEditor(Model),
                 tagEditor => dialogOverlayManager.Factory.Release(tagEditor)
             );
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private Size MeasureValueString(string candidate) {
+            FormattedText formattedText = new FormattedText(
+                textToFormat: candidate,
+                culture: CultureInfo.CurrentCulture,
+                flowDirection: FlowDirection.LeftToRight,
+                typeface: new Typeface("Calibri Light"),
+                emSize: 14D,
+                foreground: Brushes.Black,
+                numberSubstitution: new NumberSubstitution(),
+                textFormattingMode: TextFormattingMode.Display
+            );
+
+            return new Size(formattedText.Width, formattedText.Height);
         }
 
         #endregion

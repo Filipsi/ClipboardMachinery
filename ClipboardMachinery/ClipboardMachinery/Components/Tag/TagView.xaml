@@ -10,22 +10,6 @@
     cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Edit()]"
     Cursor="Hand">
 
-    <UserControl.Style>
-        <Style TargetType="UserControl">
-            <Setter Property="ToolTip" Value="{x:Null}" />
-
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding HasDescription}" Value="True">
-                    <Setter Property="ToolTip">
-                       <Setter.Value>
-                           <ToolTip Content="{Binding Model.Description}" />
-                       </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Style>
-
     <Grid
         Background="{Binding BackgroundColor}"
         Margin="4,0">
@@ -41,22 +25,58 @@
             TextAlignment="Left"
             VerticalAlignment="Center"
             Foreground="#2e3131"
+            Background="Transparent"
             Text="{Binding Model.TypeName, FallbackValue='tag'}"
-            FontFamily="Calibri" FontWeight="Bold" TextDecorations="{x:Null}" />
+            FontFamily="Calibri"
+            FontWeight="Bold"
+            TextDecorations="{x:Null}">
+
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="ToolTip" Value="{x:Null}" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasDescription}" Value="True">
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <ToolTip Content="{Binding Model.Description}" />
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
         <Border
             Grid.Column="1"
+            MaxWidth="96"
+            Padding="0,0,8,0"
             Background="Transparent">
 
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="ToolTip" Value="{x:Null}" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsValueOverflowing}" Value="True">
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <ToolTip Content="{Binding Model.Value}" />
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
             <TextBlock
-                Padding="0,0,8,0"
                 TextAlignment="Left"
                 VerticalAlignment="Center"
                 Foreground="#2e3131"
                 Text="{Binding Model.Value, FallbackValue='value'}"
                 FontFamily="Calibri Light" />
         </Border>
-
     </Grid>
 
 </UserControl>

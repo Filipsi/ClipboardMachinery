@@ -57,7 +57,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         private void OnExpandTimerElapsed(object sender, ElapsedEventArgs e) {
-            Application.Current.Dispatcher.Invoke(() => {
+            Application.Current.Dispatcher?.Invoke(() => {
                 TagPanel.BeginAnimation(HeightProperty, expandAnimation);
                 isExpanded = true;
             });
