@@ -35,11 +35,14 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
+        private bool HasModel
+            => Model != null;
+
         public bool HasDescription
-            => !string.IsNullOrWhiteSpace(Model.Description);
+            => HasModel && !string.IsNullOrWhiteSpace(Model.Description);
 
         public bool IsValueOverflowing
-            => MeasureValueString(Model.Value).Width >= 96;
+            => HasModel && MeasureValueString(Model.Value).Width >= 96;
 
         public SolidColorBrush BackgroundColor
             => model.Color.HasValue

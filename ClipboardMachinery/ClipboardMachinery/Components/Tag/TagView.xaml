@@ -50,7 +50,7 @@
 
         <Border
             Grid.Column="1"
-            MaxWidth="96"
+            MaxWidth="128"
             Padding="0,0,8,0"
             Background="Transparent">
 

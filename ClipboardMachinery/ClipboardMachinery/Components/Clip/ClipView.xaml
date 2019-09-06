@@ -93,17 +93,49 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
                 </Grid.ColumnDefinitions>
 
+                <Grid.Resources>
+                    <StackPanel
+                        x:Key="OverflowIndicator"
+                        Background="#DDEBF4"
+                        Orientation="Horizontal"
+                        Width="64">
+
+                        <TextBlock
+                            Padding="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="#2e3131"
+                            FontFamily="Calibri Light"
+                            Text="+ " />
+
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="#2e3131"
+                            FontFamily="Calibri"
+                            FontWeight="Bold"
+                            Text="{Binding OverflowElementsCount}" />
+
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="#2e3131"
+                            FontFamily="Calibri Light"
+                            Text=" more" />
+                    </StackPanel>
+                </Grid.Resources>
+
                 <ItemsControl
-                    Grid.Row="0"
-                    x:Name="Items"
-                    Margin="4,0,0,0">
+                    Grid.Column="1"
+                    x:Name="Items">
 
                     <b:Interaction.Behaviors>
-                        <behaviors:CollapseOverflowBehavior />
+                        <behaviors:CollapseOverflowBehavior
+                            OverflowIndicatorElement="{StaticResource OverflowIndicator}"
+                            OverflowIndicatorOffset="4" />
                     </b:Interaction.Behaviors>
 
                     <ItemsControl.ItemsPanel>
@@ -115,9 +147,13 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
-                <TextBlock
+                <ContentControl
                     Grid.Column="1"
-                    Margin="0,0,8,0"
+                    HorizontalAlignment="Left"
+                    Content="{StaticResource OverflowIndicator}"/>
+
+                <TextBlock
+                    Grid.Column="2"
                     VerticalAlignment="Center"
                     Foreground="#2e3131"
                     FontSize="14"

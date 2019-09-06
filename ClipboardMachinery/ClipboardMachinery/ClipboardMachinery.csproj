@@ -117,6 +117,7 @@
     <Compile Include="Common\Events\DialogOverlayEvent.cs" />
     <Compile Include="Common\Events\TagEvent.cs" />
     <Compile Include="Common\Helpers\MergedStylesExtension.cs" />
+    <Compile Include="Common\Helpers\TimingExtensions.cs" />
     <Compile Include="Common\Helpers\ValidationScreenBase.cs" />
     <Compile Include="Components\Buttons\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
