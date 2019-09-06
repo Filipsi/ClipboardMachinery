@@ -143,8 +143,24 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
         #endregion
 
         public TagTypeEditorViewModel(
-            TagTypeModel tagTypeModel, bool isCreatingNew, ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
+            ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
+            ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory)
+            : this(null, colorGallery, eventAggregator, dataRepository, tagKindManager, actionButtonFactory) {
+        }
+
+        public TagTypeEditorViewModel(
+            TagTypeModel tagTypeModel, ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
             ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory) {
+
+            if (tagTypeModel == null) {
+                IsCreatingNew = true;
+                tagTypeModel = new TagTypeModel {
+                    Kind = typeof(string)
+                };
+            }
+            else {
+                IsCreatingNew = false;
+            }
 
             Model = tagTypeModel;
             Name = Model.Name;
@@ -154,7 +170,6 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
             DialogControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
-            IsCreatingNew = isCreatingNew;
 
             // If in edit mode, disable validation specific to creation mode
             if (!IsCreatingNew) {
@@ -163,11 +178,11 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
             // Setup color gallery
             ColorGallery = colorGallery;
-            ColorGallery.SelectColor(isCreatingNew ? SystemTagTypes.DefaultColor : Model.Color);
+            ColorGallery.SelectColor(IsCreatingNew ? SystemTagTypes.DefaultColor : Model.Color);
 
             // Create popup controls
             // Do not create remove button if edited tag belongs to the system since system owned tags can't be removed.
-            if (!IsSystemOwned && !isCreatingNew) {
+            if (!IsSystemOwned && !IsCreatingNew) {
                 ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
                 removeButton.ToolTip = "Remove";
                 removeButton.Icon = (Geometry) Application.Current.FindResource("IconRemove");

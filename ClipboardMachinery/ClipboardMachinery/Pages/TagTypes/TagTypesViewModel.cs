@@ -79,8 +79,7 @@ namespace ClipboardMachinery.Pages.TagTypes {
             dialogOverlayManager.OpenDialog(
                 () => {
                     CanCreateNew = false;
-                    TagTypeModel newTagType = new TagTypeModel { Kind = typeof(string) };
-                    return dialogOverlayManager.Factory.CreateTagTypeEditor(newTagType, isCreatingNew: true);
+                    return dialogOverlayManager.Factory.CreateTagTypeEditor();
                 },
                 (editor) => {
                     dialogOverlayManager.Factory.Release(editor);

@@ -8,10 +8,13 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Helpers;
 using ClipboardMachinery.Components.Buttons.ActionButton;
+using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.DataStorage.Schema;
+using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.OverlayDialogs.TagEditor {
@@ -28,12 +31,20 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             get;
         }
 
-        public TagKindViewModel TagKind {
+        private ITagKindManager TagKindManager {
             get;
         }
 
-        private ITagKindManager TagKindManager {
-            get;
+        public TagKindViewModel TagKind {
+            get => tagKind;
+            private set {
+                if (tagKind == value) {
+                    return;
+                }
+
+                tagKind = value;
+                NotifyOfPropertyChange();
+            }
         }
 
         public bool IsOpen {
@@ -60,6 +71,32 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             }
         }
 
+        [Required]
+        [DataRepositoryCheck(nameof(IDataRepository.TagTypeExists))]
+        public string TypeName {
+            get => typeName;
+            set {
+                if (val == value) {
+                    return;
+                }
+
+                typeName = value;
+
+                Task.Run(async () => {
+                    TagType tagType = await dataRepository.FindTagType<TagType>(TypeName);
+                    if (tagType != null) {
+                        ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagType.Kind);
+                        TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
+                    }
+
+                    NotifyOfPropertyChange();
+                    await ValidateProperty(value);
+                    await ValidateProperty(Value, nameof(Value));
+                });
+            }
+        }
+
+        [Required]
         [StringLength(20)]
         [CustomValidation(typeof(TagEditorViewModel), nameof(ValidateTagValue))]
         public string Value {
@@ -75,6 +112,10 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             }
         }
 
+        public bool IsCreatingNew {
+            get;
+        }
+
         #endregion
 
         #region Fields
@@ -82,37 +123,52 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
         private readonly ActionButtonViewModel saveButton;
+        private readonly ClipModel targetClip;
 
         private bool isOpen;
         private bool areControlsVisible;
+        private string typeName;
         private string val;
+        private TagKindViewModel tagKind;
 
         #endregion
+
+        public TagEditorViewModel(
+            ClipModel clipModel, Func<ActionButtonViewModel> actionButtonFactory, IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager)
+            : this(new TagModel(), actionButtonFactory, eventAggregator, dataRepository, tagKindManager) {
+
+            IsCreatingNew = true;
+            targetClip = clipModel;
+        }
 
         public TagEditorViewModel(
             TagModel tagModel, Func<ActionButtonViewModel> actionButtonFactory,
             IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager) {
 
-            Model = tagModel;
-            TagKindManager = tagKindManager;
-            DialogControls = new BindableCollection<ActionButtonViewModel>();
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
 
-            if (Model.Value != null) {
-                Value = Model.Value;
-                ITagKindSchema tagKindSchema = tagKindManager.GetSchemaFor(Model.ValueKind);
-                TagKind = tagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
+            TagKindManager = tagKindManager;
+            DialogControls = new BindableCollection<ActionButtonViewModel>();
+
+            if (!string.IsNullOrWhiteSpace(tagModel.TypeName)) {
+                TypeName = tagModel.TypeName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(tagModel.Value)) {
+                Value = tagModel.Value;
             }
 
             // Create extension control buttons
-            ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
-            removeButton.ToolTip = "Remove";
-            removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
-            removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
-            removeButton.ClickAction = OnRemoveClick;
-            removeButton.ConductWith(this);
-            DialogControls.Add(removeButton);
+            if (!IsCreatingNew) {
+                ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
+                removeButton.ToolTip = "Remove";
+                removeButton.Icon = (Geometry) Application.Current.FindResource("IconRemove");
+                removeButton.HoverColor = (SolidColorBrush) Application.Current.FindResource("DangerousActionBrush");
+                removeButton.ClickAction = OnRemoveClick;
+                removeButton.ConductWith(this);
+                DialogControls.Add(removeButton);
+            }
 
             saveButton = actionButtonFactory.Invoke();
             saveButton.ToolTip = "Save";
@@ -121,13 +177,20 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             saveButton.ClickAction = OnSaveClick;
             saveButton.ConductWith(this);
             DialogControls.Add(saveButton);
+
+            Model = tagModel;
         }
 
         #region Logic
 
         public static ValidationResult ValidateTagValue(string newTagValue, ValidationContext context) {
             TagEditorViewModel editor = (TagEditorViewModel)context.ObjectInstance;
-            return editor.TagKindManager.IsValid(editor.Model.ValueKind, newTagValue)
+
+            if (editor.TagKind == null) {
+                return ValidationResult.Success;
+            }
+
+            return editor.TagKindManager.IsValid(editor.TagKind.Schema.Kind, newTagValue)
                 ? ValidationResult.Success
                 : new ValidationResult($"Tag value is not valid, expected a {editor.TagKind.Schema.Name.ToLowerInvariant()} value.", new[] { nameof(Value) });
         }
@@ -161,8 +224,12 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 return;
             }
 
-            // Update value of changed
-            if (TagKindManager.TryParse(TagKind.Schema.Kind, Value, out object newValue)) {
+            // Create new tag or update values if changed
+            if (IsCreatingNew) {
+                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, TypeName, Value);
+                await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagAddedEvent(targetClip.Id, newModel));
+
+            } else if (TagKindManager.TryParse(TagKind.Schema.Kind, Value, out object newValue)) {
                 string displayValue = TagKind.Schema.ToDisplayValue(newValue);
 
                 if (Model.Value != displayValue) {

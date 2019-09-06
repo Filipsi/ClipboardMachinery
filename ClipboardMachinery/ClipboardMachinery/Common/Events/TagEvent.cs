@@ -23,6 +23,8 @@ namespace ClipboardMachinery.Common.Events {
 
         public string TagTypeName { get; private set; }
 
+        public int? RelatedClipId { get; private set; }
+
         public object Argument { get; private set; }
 
         #endregion
@@ -32,6 +34,15 @@ namespace ClipboardMachinery.Common.Events {
         }
 
         #region Factories
+
+        public static TagEvent CreateTagAddedEvent(int clipId, TagModel tag) {
+            return new TagEvent(TagEventType.TagAdded) {
+                TagId = tag.Id,
+                TagTypeName = tag.TypeName,
+                RelatedClipId = clipId,
+                Argument = tag
+            };
+        }
 
         public static TagEvent CreateTagRemovedEvent(TagModel tag) {
             return new TagEvent(TagEventType.TagRemoved) {

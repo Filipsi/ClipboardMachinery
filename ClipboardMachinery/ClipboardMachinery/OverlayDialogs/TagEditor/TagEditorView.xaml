@@ -57,29 +57,51 @@
                 Style="{StaticResource FieldHeaderStyle}" />
 
             <TextBox
-                IsEnabled="False"
-                Text="{Binding Model.TypeName}" />
+                IsEnabled="{Binding IsCreatingNew}"
+                Text="{Binding TypeName, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock
-                    x:Name="ValueKindFieldHeader"
-                    Text="{Binding TagKind.Schema.Name, FallbackValue='Unknown'}"
-                    Style="{StaticResource ValueKindFieldHeaderStyle}"
-                    TextDecorations="Underline"
-                    Margin="0,0,3,0">
+            <ContentControl>
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        x:Name="ValueKindFieldHeader"
+                                        Text="{Binding TagKind.Schema.Name, FallbackValue='Unknown'}"
+                                        Style="{StaticResource ValueKindFieldHeaderStyle}"
+                                        TextDecorations="Underline"
+                                        Margin="0,0,3,0">
 
-                    <TextBlock.ToolTip>
-                        <ToolTip>
-                            <ContentControl
-                                cal:View.Model="{Binding TagKind}" />
-                        </ToolTip>
-                    </TextBlock.ToolTip>
-                </TextBlock>
+                                        <TextBlock.ToolTip>
+                                            <ToolTip>
+                                                <ContentControl
+                                                    cal:View.Model="{Binding TagKind}" />
+                                            </ToolTip>
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
 
-                <TextBlock
-                    Text="value"
-                    Style="{StaticResource FieldHeaderStyle}" />
-            </StackPanel>
+                                    <TextBlock
+                                        Text="value"
+                                        Style="{StaticResource FieldHeaderStyle}" />
+                                </StackPanel>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCreatingNew}" Value="True">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock
+                                            Text="Value"
+                                            Style="{StaticResource FieldHeaderStyle}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
 
             <TextBox
                 Text="{Binding Value, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />

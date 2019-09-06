@@ -17,6 +17,7 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
+using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.DataStorage;
 using Microsoft.Win32;
@@ -125,6 +126,7 @@ namespace ClipboardMachinery.Components.Clip {
         private readonly Func<ActionButtonViewModel> actionButtonFactory;
         private readonly Func<TagViewModel> tagVmFactory;
         private readonly ToggleButtonViewModel favoriteButton;
+        private readonly IDialogOverlayManager dialogOverlayManager;
 
         private ClipModel model;
         private bool isFocused;
@@ -144,11 +146,13 @@ namespace ClipboardMachinery.Components.Clip {
 
         public ClipViewModel(
             ClipModel model, IEventAggregator eventAggregator,
-            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> actionButtonFactory, Func<ToggleButtonViewModel> toggleButtonFactory) {
+            Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> actionButtonFactory, Func<ToggleButtonViewModel> toggleButtonFactory,
+            IDialogOverlayManager dialogOverlayManager) {
 
             this.tagVmFactory = tagVmFactory;
             this.eventAggregator = eventAggregator;
             this.actionButtonFactory = actionButtonFactory;
+            this.dialogOverlayManager = dialogOverlayManager;
 
             Controls = new BindableCollection<ActionButtonViewModel>();
 
@@ -171,6 +175,14 @@ namespace ClipboardMachinery.Components.Clip {
             favoriteButton.ClickAction = ToggleFavorite;
             favoriteButton.ConductWith(this);
             Controls.Add(favoriteButton);
+
+            ActionButtonViewModel addTagButton = actionButtonFactory.Invoke();
+            addTagButton.ToolTip = "Add tag";
+            addTagButton.Icon = (Geometry)Application.Current.FindResource("IconAddTag");
+            addTagButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
+            addTagButton.ClickAction = AddTag;
+            addTagButton.ConductWith(this);
+            Controls.Add(addTagButton);
 
             Model = model;
         }
@@ -226,6 +238,12 @@ namespace ClipboardMachinery.Components.Clip {
 
         public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch(message.EventType) {
+                case TagEventType.TagAdded:
+                    if (message.RelatedClipId == Model.Id) {
+                        Model.Tags.Add((TagModel)message.Argument);
+                    }
+                    break;
+
                 case TagEventType.TagRemoved:
                     foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.TagId).ToArray()) {
                         Model.Tags.Remove(tagToRemove.Model);
@@ -271,7 +289,10 @@ namespace ClipboardMachinery.Components.Clip {
                 exportImageButton.ConductWith(this);
                 Controls.Add(exportImageButton);
             } else {
-                ActionButtonViewModel exportImageButton = Controls.FirstOrDefault(control => control.ToolTip == "Export as *.png");
+                ActionButtonViewModel exportImageButton = Controls.FirstOrDefault(
+                    control => control.ToolTip == "Export as *.png"
+                );
+
                 if (exportImageButton != null) {
                     Controls.Remove(exportImageButton);
                 }
@@ -381,6 +402,14 @@ namespace ClipboardMachinery.Components.Clip {
                 encoder.Save(fileStream);
             }
 
+            return Task.CompletedTask;
+        }
+
+        private Task AddTag(ActionButtonViewModel button) {
+            dialogOverlayManager.OpenDialog(
+                () => dialogOverlayManager.Factory.CreateTagEditor(Model),
+                tagEditor => dialogOverlayManager.Factory.Release(tagEditor)
+            );
             return Task.CompletedTask;
         }
 

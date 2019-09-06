@@ -74,7 +74,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <summary>
         /// Create a new tag type with given properties.
         /// </summary>
-        /// <typeparam name="T"> type of data model that created tag instance will be mapped to and returned back.</typeparam>
+        /// <typeparam name="T">Type of data model that created tag instance will be mapped to and returned back.</typeparam>
         /// <param name="name">A name of newly created tag type.</param>
         /// <param name="description">Description for newly created tag type.</param>
         /// <param name="kind">A type of values that can be accepted by this tag type, the actual parsing logic is handled by corresponding <see cref="ITagKindSchema"/> implementation.</param>
@@ -88,6 +88,14 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <param name="name">Name of a tag type</param>
         /// <returns>True if there is a tag type with specified name</returns>
         Task<bool> TagTypeExists(string name);
+
+        /// <summary>
+        /// Attempts to find a TagType based on it's name property.
+        /// </summary>
+        /// <typeparam name="T">Type of data model that found tag type instance will be mapped to and returned back.</typeparam>
+        /// <param name="name">Name of a tag type that should be found.</param>
+        /// <returns>An instance of tag type mapped to T</returns>
+        Task<T> FindTagType<T>(string name);
 
         /// <summary>
         /// Updates TagType with corresponding name (primary key).

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ClipboardMachinery.Core.DataStorage.Schema;
+using ServiceStack;
 using ServiceStack.OrmLite;
 using Color = ClipboardMachinery.Core.DataStorage.Schema.Color;
 using MediaColor = System.Windows.Media.Color;
@@ -179,6 +181,15 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return await Database.Connection.ExistsAsync<TagType>(
                 tagType => tagType.Name == name
             );
+        }
+
+        public async Task<T> FindTagType<T>(string name) {
+            List<TagType> foundTypes = await Database.Connection.SelectAsync<TagType>(
+                tagType => tagType.Name == name
+            );
+
+            TagType firstMatch = foundTypes.FirstOrDefault();
+            return firstMatch == null ? default(T) : Mapper.Map<T>(firstMatch);
         }
 
         public async Task UpdateTagType(string name, MediaColor color) {
