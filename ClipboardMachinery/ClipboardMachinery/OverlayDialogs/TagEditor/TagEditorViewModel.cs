@@ -145,15 +145,21 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
         public TagEditorViewModel(
             ClipModel clipModel, Func<ActionButtonViewModel> actionButtonFactory, IEventAggregator eventAggregator,
             IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister)
-            : this(new TagModel(), actionButtonFactory, eventAggregator, dataRepository, tagKindManager, tagTypeLister) {
+            : this(null, eventAggregator, actionButtonFactory, dataRepository, tagKindManager, tagTypeLister) {
 
-            IsCreatingNew = true;
             targetClip = clipModel;
         }
 
         public TagEditorViewModel(
-            TagModel tagModel, Func<ActionButtonViewModel> actionButtonFactory,
-            IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister) {
+            TagModel tagModel, IEventAggregator eventAggregator, Func<ActionButtonViewModel> actionButtonFactory,
+            IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister) {
+
+            if (tagModel == null) {
+                IsCreatingNew = true;
+                tagModel = new TagModel();
+            } else {
+                IsCreatingNew = false;
+            }
 
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
