@@ -102,7 +102,7 @@
             </Border.Resources>
 
             <StackPanel VerticalAlignment="Center">
-                <TextBlock>Strange, there are no tag types yet.</TextBlock>
+                <TextBlock>There are no tag types.</TextBlock>
                 <Path
                     Width="32"
                     Data="{StaticResource IconTag}"

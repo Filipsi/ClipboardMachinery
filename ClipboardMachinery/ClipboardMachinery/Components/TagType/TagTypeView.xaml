@@ -33,12 +33,13 @@
         BorderThickness="0,0,0,1">
 
         <Grid
-            cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Edit()]"
+            cal:Message.Attach="[Event PreviewMouseLeftButtonUp] = [Action Select()]"
             Background="Transparent">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
             </Grid.ColumnDefinitions>
 
             <Path
@@ -67,6 +68,7 @@
 
                 <TextBlock
                     Foreground="#7F8C8d"
+                    TextWrapping="Wrap"
                     Text="{Binding Model.Description}" />
             </StackPanel>
 

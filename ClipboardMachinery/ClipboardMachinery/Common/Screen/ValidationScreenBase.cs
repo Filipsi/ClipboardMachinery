@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Caliburn.Micro;
 using Nito.Mvvm;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 using Action = System.Action;
 
-namespace ClipboardMachinery.Common.Helpers {
+namespace ClipboardMachinery.Common.Screen {
 
-    public abstract class ValidationScreenBase : Screen, INotifyDataErrorInfo {
+    public abstract class ValidationScreenBase : Caliburn.Micro.Screen, INotifyDataErrorInfo {
 
         #region Properties
 
@@ -31,9 +31,17 @@ namespace ClipboardMachinery.Common.Helpers {
 
         public NotifyTask ValidationProcess {
             get => validationProcess;
-            set {
+            private set {
                 if (validationProcess == value) {
                     return;
+                }
+
+                if (validationProcess != null) {
+                    validationProcess.PropertyChanged -= OnValidationProcessPropertyChanged;
+                }
+
+                if (value != null) {
+                    value.PropertyChanged += OnValidationProcessPropertyChanged;
                 }
 
                 validationProcess = value;
@@ -56,6 +64,7 @@ namespace ClipboardMachinery.Common.Helpers {
         private readonly object validationLock = new object();
 
         private NotifyTask validationProcess;
+        private IReadOnlyList<string> propsCache;
 
         #endregion
 
@@ -63,6 +72,18 @@ namespace ClipboardMachinery.Common.Helpers {
         }
 
         #region Exposed logic
+
+        public void ClearErrors() {
+            lock (validationLock) {
+                ValidationProcess = null;
+                errors.Clear();
+                NotifyOfPropertyChange(() => HasErrors);
+                NotifyOfPropertyChange(() => IsValid);
+                foreach (string propertyName in GetValidationProperties().Where(prop => !disabledProperties.Contains(prop))) {
+                    NotifyOfErrorsChange(propertyName);
+                }
+            }
+        }
 
         public IEnumerable GetErrors(string propertyName) {
             lock (validationLock) {
@@ -143,9 +164,7 @@ namespace ClipboardMachinery.Common.Helpers {
 
                 // Clear all previous errors
                 errors.Clear();
-
-                List<string> propertyNames = errors.Keys.ToList();
-                foreach (string propertyName in propertyNames.Where(prop => !disabledProperties.Contains(prop))) {
+                foreach (string propertyName in GetValidationProperties().Where(prop => !disabledProperties.Contains(prop))) {
                     NotifyOfErrorsChange(propertyName);
                 }
 
@@ -177,6 +196,18 @@ namespace ClipboardMachinery.Common.Helpers {
 
         #region Handlers
 
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            if (!close) {
+                return base.OnDeactivateAsync(false, cancellationToken);
+            }
+
+            if (ValidationProcess != null) {
+                ValidationProcess.PropertyChanged -= OnValidationProcessPropertyChanged;
+            }
+
+            return base.OnDeactivateAsync(true, cancellationToken);
+        }
+
         private void OnValidationProcessPropertyChanged(object sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
                 case nameof(NotifyTask.IsCompleted):
@@ -190,17 +221,6 @@ namespace ClipboardMachinery.Common.Helpers {
         internal virtual void OnValidationProcessCompleted() {
         }
 
-        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
-            if (!close) {
-                return base.OnDeactivateAsync(false, cancellationToken);
-            }
-
-            if (ValidationProcess != null) {
-                ValidationProcess.PropertyChanged -= OnValidationProcessPropertyChanged;
-            }
-
-            return base.OnDeactivateAsync(true, cancellationToken);
-        }
 
         #endregion
 
@@ -211,14 +231,34 @@ namespace ClipboardMachinery.Common.Helpers {
                 return ValidationProcess.Task;
             }
 
-            if (ValidationProcess != null) {
-                ValidationProcess.PropertyChanged -= OnValidationProcessPropertyChanged;
+            ValidationProcess = NotifyTask.Create(Task.Run(validationAction, cancellationToken));
+            return ValidationProcess.Task;
+        }
+
+        private IReadOnlyList<string> GetValidationProperties() {
+            if (propsCache != null) {
+                return propsCache;
             }
 
-            NotifyTask validationTask = NotifyTask.Create(Task.Run(validationAction, cancellationToken));
-            validationTask.PropertyChanged += OnValidationProcessPropertyChanged;
-            ValidationProcess = validationTask;
-            return ValidationProcess.Task;
+            PropertyInfo[] publicProperties = GetType().GetProperties(
+                bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty
+            );
+
+            IEnumerable<PropertyInfo> validationProperties = publicProperties
+                .SelectMany(prop =>
+                    prop.GetCustomAttributes(typeof(ValidationAttribute))
+                        .Select(attr => new {Property = prop, Attribute = attr}))
+                .Where(info => info.Attribute is ValidationAttribute)
+                .Select(info => info.Property);
+
+            propsCache = Array.AsReadOnly(
+                validationProperties
+                    .Select(prop => prop.Name)
+                    .Distinct()
+                    .ToArray()
+            );
+
+            return propsCache;
         }
 
         protected void NotifyOfErrorsChange([CallerMemberName] string propertyName = null) {

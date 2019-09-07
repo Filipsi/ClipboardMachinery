@@ -5,7 +5,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    MouseLeftButtonUp="OnMouseLeftButtonUp"
+    Focusable="True">
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>

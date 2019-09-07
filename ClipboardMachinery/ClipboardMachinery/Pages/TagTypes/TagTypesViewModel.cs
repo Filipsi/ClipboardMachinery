@@ -1,16 +1,13 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Caliburn.Micro;
-using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Components.DialogOverlay;
+﻿using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagType;
+using ClipboardMachinery.Components.TagTypeLister;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.TagTypes {
 
-    public class TagTypesViewModel : LazyPageBase<TagTypeViewModel, TagTypeModel>, IScreenPage, IHandle<TagEvent> {
+    public class TagTypesViewModel : TagTypeListerViewModel, IScreenPage {
 
         #region IScreenPage
 
@@ -44,31 +41,22 @@ namespace ClipboardMachinery.Pages.TagTypes {
         #region Fields
 
         private readonly IDialogOverlayManager dialogOverlayManager;
-        private readonly IViewModelFactory vmFactory;
 
         private bool canCreateNew = true;
 
         #endregion
 
         public TagTypesViewModel(IDialogOverlayManager dialogOverlayManager, IDataRepository dataRepository, IViewModelFactory vmFactory)
-            : base(dataRepository.CreateLazyTagTypeProvider(15)) {
+            : base(dataRepository, vmFactory) {
 
             this.dialogOverlayManager = dialogOverlayManager;
-            this.vmFactory = vmFactory;
         }
 
-        #region Logic
+        #region Handlers
 
-        protected override bool IsClearingItemsWhenDeactivating() {
-            return true;
-        }
-
-        protected override TagTypeViewModel CreateItem(TagTypeModel model) {
-            return vmFactory.CreateTagType(model);
-        }
-
-        protected override void ReleaseItem(TagTypeViewModel instance) {
-            vmFactory.Release(instance);
+        protected override void OnItemSelected(TagTypeViewModel item) {
+            base.OnItemSelected(item);
+            EditTagType(item.Model);
         }
 
         #endregion
@@ -81,24 +69,18 @@ namespace ClipboardMachinery.Pages.TagTypes {
                     CanCreateNew = false;
                     return dialogOverlayManager.Factory.CreateTagTypeEditor();
                 },
-                (editor) => {
+                editor => {
                     dialogOverlayManager.Factory.Release(editor);
                     CanCreateNew = true;
                 }
             );
         }
 
-        #endregion
-
-        #region Handlers
-
-        public async Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
-            switch (message.EventType) {
-                case TagEvent.TagEventType.TypeAdded:
-                case TagEvent.TagEventType.TypeRemoved:
-                    await Reset();
-                    break;
-            }
+        public void EditTagType(TagTypeModel tagType) {
+            dialogOverlayManager.OpenDialog(
+                () => dialogOverlayManager.Factory.CreateTagTypeEditor(tagType),
+                editor => dialogOverlayManager.Factory.Release(editor)
+            );
         }
 
         #endregion

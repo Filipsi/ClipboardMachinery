@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.DataStorage;

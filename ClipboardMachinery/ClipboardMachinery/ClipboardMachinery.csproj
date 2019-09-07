@@ -110,6 +110,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\CollapseOverflowBehavior.cs" />
+    <Compile Include="Common\Behaviors\FocusAdornerBehavior.cs" />
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
     <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
     <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="Common\Events\TagEvent.cs" />
     <Compile Include="Common\Helpers\MergedStylesExtension.cs" />
     <Compile Include="Common\Helpers\TimingExtensions.cs" />
-    <Compile Include="Common\Helpers\ValidationScreenBase.cs" />
+    <Compile Include="Common\Screen\ValidationScreenBase.cs" />
     <Compile Include="Components\Buttons\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>
     </Compile>
@@ -147,13 +148,17 @@
       <DependentUpon>TagKindView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\TagKind\TagKindViewModel.cs" />
+    <Compile Include="Components\TagTypeLister\TagTypeListerView.xaml.cs">
+      <DependentUpon>TagTypeListerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TagTypeLister\TagTypeListerViewModel.cs" />
     <Compile Include="Components\TagType\TagTypeModel.cs" />
     <Compile Include="Components\TagType\TagTypeView.xaml.cs">
       <DependentUpon>TagTypeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\TagType\TagTypeViewModel.cs" />
-    <Compile Include="Pages\ClipPageBase.cs" />
-    <Compile Include="Pages\LazyPageBase.cs" />
+    <Compile Include="Common\Screen\ClipPageBase.cs" />
+    <Compile Include="Common\Screen\LazyPageBase.cs" />
     <Compile Include="Pages\TagTypes\TagTypesView.xaml.cs">
       <DependentUpon>TagTypesView.xaml</DependentUpon>
     </Compile>
@@ -279,6 +284,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\TagKind\TagKindView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\TagTypeLister\TagTypeListerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

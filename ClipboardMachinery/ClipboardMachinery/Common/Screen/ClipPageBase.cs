@@ -1,16 +1,16 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Pages;
 using ClipboardMachinery.Plumbing.Factories;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using static ClipboardMachinery.Common.Events.ClipEvent;
 
-namespace ClipboardMachinery.Pages {
+namespace ClipboardMachinery.Common.Screen {
 
     public abstract class ClipPageBase : LazyPageBase<ClipViewModel, ClipModel>, IHandle<ClipEvent> {
 
@@ -46,7 +46,7 @@ namespace ClipboardMachinery.Pages {
 
         public async Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
             switch (message.EventType) {
-                case ClipEventType.Created:
+                case ClipEvent.ClipEventType.Created:
                     if (!IsAllowedAddClipsFromKeyboard(message)) {
                         return;
                     }
@@ -57,7 +57,7 @@ namespace ClipboardMachinery.Pages {
                     OnKeyboardClipAdded(createdClip);
                     break;
 
-                case ClipEventType.Remove:
+                case ClipEvent.ClipEventType.Remove:
                     ClipViewModel clipToRemove = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipToRemove != null) {
                         await Task.Run(() => dataRepository.DeleteClip(clipToRemove.Model.Id), cancellationToken);
@@ -66,7 +66,7 @@ namespace ClipboardMachinery.Pages {
                     }
                     break;
 
-                case ClipEventType.ToggleFavorite:
+                case ClipEvent.ClipEventType.ToggleFavorite:
                     ClipViewModel clipVm = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
                     if (clipVm != null) {
                         ClipModel clip = clipVm.Model;

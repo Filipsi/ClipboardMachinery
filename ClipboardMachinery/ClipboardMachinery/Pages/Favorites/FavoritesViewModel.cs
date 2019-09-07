@@ -1,4 +1,5 @@
 ﻿using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Plumbing.Factories;

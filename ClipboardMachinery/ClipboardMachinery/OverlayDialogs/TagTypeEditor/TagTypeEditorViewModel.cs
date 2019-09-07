@@ -8,6 +8,7 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Helpers;
+using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.DialogOverlay;

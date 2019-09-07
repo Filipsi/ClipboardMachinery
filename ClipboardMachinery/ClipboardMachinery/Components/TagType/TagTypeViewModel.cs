@@ -1,10 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
-using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.TagKind;
 
@@ -43,19 +43,19 @@ namespace ClipboardMachinery.Components.TagType {
 
         #endregion
 
+        public event EventHandler Selected;
+
         #region Fields
 
         private readonly ITagKindManager tagKindManager;
-        private readonly IDialogOverlayManager dialogOverlayManager;
 
         private bool isFocused;
 
         #endregion
 
-        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager, IDialogOverlayManager dialogOverlayManager) {
+        public TagTypeViewModel(TagTypeModel model, ITagKindManager tagKindManager) {
             Model = model;
             this.tagKindManager = tagKindManager;
-            this.dialogOverlayManager = dialogOverlayManager;
         }
 
         #region Handlers
@@ -80,11 +80,8 @@ namespace ClipboardMachinery.Components.TagType {
 
         #region Actions
 
-        public void Edit() {
-            dialogOverlayManager.OpenDialog(
-                () => dialogOverlayManager.Factory.CreateTagTypeEditor(Model),
-                (editor) => dialogOverlayManager.Factory.Release(editor)
-            );
+        public void Select() {
+            Selected?.Invoke(this, EventArgs.Empty);
         }
 
         public void Focus() {

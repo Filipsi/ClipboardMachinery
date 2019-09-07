@@ -1,21 +1,26 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Castle.Core;
 using ClipboardMachinery.Common.Events;
-using ClipboardMachinery.Common.Helpers;
+using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagKind;
+using ClipboardMachinery.Components.TagTypeLister;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
+// ReSharper disable SuggestBaseTypeForParameter
 
 namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
@@ -31,10 +36,15 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             get;
         }
 
+        public IScreen TagTypeLister {
+            get;
+        }
+
         private ITagKindManager TagKindManager {
             get;
         }
 
+        [DoNotWire]
         public TagKindViewModel TagKind {
             get => tagKind;
             private set {
@@ -73,31 +83,30 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         [Required]
         [DataRepositoryCheck(nameof(IDataRepository.TagTypeExists))]
-        public string TypeName {
-            get => typeName;
+        public string Tag {
+            get => tag;
             set {
                 if (val == value) {
                     return;
                 }
 
-                typeName = value;
+                tag = value;
 
                 Task.Run(async () => {
-                    TagType tagType = await dataRepository.FindTagType<TagType>(TypeName);
+                    TagType tagType = await dataRepository.FindTagType<TagType>(Tag);
                     if (tagType != null) {
                         ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagType.Kind);
                         TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
+                    } else {
+                        TagKind = null;
                     }
 
                     NotifyOfPropertyChange();
-                    await ValidateProperty(value);
-                    await ValidateProperty(Value, nameof(Value));
                 });
             }
         }
 
         [Required]
-        [StringLength(20)]
         [CustomValidation(typeof(TagEditorViewModel), nameof(ValidateTagValue))]
         public string Value {
             get => val;
@@ -127,15 +136,16 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         private bool isOpen;
         private bool areControlsVisible;
-        private string typeName;
+        private string tag;
         private string val;
         private TagKindViewModel tagKind;
 
         #endregion
 
         public TagEditorViewModel(
-            ClipModel clipModel, Func<ActionButtonViewModel> actionButtonFactory, IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager)
-            : this(new TagModel(), actionButtonFactory, eventAggregator, dataRepository, tagKindManager) {
+            ClipModel clipModel, Func<ActionButtonViewModel> actionButtonFactory, IEventAggregator eventAggregator,
+            IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister)
+            : this(new TagModel(), actionButtonFactory, eventAggregator, dataRepository, tagKindManager, tagTypeLister) {
 
             IsCreatingNew = true;
             targetClip = clipModel;
@@ -143,20 +153,25 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         public TagEditorViewModel(
             TagModel tagModel, Func<ActionButtonViewModel> actionButtonFactory,
-            IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager) {
+            IEventAggregator eventAggregator, IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister) {
 
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
 
-            TagKindManager = tagKindManager;
             DialogControls = new BindableCollection<ActionButtonViewModel>();
+            TagKindManager = tagKindManager;
+            TagTypeLister = tagTypeLister;
+            TagTypeLister.ConductWith(this);
+            TagTypeLister.PropertyChanged += OnTagTypeListerPropertyChanged;
 
             if (!string.IsNullOrWhiteSpace(tagModel.TypeName)) {
-                TypeName = tagModel.TypeName;
+                Tag = tagModel.TypeName;
             }
 
             if (!string.IsNullOrWhiteSpace(tagModel.Value)) {
                 Value = tagModel.Value;
+                ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagModel.ValueKind);
+                TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
             }
 
             // Create extension control buttons
@@ -199,6 +214,20 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         #region Handlers
 
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            TagTypeLister.PropertyChanged -= OnTagTypeListerPropertyChanged;
+            return base.OnDeactivateAsync(close, cancellationToken);
+        }
+
+        private void OnTagTypeListerPropertyChanged(object sender, PropertyChangedEventArgs e) {
+            switch (e.PropertyName) {
+                case nameof(TagTypeListerViewModel.SelectedItem):
+                    TagTypeListerViewModel tagTypeLister = (TagTypeListerViewModel)sender;
+                    Tag = tagTypeLister.SelectedItem.Name;
+                    break;
+            }
+        }
+
         internal override void OnValidationProcessCompleted() {
             saveButton.IsEnabled = IsValid;
             base.OnValidationProcessCompleted();
@@ -226,7 +255,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
             // Create new tag or update values if changed
             if (IsCreatingNew) {
-                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, TypeName, Value);
+                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, Tag, Value);
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagAddedEvent(targetClip.Id, newModel));
 
             } else if (TagKindManager.TryParse(TagKind.Schema.Kind, Value, out object newValue)) {

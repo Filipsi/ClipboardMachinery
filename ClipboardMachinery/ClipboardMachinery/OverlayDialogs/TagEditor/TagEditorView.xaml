@@ -5,7 +5,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:cal="http://www.caliburnproject.org"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
     mc:Ignorable="d" d:DesignWidth="800"
+    Initialized="OnInitialized"
+    Unloaded="OnUnloaded"
     Height="256">
 
     <UserControl.Resources>
@@ -58,7 +62,15 @@
 
             <TextBox
                 IsEnabled="{Binding IsCreatingNew}"
-                Text="{Binding TypeName, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                IsReadOnly="True"
+                Text="{Binding Tag, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=LostFocus}">
+
+                <b:Interaction.Behaviors>
+                    <behaviors:FocusAdornerBehavior
+                        x:Name="TagTypeAdorner"
+                        Content="{Binding TagTypeLister}" />
+                </b:Interaction.Behaviors>
+            </TextBox>
 
             <ContentControl>
                 <ContentControl.Style>
@@ -89,7 +101,7 @@
                         </Setter>
 
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsCreatingNew}" Value="True">
+                            <DataTrigger Binding="{Binding TagKind}" Value="{x:Null}">
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <TextBlock

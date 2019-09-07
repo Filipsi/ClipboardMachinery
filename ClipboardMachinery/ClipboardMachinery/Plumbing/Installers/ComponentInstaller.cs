@@ -20,7 +20,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .FromThisAssembly()
                     .BasedOn<IScreenPage>()
                     .WithServiceBase()
-                    .LifestyleSingleton()
+                    .WithServiceSelf()
             );
 
             container.Register(

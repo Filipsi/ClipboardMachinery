@@ -8,7 +8,7 @@ using Caliburn.Micro;
 using ClipboardMachinery.Core.DataStorage;
 using Nito.Mvvm;
 
-namespace ClipboardMachinery.Pages {
+namespace ClipboardMachinery.Common.Screen {
 
     public abstract class LazyPageBase<TVM, TM> : Conductor<TVM>.Collection.AllActive where TVM : class, IScreen where TM : class {
 
