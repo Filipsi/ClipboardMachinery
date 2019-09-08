@@ -23,7 +23,7 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
             return true;
         }
 
-        public string ToDisplayValue(object value) {
+        public string ToPersistentValue(object value) {
             return value.ToString();
         }
 

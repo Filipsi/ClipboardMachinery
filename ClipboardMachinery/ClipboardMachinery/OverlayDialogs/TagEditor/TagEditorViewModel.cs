@@ -263,17 +263,17 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 return;
             }
 
-            string displayValue = TagKind.Schema.ToDisplayValue(newValue);
+            string persistentValue = TagKind.Schema.ToPersistentValue(newValue);
 
             // Create new tag or update values if changed
             if (IsCreatingNew) {
-                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, Tag, displayValue);
+                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, Tag, persistentValue);
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagAddedEvent(targetClip.Id, newModel));
 
             } else {
-                if (Model.Value != displayValue) {
-                    Model.Value = displayValue;
-                    await dataRepository.UpdateTag(Model.Id, displayValue);
+                if (Model.Value != persistentValue) {
+                    Model.Value = persistentValue;
+                    await dataRepository.UpdateTag(Model.Id, persistentValue);
                     await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagValueChangedEvent(Model));
                 }
             }

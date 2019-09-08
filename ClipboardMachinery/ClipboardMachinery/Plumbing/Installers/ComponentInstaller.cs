@@ -85,6 +85,12 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .For<IDialogOverlayFactory>()
                     .AsFactory()
             );
+
+            container.Register(
+                Component
+                    .For<IClipFactory>()
+                    .AsFactory()
+            );
         }
 
     }

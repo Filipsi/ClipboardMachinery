@@ -14,7 +14,7 @@ namespace ClipboardMachinery.Core.TagKind {
 
         bool TryParse(string value, out object result);
 
-        string ToDisplayValue(object value);
+        string ToPersistentValue(object value);
 
     }
 

@@ -159,10 +159,15 @@
     <Compile Include="Components\TagType\TagTypeViewModel.cs" />
     <Compile Include="Common\Screen\ClipPageBase.cs" />
     <Compile Include="Common\Screen\LazyPageBase.cs" />
+    <Compile Include="OverlayDialogs\TagOverview\TagOverviewView.xaml.cs">
+      <DependentUpon>TagOverviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OverlayDialogs\TagOverview\TagOverviewViewModel.cs" />
     <Compile Include="Pages\TagTypes\TagTypesView.xaml.cs">
       <DependentUpon>TagTypesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TagTypes\TagTypesViewModel.cs" />
+    <Compile Include="Plumbing\Factories\IClipFactory.cs" />
     <Compile Include="Plumbing\Factories\ITagKindFactory.cs" />
     <Compile Include="Plumbing\Factories\IViewModelFactory.cs" />
     <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
@@ -292,6 +297,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\TagType\TagTypeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OverlayDialogs\TagOverview\TagOverviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

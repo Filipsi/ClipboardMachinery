@@ -31,7 +31,7 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
             return isSucessfulyParsed;
         }
 
-        public string ToDisplayValue(object value) {
+        public string ToPersistentValue(object value) {
             return value is decimal decimalValue
                 ? decimalValue.ToString(CultureInfo.InvariantCulture)
                 : value.ToString();

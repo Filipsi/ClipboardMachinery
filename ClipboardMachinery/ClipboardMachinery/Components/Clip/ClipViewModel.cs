@@ -20,7 +20,6 @@ using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core;
-using ClipboardMachinery.Core.DataStorage;
 using Microsoft.Win32;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 using static ClipboardMachinery.Common.Events.TagEvent;
@@ -362,28 +361,12 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        #endregion
-
-        #region Actions
-
-        public async Task Remove(ActionButtonViewModel source) {
-            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Remove));
-        }
-
-        public void Select() {
-            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
-        }
-
-        public async Task ToggleFavorite(ActionButtonViewModel source) {
-            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
-        }
-
         private Task ExportImage(ActionButtonViewModel source) {
             if (Type != EntryType.Image) {
                 return Task.CompletedTask;
             }
 
-            if (!(((Image) Content).Source is BitmapImage bitmapImage)) {
+            if (!(((Image)Content).Source is BitmapImage bitmapImage)) {
                 return Task.CompletedTask;
             }
 
@@ -412,6 +395,29 @@ namespace ClipboardMachinery.Components.Clip {
                 tagEditor => dialogOverlayManager.Factory.Release(tagEditor)
             );
             return Task.CompletedTask;
+        }
+
+        #endregion
+
+        #region Actions
+
+        public async Task Remove(ActionButtonViewModel source) {
+            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Remove));
+        }
+
+        public void Select() {
+            eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
+        }
+
+        public async Task ToggleFavorite(ActionButtonViewModel source) {
+            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
+        }
+
+        public void ShowTagOverview() {
+            dialogOverlayManager.OpenDialog(
+                createFn: () => dialogOverlayManager.Factory.CreateTagOverview(Model),
+                releaseFn: dialog => dialogOverlayManager.Factory.Release(dialog)
+            );
         }
 
         public void Focus() {

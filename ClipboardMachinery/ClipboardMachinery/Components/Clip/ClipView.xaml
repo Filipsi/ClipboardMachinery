@@ -150,7 +150,9 @@
                 <ContentControl
                     Grid.Column="1"
                     HorizontalAlignment="Left"
-                    Content="{StaticResource OverflowIndicator}"/>
+                    Content="{StaticResource OverflowIndicator}"
+                    Cursor="Hand"
+                    cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ShowTagOverview()]" />
 
                 <TextBlock
                     Grid.Column="2"

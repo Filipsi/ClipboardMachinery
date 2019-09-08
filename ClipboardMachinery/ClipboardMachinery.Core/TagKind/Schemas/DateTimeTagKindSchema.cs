@@ -35,7 +35,7 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
             return false;
         }
 
-        public string ToDisplayValue(object value) {
+        public string ToPersistentValue(object value) {
             if (value is DateTime dateTime) {
                 return dateTime.ToString(TargetCultureInfo);
             }

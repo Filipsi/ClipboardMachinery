@@ -55,12 +55,12 @@ namespace ClipboardMachinery.Components.DialogOverlay.Impl.Portal {
         }
 
         public async Task OpenDialog<T>(Func<T> createFn, Action<T> releaseFn) where T : IOverlayDialog {
-            // Close previous dialog if there is any
-            await CloseDialog();
-
             // Create new dialog with a abound release handle
             T newDialog = createFn.Invoke();
             dialogReleaseFn = () => releaseFn(newDialog);
+
+            // Close previous dialog if there is any
+            await CloseDialog();
 
             // Show new dialog
             await ChangeActiveItemAsync(newDialog, true);
