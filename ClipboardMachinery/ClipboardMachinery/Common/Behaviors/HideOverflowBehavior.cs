@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,14 +11,16 @@ using Microsoft.Xaml.Behaviors;
 
 namespace ClipboardMachinery.Common.Behaviors {
 
-    internal class CollapseOverflowBehavior : Behavior<ItemsControl> {
+    internal class HideOverflowBehavior : Behavior<ItemsControl> {
 
         #region Properties
+
+        #region OverflowIndicatorElement
 
         public static readonly DependencyProperty OverflowIndicatorElementProperty = DependencyProperty.Register(
             name: nameof(OverflowIndicatorElement),
             propertyType: typeof(FrameworkElement),
-            ownerType: typeof(CollapseOverflowBehavior),
+            ownerType: typeof(HideOverflowBehavior),
             typeMetadata: new FrameworkPropertyMetadata(
                 defaultValue: null,
                 propertyChangedCallback: OnOverflowIndicatorElementChange
@@ -29,13 +32,17 @@ namespace ClipboardMachinery.Common.Behaviors {
             set => SetValue(OverflowIndicatorElementProperty, value);
         }
 
+        #endregion
+
+        #region OverflowIndicatorOffset
+
         public static readonly DependencyProperty OverflowIndicatorOffsetProperty = DependencyProperty.Register(
             name: nameof(OverflowIndicatorOffset),
             propertyType: typeof(double),
-            ownerType: typeof(CollapseOverflowBehavior),
+            ownerType: typeof(HideOverflowBehavior),
             typeMetadata: new FrameworkPropertyMetadata(
                 defaultValue: 0D,
-                propertyChangedCallback: OverflowIndicatorOffsetChange
+                propertyChangedCallback: OnOverflowIndicatorOffsetChange
             )
         );
 
@@ -44,10 +51,14 @@ namespace ClipboardMachinery.Common.Behaviors {
             set => SetValue(OverflowIndicatorOffsetProperty, value);
         }
 
+        #endregion
+
+        #region OverflowElementsCount
+
         public static readonly DependencyProperty OverflowElementsCountProperty = DependencyProperty.Register(
             name: nameof(OverflowElementsCount),
             propertyType: typeof(int),
-            ownerType: typeof(CollapseOverflowBehavior)
+            ownerType: typeof(HideOverflowBehavior)
         );
 
         public int OverflowElementsCount {
@@ -57,20 +68,22 @@ namespace ClipboardMachinery.Common.Behaviors {
 
         #endregion
 
+        #endregion
+
         #region Fields
 
         private readonly List<FrameworkElement> trackedContainers = new List<FrameworkElement>();
-        private readonly Action debouncedSizeChange;
+        private readonly Action beginRecalculate;
         private bool isUnhooked;
 
         #endregion
 
-        public CollapseOverflowBehavior() {
-            Action dispatchSizeChange = () => {
-                Application.Current.Dispatcher?.Invoke(HandleSizeChange);
+        public HideOverflowBehavior() {
+            Action dispatchRecalculate = () => {
+                Application.Current.Dispatcher?.Invoke(Recalculate);
             };
 
-            debouncedSizeChange = dispatchSizeChange.Debounce(500);
+            beginRecalculate = dispatchRecalculate.Debounce(100);
         }
 
         #region Behavior
@@ -80,6 +93,7 @@ namespace ClipboardMachinery.Common.Behaviors {
 
             // Hook events for associated object
             AssociatedObject.ItemContainerGenerator.StatusChanged += OnItemsGeneratorStatusChanged;
+            AssociatedObject.ItemContainerGenerator.ItemsChanged += OnItemContainerGeneratorItemsChanged;
             AssociatedObject.Unloaded += OnAssociatedObjectUnloaded;
         }
 
@@ -116,7 +130,7 @@ namespace ClipboardMachinery.Common.Behaviors {
         }
 
         private void OnContainerSizeChanged(object sender, SizeChangedEventArgs e) {
-            debouncedSizeChange();
+            beginRecalculate();
         }
 
         private void OnItemsGeneratorStatusChanged(object sender, EventArgs e) {
@@ -129,25 +143,38 @@ namespace ClipboardMachinery.Common.Behaviors {
                 return;
             }
 
-            IEnumerable<FrameworkElement> containers = generator.Items
-                .Select(item => generator.ContainerFromItem(item))
-                .Where(container => container is FrameworkElement)
-                .Cast<FrameworkElement>();
-
-            foreach (FrameworkElement container in containers) {
+            foreach (FrameworkElement container in GetItemContainers(generator)) {
                 StartTrackingItemContainer(container);
             }
+
+            beginRecalculate();
+        }
+
+        private void OnItemContainerGeneratorItemsChanged(object sender, ItemsChangedEventArgs e) {
+            if (e.Action != NotifyCollectionChangedAction.Remove) {
+                return;
+            }
+
+            ItemContainerGenerator generator = (ItemContainerGenerator)sender;
+            FrameworkElement[] containers = GetItemContainers(generator);
+
+            foreach (FrameworkElement trackedContainer in trackedContainers.ToArray()) {
+                if (!containers.Contains(trackedContainer)) {
+                    StopTrackingItemContainer(trackedContainer);
+                }
+            }
+
+            beginRecalculate();
         }
 
         private static void OnOverflowIndicatorElementChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            CollapseOverflowBehavior behavior = (CollapseOverflowBehavior) d;
+            HideOverflowBehavior behavior = (HideOverflowBehavior) d;
             behavior.OverflowIndicatorElement.Visibility = Visibility.Hidden;
             behavior.OverflowIndicatorElement.DataContext = behavior;
         }
 
-
-        private static void OverflowIndicatorOffsetChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            CollapseOverflowBehavior behavior = (CollapseOverflowBehavior)d;
+        private static void OnOverflowIndicatorOffsetChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            HideOverflowBehavior behavior = (HideOverflowBehavior)d;
 
             if (behavior.AssociatedObject == null) {
                 return;
@@ -161,12 +188,21 @@ namespace ClipboardMachinery.Common.Behaviors {
 
         #region Logic
 
+        private static FrameworkElement[] GetItemContainers(ItemContainerGenerator generator) {
+            return generator.Items
+                .Select(generator.ContainerFromItem)
+                .Where(container => container is FrameworkElement)
+                .Cast<FrameworkElement>()
+                .ToArray();
+        }
+
         private void StartTrackingItemContainer(FrameworkElement container) {
             // Make sure that the element we want to add is not already tracked container
             if (trackedContainers.Contains(container)) {
                 return;
             }
 
+            container.Visibility = Visibility.Hidden;
             container.Unloaded += OnItemContainerUnloaded;
             container.SizeChanged += OnContainerSizeChanged;
             trackedContainers.Add(container);
@@ -188,23 +224,20 @@ namespace ClipboardMachinery.Common.Behaviors {
             trackedContainers.Remove(container);
         }
 
-        private int GetNumberOfFittingContainers(double wrapperWidth) {;
+        private int GetNumberOfFittingContainers(double wrapperWidth) {
+            if (!IsOverflowing(wrapperWidth)) {
+                return trackedContainers.Count;
+            }
+
             double oveflowIndicatorWidth = OverflowIndicatorElement?.ActualWidth ?? 0;
             double currentWidth = oveflowIndicatorWidth;
             int fittedContainers = 0;
 
-            for (int i = 0; i < trackedContainers.Count; i++) {
-                FrameworkElement container = trackedContainers[i];
+            foreach (FrameworkElement container in trackedContainers) {
                 double containerWidth = container.ActualWidth;
 
                 if (currentWidth + containerWidth > wrapperWidth) {
-                    if (i == trackedContainers.Count - 1) {
-                        if (currentWidth + containerWidth - oveflowIndicatorWidth > wrapperWidth) {
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
+                    break;
                 }
 
                 fittedContainers++;
@@ -214,24 +247,24 @@ namespace ClipboardMachinery.Common.Behaviors {
             return fittedContainers;
         }
 
-        private void HandleSizeChange() {
-            // Calculate sizes of wrapper and items
-            double wrapperWidth = AssociatedObject.ActualWidth;
+        private bool IsOverflowing(double wrapperWidth) {
             double itemsWidth = trackedContainers
                 .Select(container => container.ActualWidth)
                 .Sum();
 
-            // If items are overflowing the container
-            if (itemsWidth <= wrapperWidth) {
-                if (!(trackedContainers.Any(container => container.Visibility != Visibility.Visible))) {
-                    return;
-                }
-            }
+            return itemsWidth > wrapperWidth;
+        }
+
+        private void Recalculate() {
+            // Calculate sizes of wrapper and items
+            double wrapperWidth = AssociatedObject.ActualWidth;
 
             // Update visibility depending of number of containers that can fit the wrapper
             int fittedContainers = GetNumberOfFittingContainers(wrapperWidth);
             for (int index = 0; index < trackedContainers.Count; index++) {
-                trackedContainers[index].Visibility = index >= fittedContainers ? Visibility.Hidden : Visibility.Visible;
+                trackedContainers[index].Visibility = index >= fittedContainers
+                    ? Visibility.Hidden
+                    : Visibility.Visible;
             }
 
             if (OverflowIndicatorElement == null) {
@@ -244,7 +277,7 @@ namespace ClipboardMachinery.Common.Behaviors {
                 OverflowElementsCount = trackedContainers.Count - fittedContainers;
                 OverflowIndicatorElement.Visibility = Visibility.Visible;
             } else {
-                OverflowIndicatorElement.Visibility = Visibility.Collapsed;
+                OverflowIndicatorElement.Visibility = Visibility.Hidden;
             }
         }
 

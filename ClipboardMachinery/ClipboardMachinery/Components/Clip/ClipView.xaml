@@ -133,7 +133,7 @@
                     x:Name="Items">
 
                     <b:Interaction.Behaviors>
-                        <behaviors:CollapseOverflowBehavior
+                        <behaviors:HideOverflowBehavior
                             OverflowIndicatorElement="{StaticResource OverflowIndicator}"
                             OverflowIndicatorOffset="4" />
                     </b:Interaction.Behaviors>

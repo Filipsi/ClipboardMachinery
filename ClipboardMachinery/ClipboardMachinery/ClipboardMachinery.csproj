@@ -109,7 +109,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\Behaviors\CollapseOverflowBehavior.cs" />
+    <Compile Include="Common\Behaviors\HideOverflowBehavior.cs" />
     <Compile Include="Common\Behaviors\FocusAdornerBehavior.cs" />
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
     <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
