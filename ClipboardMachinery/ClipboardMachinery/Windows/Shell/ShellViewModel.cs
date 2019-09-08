@@ -12,6 +12,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.Services.Clipboard;
 using ClipboardMachinery.Core.Services.HotKeys;

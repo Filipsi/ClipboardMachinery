@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using MediaColor = System.Windows.Media.Color;
 
-namespace ClipboardMachinery.Core.DataStorage {
+namespace ClipboardMachinery.Core {
 
     public static class SystemTagTypes {
 
-        #region Data
+        #region Colors
 
         internal static readonly Color DefaultDBColor = new Color {
             A = 255,
             R = 41,
             G = 128,
             B = 185
+        };
+
+        private static readonly Color YellowDBColor = new Color {
+            A = 255,
+            R = 241,
+            G = 196,
+            B = 15
         };
 
         public static readonly MediaColor DefaultColor = MediaColor.FromArgb(
@@ -38,7 +45,7 @@ namespace ClipboardMachinery.Core.DataStorage {
             Name = "category",
             Description = "Describes a category to which the clip belongs to, useful for sorting.",
             Kind = typeof(string),
-            Color = DefaultDBColor
+            Color = YellowDBColor
         };
 
         public static readonly IReadOnlyCollection<TagType> TagTypes = Array.AsReadOnly(

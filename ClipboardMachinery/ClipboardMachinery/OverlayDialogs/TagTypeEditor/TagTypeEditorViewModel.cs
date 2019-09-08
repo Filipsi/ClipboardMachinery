@@ -14,6 +14,7 @@ using ClipboardMachinery.Components.ColorGallery;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Components.TagType;
+using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;

@@ -10,7 +10,7 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
 
         public string Name { get; } = "Text";
 
-        public string Description { get; } = "Allows holding a text value and provides text based searching options.";
+        public string Description { get; } = "A value stored as a plain text without any restrictions.";
 
         public string Icon { get; } = "IconText";
 

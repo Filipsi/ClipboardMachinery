@@ -11,7 +11,7 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
 
         public string Name { get; } = "Numeric";
 
-        public string Description { get; } = "Allows holding a decimal value and provides mathematical search options.";
+        public string Description { get; } = "A value stored as number allowing for decimal places if desired.";
 
         public string Icon { get; } = "IconNumeric";
 

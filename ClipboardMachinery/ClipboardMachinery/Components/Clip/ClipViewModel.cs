@@ -19,6 +19,7 @@ using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 using Microsoft.Win32;
 using static ClipboardMachinery.Common.Events.ClipEvent;

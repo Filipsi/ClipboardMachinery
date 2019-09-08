@@ -1,6 +1,7 @@
 ﻿using System;
 using Caliburn.Micro;
 using System.Windows.Media;
+using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 
 namespace ClipboardMachinery.Components.Tag {
