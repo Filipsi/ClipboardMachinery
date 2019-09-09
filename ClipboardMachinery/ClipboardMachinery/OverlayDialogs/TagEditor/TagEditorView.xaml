@@ -1,5 +1,4 @@
 ﻿<UserControl
-    x:Class="ClipboardMachinery.OverlayDialogs.TagEditor.TagEditorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +6,8 @@
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
+    xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
+    x:Class="ClipboardMachinery.OverlayDialogs.TagEditor.TagEditorView"
     mc:Ignorable="d" d:DesignWidth="800"
     Initialized="OnInitialized"
     Unloaded="OnUnloaded"
@@ -22,7 +23,7 @@
             <Style
                 x:Key="ValueKindFieldHeaderStyle"
                 BasedOn="{StaticResource FieldHeaderStyle}"
-                TargetType="TextBlock">
+                TargetType="{x:Type TextBlock}">
 
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
@@ -44,12 +45,8 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Stretch="Uniform"
-                Data="{StaticResource IconTag}">
-
-                <Path.Fill>
-                    <SolidColorBrush Color="{Binding Model.Color, FallbackValue={StaticResource BodyControlColor}}" />
-                </Path.Fill>
-            </Path>
+                Data="{StaticResource IconTag}"
+                Fill="{Binding Color, Converter={converters:ColorToSolidBrushConverter}}" />
         </Grid>
 
         <StackPanel
@@ -63,7 +60,7 @@
             <TextBox
                 IsEnabled="{Binding IsCreatingNew}"
                 IsReadOnly="True"
-                Text="{Binding Tag, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=LostFocus}">
+                Text="{Binding Tag, NotifyOnValidationError=True, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}">
 
                 <b:Interaction.Behaviors>
                     <behaviors:FocusAdornerBehavior
@@ -75,13 +72,13 @@
 
             <ContentControl>
                 <ContentControl.Style>
-                    <Style TargetType="ContentControl">
+                    <Style TargetType="{x:Type ContentControl}">
                         <Setter Property="Content">
                             <Setter.Value>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock
                                         x:Name="ValueKindFieldHeader"
-                                        Text="{Binding TagKind.Schema.Name, FallbackValue='Unknown'}"
+                                        Text="{Binding TagKind.Schema.Name, FallbackValue=Unknown}"
                                         Style="{StaticResource ValueKindFieldHeaderStyle}"
                                         TextDecorations="Underline"
                                         Margin="0,0,3,0">
@@ -117,7 +114,7 @@
             </ContentControl>
 
             <TextBox
-                Text="{Binding Value, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Value, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
 
         </StackPanel>
     </Grid>

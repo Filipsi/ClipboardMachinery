@@ -15,11 +15,12 @@ using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagKind;
+using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Components.TagTypeLister;
 using ClipboardMachinery.Core.DataStorage;
-using ClipboardMachinery.Core.DataStorage.Schema;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
+using Color = System.Windows.Media.Color;
 // ReSharper disable SuggestBaseTypeForParameter
 
 namespace ClipboardMachinery.OverlayDialogs.TagEditor {
@@ -30,6 +31,30 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         public BindableCollection<ActionButtonViewModel> DialogControls {
             get;
+        }
+
+        public bool IsOpen {
+            get => isOpen;
+            set {
+                if (isOpen == value) {
+                    return;
+                }
+
+                isOpen = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public bool AreControlsVisible {
+            get => areControlsVisible;
+            set {
+                if (areControlsVisible == value) {
+                    return;
+                }
+
+                areControlsVisible = value;
+                NotifyOfPropertyChange();
+            }
         }
 
         public TagModel Model {
@@ -57,26 +82,14 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             }
         }
 
-        public bool IsOpen {
-            get => isOpen;
-            set {
-                if (isOpen == value) {
+        public Color Color {
+            get => color;
+            private set {
+                if (color == value) {
                     return;
                 }
 
-                isOpen = value;
-                NotifyOfPropertyChange();
-            }
-        }
-
-        public bool AreControlsVisible {
-            get => areControlsVisible;
-            set {
-                if (areControlsVisible == value) {
-                    return;
-                }
-
-                areControlsVisible = value;
+                color = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -93,8 +106,9 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 tag = value;
 
                 Task.Run(async () => {
-                    TagType tagType = await dataRepository.FindTagType<TagType>(Tag);
+                    TagTypeModel tagType = await dataRepository.FindTagType<TagTypeModel>(Tag);
                     if (tagType != null) {
+                        Color = tagType.Color;
                         ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagType.Kind);
                         TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
                     } else {
@@ -139,6 +153,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
         private string tag;
         private string val;
         private TagKindViewModel tagKind;
+        private Color color;
 
         #endregion
 
@@ -179,6 +194,8 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagModel.ValueKind);
                 TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
             }
+
+            Color = tagModel.Color.GetValueOrDefault();
 
             // Create extension control buttons
             if (!IsCreatingNew) {
