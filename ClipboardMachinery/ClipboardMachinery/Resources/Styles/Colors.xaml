@@ -19,6 +19,9 @@
     <Color x:Key="BodyControlColor">#A8A8A8</Color>
     <SolidColorBrush x:Key="BodyControlBrush" Color="{StaticResource BodyControlColor}" />
 
+    <Color x:Key="TagTextColor">#2E3131</Color>
+    <SolidColorBrush x:Key="TagTextBrush" Color="{StaticResource TagTextColor}" />
+
     <Color x:Key="ElementSelectColor">#446cb3</Color>
     <SolidColorBrush x:Key="ElementSelectBrush" Color="{StaticResource ElementSelectColor}" />
 

@@ -63,7 +63,7 @@
 
             <ComboBox
                 IsEnabled="{Binding IsCreatingNew}"
-                ItemsSource="{Binding TagKindManager.TagKinds}"
+                ItemsSource="{Binding TagKinds}"
                 SelectedValue="{Binding SelectedTagKind, Mode=TwoWay}"
                 SelectedValuePath="Schema"
                 Style="{StaticResource FieldStyle}">

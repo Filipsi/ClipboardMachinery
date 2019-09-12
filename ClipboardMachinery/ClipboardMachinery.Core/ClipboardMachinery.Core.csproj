@@ -114,10 +114,13 @@
     <Compile Include="Services\HotKeys\IHotKeyService.cs" />
     <Compile Include="Services\HotKeys\KeyModifiers.cs" />
     <Compile Include="SystemTagTypes.cs" />
+    <Compile Include="TagKind\ITagKindSchemaFactory.cs" />
+    <Compile Include="TagKind\ITagKindManager.cs" />
     <Compile Include="TagKind\ITagKindSchema.cs" />
-    <Compile Include="TagKind\Schemas\DateTimeTagKindSchema.cs" />
-    <Compile Include="TagKind\Schemas\NumericTagKindSchema.cs" />
-    <Compile Include="TagKind\Schemas\TextTagKindSchema.cs" />
+    <Compile Include="TagKind\Impl\Schemas\DateTimeTagKindSchema.cs" />
+    <Compile Include="TagKind\Impl\Schemas\NumericTagKindSchema.cs" />
+    <Compile Include="TagKind\Impl\Schemas\TextTagKindSchema.cs" />
+    <Compile Include="TagKind\Impl\TagKindManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

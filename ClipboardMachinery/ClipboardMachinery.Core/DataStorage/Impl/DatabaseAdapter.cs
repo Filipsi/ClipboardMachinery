@@ -46,7 +46,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             Connection.CreateTableIfNotExists<Tag>();
             Connection.CreateTableIfNotExists<TagType>();
 
-            // Make sure that there are all system owned tag types
+            if (Connection.ColumnExists("Created", nameof(Clip))) {
+                Connection.DropAndCreateTable<Clip>();
+            }
+
+            // Make sure that  all system owned tag types are in the database
             foreach (TagType systemTagType in SystemTagTypes.TagTypes) {
                 if (!Connection.Exists<TagType>(new { systemTagType.Name })) {
                     Connection.Insert(systemTagType);

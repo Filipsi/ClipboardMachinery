@@ -153,10 +153,10 @@ namespace ClipboardMachinery.Windows.Shell {
             // Save clip
             ClipModel model = await dataRepository.CreateClip<ClipModel>(
                 content: content,
-                created: DateTime.UtcNow,
                 tags: new[] {
                     // TODO: Add config option to disable this
-                    new KeyValuePair<string, object>(SystemTagTypes.SourceTagType.Name, source)
+                    new KeyValuePair<string, object>(SystemTagTypes.SourceTagType.Name, source),
+                    new KeyValuePair<string, object>(SystemTagTypes.CreatedTagType.Name, DateTime.Now)
                 }
             );
 

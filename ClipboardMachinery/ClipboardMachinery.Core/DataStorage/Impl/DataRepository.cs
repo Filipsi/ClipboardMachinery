@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ClipboardMachinery.Core.DataStorage.Schema;
-using ServiceStack;
+using ClipboardMachinery.Core.TagKind;
 using ServiceStack.OrmLite;
 using Color = ClipboardMachinery.Core.DataStorage.Schema.Color;
 using MediaColor = System.Windows.Media.Color;
@@ -31,9 +31,16 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #endregion
 
-        public DataRepository(IDatabaseAdapter databaseAdapter, IMapper mapper) {
+        #region Fields
+
+        private readonly ITagKindManager tagKindManager;
+
+        #endregion
+
+        public DataRepository(IDatabaseAdapter databaseAdapter, IMapper mapper, ITagKindManager tagKindManager) {
             Database = databaseAdapter;
             Mapper = mapper;
+            this.tagKindManager = tagKindManager;
 
             // Load last saved clip
             IDbConnection db = Database.Connection;
@@ -47,21 +54,27 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return new LazyDataProvider<Clip>(this, batchSize, LoadNestedClipReferences);
         }
 
-        public async Task<T> CreateClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null) {
+        public async Task<T> CreateClip<T>(string content, KeyValuePair<string, object>[] tags = null) {
             // Create clip entity
             Clip clip = new Clip {
                 Content = content,
-                Created = created,
                 Tags = new List<Tag>()
             };
 
             // Add tags if there are any
             if (tags != null) {
                 foreach (KeyValuePair<string, object> tagData in tags) {
+                    string presistentValue = await ResolvePresistentValue(tagData.Key, tagData.Value);
+
+                    if (presistentValue == null) {
+                        // TODO: Log this
+                        continue; ;
+                    }
+
                     clip.Tags.Add(
                         new Tag {
                             TypeName = tagData.Key,
-                            Value = tagData.Value
+                            Value = presistentValue
                         }
                     );
                 }
@@ -106,19 +119,26 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             await Database.Connection.DeleteByIdAsync<Clip>(id);
         }
 
-        public async Task<T> CreateTag<T>(int clipId, string type, object value) {
+        public async Task<T> CreateTag<T>(int clipId, string tagType, object value) {
+            string presistentValue = await ResolvePresistentValue(tagType, value);
+
+            if (presistentValue == null) {
+                // TODO: Log this
+                return default(T);
+            }
+
             // Create tag entity
             Tag tag = new Tag {
                 ClipId = clipId,
-                TypeName = type,
-                Value = value
+                TypeName = tagType,
+                Value = presistentValue
             };
 
             // Check if TagType exits, if not create it
-            if (!await Database.Connection.ExistsAsync<TagType>(new { Name = type })) {
+            if (!await Database.Connection.ExistsAsync<TagType>(new { Name = tagType })) {
                 await Database.Connection.InsertAsync(
                     new TagType {
-                        Name = type,
+                        Name = tagType,
                         Kind = value.GetType(),
                         Color = SystemTagTypes.DefaultDBColor
                     }
@@ -136,11 +156,41 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return Mapper.Map<T>(tag);
         }
 
+        public async Task<T> FindTag<T>(int tagId) {
+            List<Tag> foundTags = await Database.Connection.SelectAsync<Tag>(
+                tag => tag.Id == tagId
+            );
+
+            Tag firstMatch = foundTags.FirstOrDefault();
+
+            if (firstMatch == null) {
+                // TODO: Log this
+                return default(T);
+            }
+
+            await Database.Connection.LoadReferencesAsync(firstMatch);
+            return Mapper.Map<T>(firstMatch);
+        }
+
         public async Task UpdateTag(int id, object value) {
+            Tag tag = await FindTag<Tag>(id);
+
+            if (tag == null) {
+                // TODO: Log this
+                return;
+            }
+
+            string presistentValue = await ResolvePresistentValue(tag.Type.Name, value);
+
+            if (presistentValue == null) {
+                // TODO: Log this
+                return;
+            }
+
             await Database.Connection.UpdateAsync<Tag>(
                 new {
                     Id = id,
-                    Value = value
+                    Value = presistentValue
                 }
             );
         }
@@ -227,6 +277,28 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         #endregion
 
         #region Helpers
+
+        private async Task<string> ResolvePresistentValue(string tagType, object value) {
+            TagType ttype = await FindTagType<TagType>(tagType);
+
+            // Skip tag, non-existent tag type
+            if (ttype == null) {
+                // TODO: Log this
+                return null;
+            }
+
+            ITagKindSchema schema = tagKindManager.GetSchemaFor(ttype.Kind);
+
+            // Skip tag if there is no schema that would allow parsing the value
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            // ReSharper disable once UseNullPropagation
+            if (schema == null) {
+                // TODO: Log this
+                return null;
+            }
+
+            return schema.ToPersistentValue(value);
+        }
 
         private static async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {
             // Go thought every single clip in the batch

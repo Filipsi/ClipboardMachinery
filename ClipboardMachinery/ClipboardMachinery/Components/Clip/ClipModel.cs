@@ -32,18 +32,6 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public DateTime Created {
-            get => created;
-            set {
-                if (created == value) {
-                    return;
-                }
-
-                created = value;
-                NotifyOfPropertyChange();
-            }
-        }
-
         public BindableCollection<TagModel> Tags {
             set; get;
         }
@@ -54,7 +42,6 @@ namespace ClipboardMachinery.Components.Clip {
 
         private int id;
         private string rawContent;
-        private DateTime created;
 
         #endregion
 

@@ -8,6 +8,7 @@ using ClipboardMachinery.Components.DialogOverlay.Impl;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.TagKind;
+using ClipboardMachinery.Core.TagKind.Impl;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Plumbing.Installers {
@@ -71,6 +72,12 @@ namespace ClipboardMachinery.Plumbing.Installers {
             container.Register(
                 Component
                     .For<ITagKindFactory>()
+                    .AsFactory()
+            );
+
+            container.Register(
+                Component
+                    .For<ITagKindSchemaFactory>()
                     .AsFactory()
             );
 

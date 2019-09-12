@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ClipboardMachinery.Core.TagKind.Schemas {
+namespace ClipboardMachinery.Core.TagKind.Impl.Schemas {
 
     public class NumericTagKindSchema : ITagKindSchema {
 
@@ -32,9 +32,19 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
         }
 
         public string ToPersistentValue(object value) {
-            return value is decimal decimalValue
-                ? decimalValue.ToString(CultureInfo.InvariantCulture)
-                : value.ToString();
+            switch (value) {
+                case decimal decimalValue:
+                    return decimalValue.ToString(CultureInfo.InvariantCulture);
+
+                case string textValue:
+                    if (TryParse(textValue, out object result)) {
+                        // ReSharper disable once TailRecursiveCall
+                        return ToPersistentValue(result);
+                    }
+                    break;
+            }
+
+            return string.Empty;
         }
 
         #endregion

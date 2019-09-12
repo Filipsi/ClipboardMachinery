@@ -1,5 +1,4 @@
 ﻿using ServiceStack.DataAnnotations;
-using System;
 using System.Collections.Generic;
 
 namespace ClipboardMachinery.Core.DataStorage.Schema {
@@ -11,9 +10,6 @@ namespace ClipboardMachinery.Core.DataStorage.Schema {
 
         [Required]
         public string Content { get; set; }
-
-        [Required]
-        public DateTime Created { get; set; }
 
         [Reference]
         public List<Tag> Tags { get; set; }

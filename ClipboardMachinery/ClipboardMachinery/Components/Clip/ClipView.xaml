@@ -9,14 +9,16 @@
     xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
     mc:Ignorable="d" d:DesignWidth="512"
     UseLayoutRounding="True"
-    RenderOptions.BitmapScalingMode="NearestNeighbor"
-    SnapsToDevicePixels="True"
-    RenderOptions.ClearTypeHint="Enabled"
     BorderThickness="2,0,0,0"
     BorderBrush="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
     Background="{StaticResource BodyBackgroundBrush}"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
+    SnapsToDevicePixels="True"
+    RenderOptions.ClearTypeHint="Enabled"
+    RenderOptions.BitmapScalingMode="HighQuality"
+    TextOptions.TextHintingMode="Auto"
+    TextOptions.TextFormattingMode="Display"
     cal:Message.Attach="
         [Event MouseEnter] = [Action Focus()];
         [Event MouseLeave] = [Action Unfocus()]">
@@ -93,10 +95,10 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="24" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.Resources>
@@ -104,25 +106,27 @@
                         x:Key="OverflowIndicator"
                         Background="#DDEBF4"
                         Orientation="Horizontal"
-                        Width="64">
+                        VerticalAlignment="Bottom"
+                        Width="64"
+                        Height="24">
 
                         <TextBlock
                             Padding="8,0,0,0"
                             VerticalAlignment="Center"
-                            Foreground="#2e3131"
+                            Foreground="{StaticResource TagTextBrush}"
                             FontFamily="Calibri Light"
                             Text="+ " />
 
                         <TextBlock
                             VerticalAlignment="Center"
-                            Foreground="#2e3131"
+                            Foreground="{StaticResource TagTextBrush}"
                             FontFamily="Calibri"
                             FontWeight="Bold"
                             Text="{Binding OverflowElementsCount}" />
 
                         <TextBlock
                             VerticalAlignment="Center"
-                            Foreground="#2e3131"
+                            Foreground="{StaticResource TagTextBrush}"
                             FontFamily="Calibri Light"
                             Text=" more" />
                     </StackPanel>
@@ -130,7 +134,9 @@
 
                 <ItemsControl
                     Grid.Column="1"
-                    x:Name="Items">
+                    x:Name="Items"
+                    VerticalAlignment="Bottom"
+                    Height="24">
 
                     <b:Interaction.Behaviors>
                         <behaviors:HideOverflowBehavior
@@ -154,13 +160,10 @@
                     Cursor="Hand"
                     cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ShowTagOverview()]" />
 
-                <TextBlock
-                    Grid.Column="2"
-                    VerticalAlignment="Center"
-                    Foreground="#2e3131"
-                    FontSize="14"
-                    FontFamily="Yu Gothic UI Light"
-                    Text="{Binding Model.Created, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" />
+                <ContentControl
+                    Grid.Column="3"
+                    x:Name="AddTagButton"
+                    VerticalAlignment="Center" />
             </Grid>
         </Border>
 

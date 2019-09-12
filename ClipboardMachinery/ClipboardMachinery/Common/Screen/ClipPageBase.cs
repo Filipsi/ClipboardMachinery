@@ -78,7 +78,7 @@ namespace ClipboardMachinery.Common.Screen {
                             await Task.Run(async () => {
                                 TagModel newTag = await dataRepository.CreateTag<TagModel>(
                                     clipId: clip.Id,
-                                    name: "category",
+                                    tagType: "category",
                                     value: "favorite"
                                 );
 

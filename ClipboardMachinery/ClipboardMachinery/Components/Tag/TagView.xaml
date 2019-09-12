@@ -8,12 +8,12 @@
     mc:Ignorable="d" d:DesignWidth="96"
     FontSize="14" FontFamily="Yu Gothic UI Light"
     cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Edit()]"
-    Cursor="Hand">
+    Cursor="Hand"
+    Background="{Binding BackgroundColor}"
+    Margin="0,0,8,0"
+    MinHeight="24">
 
-    <Grid
-        Background="{Binding BackgroundColor}"
-        Margin="4,0">
-
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -24,7 +24,7 @@
             Padding="8,0"
             TextAlignment="Left"
             VerticalAlignment="Center"
-            Foreground="#2e3131"
+            Foreground="{StaticResource TagTextBrush}"
             Background="Transparent"
             Text="{Binding Model.TypeName, FallbackValue='tag'}"
             FontFamily="Calibri"
@@ -73,7 +73,7 @@
             <TextBlock
                 TextAlignment="Left"
                 VerticalAlignment="Center"
-                Foreground="#2e3131"
+                Foreground="{StaticResource TagTextBrush}"
                 Text="{Binding Model.Value, FallbackValue='value'}"
                 FontFamily="Calibri Light" />
         </Border>

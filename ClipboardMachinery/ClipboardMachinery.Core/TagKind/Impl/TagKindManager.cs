@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ClipboardMachinery.Core.TagKind;
-using ClipboardMachinery.Plumbing.Factories;
 
-namespace ClipboardMachinery.Components.TagKind {
+namespace ClipboardMachinery.Core.TagKind.Impl {
 
     public class TagKindManager : ITagKindManager {
 
         #region Properties
 
-        public IReadOnlyCollection<TagKindViewModel> TagKinds { get; }
+        public IReadOnlyList<ITagKindSchema> Schemas { get; }
 
         #endregion
 
@@ -20,16 +18,10 @@ namespace ClipboardMachinery.Components.TagKind {
 
         #endregion
 
-        public TagKindManager(ITagKindFactory tagKindFactory) {
-            ITagKindSchema[] schemas = tagKindFactory.GetAllSchemas();
+        public TagKindManager(ITagKindSchemaFactory kindSchemaFactory) {
+            ITagKindSchema[] schemas = kindSchemaFactory.GetAll();
+            Schemas = Array.AsReadOnly(schemas);
             schemaMap = schemas.ToDictionary(sch => sch.Kind, sch => sch);
-
-            TagKinds = Array.AsReadOnly(
-                schemas
-                    .Select(tagKindFactory.CreateTagKind)
-                    .Reverse()
-                    .ToArray()
-            );
         }
 
         #region Logic

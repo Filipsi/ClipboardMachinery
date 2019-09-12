@@ -20,6 +20,7 @@ using ClipboardMachinery.Components.TagTypeLister;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
+using ClipboardMachinery.Plumbing.Factories;
 using Color = System.Windows.Media.Color;
 // ReSharper disable SuggestBaseTypeForParameter
 
@@ -107,12 +108,16 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
                 Task.Run(async () => {
                     TagTypeModel tagType = await dataRepository.FindTagType<TagTypeModel>(Tag);
+
+                    if (TagKind != null) {
+                        tagKindFactory.Release(TagKind);
+                        TagKind = null;
+                    }
+
                     if (tagType != null) {
                         Color = tagType.Color;
                         ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagType.Kind);
-                        TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
-                    } else {
-                        TagKind = null;
+                        TagKind = tagKindSchema != null ? tagKindFactory.CreateTagKind(tagKindSchema) : null;
                     }
 
                     NotifyOfPropertyChange();
@@ -145,6 +150,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
+        private readonly ITagKindFactory tagKindFactory;
         private readonly ActionButtonViewModel saveButton;
         private readonly ClipModel targetClip;
 
@@ -159,15 +165,15 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
         public TagEditorViewModel(
             ClipModel clipModel, Func<ActionButtonViewModel> actionButtonFactory, IEventAggregator eventAggregator,
-            IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister)
-            : this(null, eventAggregator, actionButtonFactory, dataRepository, tagKindManager, tagTypeLister) {
+            IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister, ITagKindFactory tagKindFactory)
+            : this(null, eventAggregator, actionButtonFactory, dataRepository, tagKindManager, tagTypeLister, tagKindFactory) {
 
             targetClip = clipModel;
         }
 
         public TagEditorViewModel(
             TagModel tagModel, IEventAggregator eventAggregator, Func<ActionButtonViewModel> actionButtonFactory,
-            IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister) {
+            IDataRepository dataRepository, ITagKindManager tagKindManager, TagTypeListerViewModel tagTypeLister, ITagKindFactory tagKindFactory) {
 
             if (tagModel == null) {
                 IsCreatingNew = true;
@@ -178,6 +184,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
+            this.tagKindFactory = tagKindFactory;
 
             DialogControls = new BindableCollection<ActionButtonViewModel>();
             TagKindManager = tagKindManager;
@@ -190,9 +197,9 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             }
 
             if (!string.IsNullOrWhiteSpace(tagModel.Value)) {
-                Value = tagModel.Value;
                 ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagModel.ValueKind);
-                TagKind = TagKindManager.TagKinds.FirstOrDefault(vm => vm.Schema == tagKindSchema);
+                TagKind = tagKindSchema != null ? tagKindFactory.CreateTagKind(tagKindSchema) : null;
+                Value = tagModel.Value;
             }
 
             Color = tagModel.Color.GetValueOrDefault();
@@ -238,8 +245,22 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
         #region Handlers
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            if (!close) {
+                return base.OnDeactivateAsync(false, cancellationToken);
+            }
+
+            // Unhook event handlers
             TagTypeLister.PropertyChanged -= OnTagTypeListerPropertyChanged;
-            return base.OnDeactivateAsync(close, cancellationToken);
+
+            if (TagKind == null) {
+                return base.OnDeactivateAsync(true, cancellationToken);
+            }
+
+            // Release tag type view model
+            tagKindFactory.Release(TagKind);
+            TagKind = null;
+
+            return base.OnDeactivateAsync(true, cancellationToken);
         }
 
         private void OnTagTypeListerPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -276,23 +297,15 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 return;
             }
 
-            if (!TagKindManager.TryParse(TagKind.Schema.Kind, Value, out object newValue)) {
-                return;
-            }
-
-            string persistentValue = TagKind.Schema.ToPersistentValue(newValue);
-
             // Create new tag or update values if changed
             if (IsCreatingNew) {
-                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, Tag, persistentValue);
+                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, Tag, Value);
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagAddedEvent(targetClip.Id, newModel));
 
             } else {
-                if (Model.Value != persistentValue) {
-                    Model.Value = persistentValue;
-                    await dataRepository.UpdateTag(Model.Id, persistentValue);
-                    await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagValueChangedEvent(Model));
-                }
+                Model.Value = Value;
+                await dataRepository.UpdateTag(Model.Id, Model.Value);
+                await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagValueChangedEvent(Model));
             }
 
             IsOpen = false;

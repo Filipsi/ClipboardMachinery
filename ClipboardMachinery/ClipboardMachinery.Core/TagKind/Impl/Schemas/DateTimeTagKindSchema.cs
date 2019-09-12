@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ClipboardMachinery.Core.TagKind.Schemas {
+namespace ClipboardMachinery.Core.TagKind.Impl.Schemas {
 
     public class DateTimeTagKindSchema : ITagKindSchema {
 
@@ -36,8 +36,16 @@ namespace ClipboardMachinery.Core.TagKind.Schemas {
         }
 
         public string ToPersistentValue(object value) {
-            if (value is DateTime dateTime) {
-                return dateTime.ToString(TargetCultureInfo);
+            switch (value) {
+                case DateTime dateTime:
+                    return dateTime.ToString(TargetCultureInfo);
+
+                case string textValue:
+                    if (TryParse(textValue, out object result)) {
+                        // ReSharper disable once TailRecursiveCall
+                        return ToPersistentValue(result);
+                    }
+                    break;
             }
 
             return string.Empty;

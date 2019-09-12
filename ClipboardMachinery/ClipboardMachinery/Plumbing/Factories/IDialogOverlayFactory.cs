@@ -1,6 +1,4 @@
-﻿using System;
-using ClipboardMachinery.Components.Clip;
-using ClipboardMachinery.Components.DialogOverlay;
+﻿using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.OverlayDialogs.TagEditor;

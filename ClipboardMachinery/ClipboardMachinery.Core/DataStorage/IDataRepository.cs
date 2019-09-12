@@ -26,10 +26,9 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <typeparam name="T">A type of data model that created clip instance will be mapped to and returned back</typeparam>
         /// <param name="content">Content of a clip</param>
-        /// <param name="created">Date and time when clip was created</param>
         /// <param name="tags">Tags that clip have in format name=value</param>
         /// <returns>An instance of created clip mapped to T model</returns>
-        Task<T> CreateClip<T>(string content, DateTime created, KeyValuePair<string, object>[] tags = null);
+        Task<T> CreateClip<T>(string content, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
         /// Remove clip with corresponding id and all related tags.
@@ -44,10 +43,18 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <typeparam name="T">A type of data model that created tag instance will be mapped to and returned back</typeparam>
         /// <param name="clipId">Id of a clip that this tag is related to</param>
-        /// <param name="name">Name of the tag that should be created. This corresponds to tag type definition.</param>
+        /// <param name="tagType">Name of the tag that should be created. This corresponds to tag type definition.</param>
         /// <param name="value">Value of the tag that will be created. If TagType specified by the name does not exist, this value data type will be used as newly created TagType's data type.</param>
         /// <returns>An instance of created tag mapped to T model</returns>
-        Task<T> CreateTag<T>(int clipId, string name, object value);
+        Task<T> CreateTag<T>(int clipId, string tagType, object value);
+
+        /// <summary>
+        /// Attempts to find a Tag based on it's id property.
+        /// </summary>
+        /// <typeparam name="T">Type of data model that found tag type instance will be mapped to and returned back.</typeparam>
+        /// <param name="tagId">Id of a tag that should be found.</param>
+        /// <returns>An instance of tag mapped to T</returns>
+        Task<T> FindTag<T>(int tagId);
 
         /// <summary>
         /// Update value of tag with corresponding id.

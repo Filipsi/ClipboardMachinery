@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
@@ -17,6 +18,7 @@ using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
+using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
@@ -110,9 +112,8 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
             }
         }
 
-        public ITagKindManager TagKindManager {
-            get;
-        }
+        public IReadOnlyCollection<TagKindViewModel> TagKinds
+            => tagKinds;
 
         public ColorGalleryViewModel ColorGallery {
             get;
@@ -130,8 +131,11 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
         #region Fields
 
+        private static IReadOnlyCollection<TagKindViewModel> tagKinds;
+
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
+        private readonly ITagKindManager tagKindManager;
         private readonly ActionButtonViewModel saveButton;
 
         private bool isOpen;
@@ -145,13 +149,13 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
         public TagTypeEditorViewModel(
             ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
-            ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory)
-            : this(null, colorGallery, eventAggregator, dataRepository, tagKindManager, actionButtonFactory) {
+            ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory, ITagKindFactory tagKindFactory)
+            : this(null, colorGallery, eventAggregator, dataRepository, tagKindManager, actionButtonFactory, tagKindFactory) {
         }
 
         public TagTypeEditorViewModel(
             TagTypeModel tagTypeModel, ColorGalleryViewModel colorGallery, IEventAggregator eventAggregator, IDataRepository dataRepository,
-            ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory) {
+            ITagKindManager tagKindManager, Func<ActionButtonViewModel> actionButtonFactory, ITagKindFactory tagKindFactory) {
 
             if (tagTypeModel == null) {
                 IsCreatingNew = true;
@@ -163,14 +167,25 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
                 IsCreatingNew = false;
             }
 
+            this.tagKindManager = tagKindManager;
+            this.eventAggregator = eventAggregator;
+            this.dataRepository = dataRepository;
+
+            // Create static tag kind options
+            if (tagKinds == null) {
+                tagKinds = Array.AsReadOnly(
+                    tagKindManager.Schemas
+                        .Select(tagKindFactory.CreateTagKind)
+                        .Reverse()
+                        .ToArray()
+                );
+            }
+
             Model = tagTypeModel;
             Name = Model.Name;
             Description = Model.Description;
-            TagKindManager = tagKindManager;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
             DialogControls = new BindableCollection<ActionButtonViewModel>();
-            this.eventAggregator = eventAggregator;
-            this.dataRepository = dataRepository;
 
             // If in edit mode, disable validation specific to creation mode
             if (!IsCreatingNew) {
@@ -205,7 +220,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
         #region Handlers
 
         protected override Task OnActivateAsync(CancellationToken cancellationToken) {
-            SelectedTagKind = TagKindManager.GetSchemaFor(Model.Kind);
+            SelectedTagKind = tagKindManager.GetSchemaFor(Model.Kind);
             return base.OnActivateAsync(cancellationToken);
         }
 

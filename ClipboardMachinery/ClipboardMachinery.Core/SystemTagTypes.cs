@@ -41,6 +41,13 @@ namespace ClipboardMachinery.Core {
             Color = DefaultDBColor
         };
 
+        public static readonly TagType CreatedTagType = new TagType {
+            Name = "created",
+            Description = "Timestamp created when clip was added to the clipboard.",
+            Kind = typeof(DateTime),
+            Color = DefaultDBColor
+        };
+
         public static readonly TagType CategoryTagType = new TagType {
             Name = "category",
             Description = "Describes a category to which the clip belongs to, useful for sorting.",
@@ -51,6 +58,7 @@ namespace ClipboardMachinery.Core {
         public static readonly IReadOnlyCollection<TagType> TagTypes = Array.AsReadOnly(
             new[] {
                 SourceTagType,
+                CreatedTagType,
                 CategoryTagType
             }
         );

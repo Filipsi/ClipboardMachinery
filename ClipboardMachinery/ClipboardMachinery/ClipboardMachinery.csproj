@@ -142,8 +142,6 @@
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
     <Compile Include="Components\DialogOverlay\IDialogOverlayManager.cs" />
     <Compile Include="Components\DialogOverlay\Impl\DialogOverlayManager.cs" />
-    <Compile Include="Components\TagKind\ITagKindManager.cs" />
-    <Compile Include="Components\TagKind\TagKindManager.cs" />
     <Compile Include="Components\TagKind\TagKindView.xaml.cs">
       <DependentUpon>TagKindView.xaml</DependentUpon>
     </Compile>

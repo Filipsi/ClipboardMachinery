@@ -102,9 +102,9 @@ namespace ClipboardMachinery.Components.Clip {
         public SolidColorBrush SelectionColor
             => Application.Current.FindResource(IsFocused ? "ElementSelectBrush" : "PanelControlBrush") as SolidColorBrush;
 
-        public BindableCollection<ActionButtonViewModel> Controls {
-            get;
-        }
+        public BindableCollection<ActionButtonViewModel> Controls { get; }
+
+        public ActionButtonViewModel AddTagButton { get; }
 
         #endregion
 
@@ -154,9 +154,17 @@ namespace ClipboardMachinery.Components.Clip {
             this.actionButtonFactory = actionButtonFactory;
             this.dialogOverlayManager = dialogOverlayManager;
 
-            Controls = new BindableCollection<ActionButtonViewModel>();
+            // Create add tag button
+            AddTagButton = actionButtonFactory.Invoke();
+            AddTagButton.ToolTip = "Add tag";
+            AddTagButton.Icon = (Geometry)Application.Current.FindResource("IconAddTag");
+            AddTagButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
+            AddTagButton.ClickAction = AddTag;
+            AddTagButton.ConductWith(this);
 
             // Create controls
+            Controls = new BindableCollection<ActionButtonViewModel>();
+
             ActionButtonViewModel removeButton = actionButtonFactory.Invoke();
             removeButton.ToolTip = "Remove";
             removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
@@ -175,14 +183,6 @@ namespace ClipboardMachinery.Components.Clip {
             favoriteButton.ClickAction = ToggleFavorite;
             favoriteButton.ConductWith(this);
             Controls.Add(favoriteButton);
-
-            ActionButtonViewModel addTagButton = actionButtonFactory.Invoke();
-            addTagButton.ToolTip = "Add tag";
-            addTagButton.Icon = (Geometry)Application.Current.FindResource("IconAddTag");
-            addTagButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
-            addTagButton.ClickAction = AddTag;
-            addTagButton.ConductWith(this);
-            Controls.Add(addTagButton);
 
             Model = model;
         }
@@ -371,7 +371,7 @@ namespace ClipboardMachinery.Components.Clip {
             }
 
             SaveFileDialog dialog = new SaveFileDialog {
-                FileName = $"{Model.Id}-{Model.Created.ToFileTimeUtc()}",
+                FileName = $"{Model.Id}-{DateTime.UtcNow.ToFileTimeUtc()}",
                 Filter = "Portable Network Graphics (*.png)|*.png|All files (*.*)|*.*"
             };
 

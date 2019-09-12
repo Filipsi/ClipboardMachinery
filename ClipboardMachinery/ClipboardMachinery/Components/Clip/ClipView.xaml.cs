@@ -3,23 +3,22 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
 namespace ClipboardMachinery.Components.Clip {
 
-    public partial class ClipView : UserControl {
+    public partial class ClipView {
 
         #region Fields
 
         private readonly DoubleAnimation expandAnimation = new DoubleAnimation {
             From = 1,
-            To = 24,
+            To = 32,
             Duration = new Duration(TimeSpan.FromMilliseconds(250))
         };
 
         private readonly DoubleAnimation colapseAnimation = new DoubleAnimation {
-            From = 24,
+            From = 32,
             To = 1,
             Duration = new Duration(TimeSpan.FromMilliseconds(250))
         };
