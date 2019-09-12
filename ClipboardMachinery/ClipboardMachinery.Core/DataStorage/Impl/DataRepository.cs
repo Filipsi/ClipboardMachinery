@@ -172,19 +172,19 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return Mapper.Map<T>(firstMatch);
         }
 
-        public async Task UpdateTag(int id, object value) {
+        public async Task<string> UpdateTag(int id, object value) {
             Tag tag = await FindTag<Tag>(id);
 
             if (tag == null) {
                 // TODO: Log this
-                return;
+                return string.Empty;
             }
 
             string presistentValue = await ResolvePresistentValue(tag.Type.Name, value);
 
             if (presistentValue == null) {
                 // TODO: Log this
-                return;
+                return string.Empty;
             }
 
             await Database.Connection.UpdateAsync<Tag>(
@@ -193,6 +193,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     Value = presistentValue
                 }
             );
+
+            return presistentValue;
         }
 
         public async Task DeleteTag(int id) {

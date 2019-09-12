@@ -61,8 +61,8 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="id">Id of tag to update</param>
         /// <param name="value">A new value for the tag</param>
-        /// <returns>A task that will be completed after the operation is performed.</returns>
-        Task UpdateTag(int id, object value);
+        /// <returns>A task that will be completed after the operation is performed with new presisted value.</returns>
+        Task<string> UpdateTag(int id, object value);
 
         /// <summary>
         /// Remove tag with corresponding id.

@@ -303,8 +303,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagAddedEvent(targetClip.Id, newModel));
 
             } else {
-                Model.Value = Value;
-                await dataRepository.UpdateTag(Model.Id, Model.Value);
+                Model.Value = await dataRepository.UpdateTag(Model.Id, Value);
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagValueChangedEvent(Model));
             }
 
