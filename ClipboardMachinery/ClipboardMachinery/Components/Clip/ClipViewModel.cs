@@ -20,9 +20,9 @@ using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Core;
+using ClipboardMachinery.Core.DataStorage;
 using Microsoft.Win32;
 using static ClipboardMachinery.Common.Events.ClipEvent;
-using static ClipboardMachinery.Common.Events.TagEvent;
 using Image = System.Windows.Controls.Image;
 
 namespace ClipboardMachinery.Components.Clip {
@@ -123,6 +123,7 @@ namespace ClipboardMachinery.Components.Clip {
         };
 
         private readonly IEventAggregator eventAggregator;
+        private readonly IDataRepository dataRepository;
         private readonly Func<ActionButtonViewModel> actionButtonFactory;
         private readonly Func<TagViewModel> tagVmFactory;
         private readonly ToggleButtonViewModel favoriteButton;
@@ -145,12 +146,13 @@ namespace ClipboardMachinery.Components.Clip {
         #endregion
 
         public ClipViewModel(
-            ClipModel model, IEventAggregator eventAggregator,
+            ClipModel model, IEventAggregator eventAggregator, IDataRepository dataRepository,
             Func<TagViewModel> tagVmFactory, Func<ActionButtonViewModel> actionButtonFactory, Func<ToggleButtonViewModel> toggleButtonFactory,
             IDialogOverlayManager dialogOverlayManager) {
 
-            this.tagVmFactory = tagVmFactory;
             this.eventAggregator = eventAggregator;
+            this.dataRepository = dataRepository;
+            this.tagVmFactory = tagVmFactory;
             this.actionButtonFactory = actionButtonFactory;
             this.dialogOverlayManager = dialogOverlayManager;
 
@@ -238,37 +240,37 @@ namespace ClipboardMachinery.Components.Clip {
 
         public Task HandleAsync(TagEvent message, CancellationToken cancellationToken) {
             switch(message.EventType) {
-                case TagEventType.TagAdded:
+                case TagEvent.TagEventType.TagAdded:
                     if (message.RelatedClipId == Model.Id) {
                         Model.Tags.Add((TagModel)message.Argument);
                     }
                     break;
 
-                case TagEventType.TagRemoved:
+                case TagEvent.TagEventType.TagRemoved:
                     foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.Id == message.TagId).ToArray()) {
                         Model.Tags.Remove(tagToRemove.Model);
                     }
                     break;
 
-                case TagEventType.TypeRemoved:
+                case TagEvent.TagEventType.TypeRemoved:
                     foreach (TagViewModel tagToRemove in Items.Where(vm => vm.Model.TypeName == message.TagTypeName).ToArray()) {
                         Model.Tags.Remove(tagToRemove.Model);
                     }
                     break;
 
-                case TagEventType.TypeColorChanged:
+                case TagEvent.TagEventType.TypeColorChanged:
                     foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
                         vm.Model.Color = (Color)message.Argument;
                     }
                     break;
 
-                case TagEventType.TypeDescriptionChanged:
+                case TagEvent.TagEventType.TypeDescriptionChanged:
                     foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
                         vm.Model.Description = (string)message.Argument;
                     }
                     break;
 
-                case TagEventType.TagValueChanged:
+                case TagEvent.TagEventType.TagValueChanged:
                     TagViewModel tagWithChangedValue = Items.FirstOrDefault(tag => tag.Model.Id == message.TagId);
                     if (tagWithChangedValue != null) {
                         tagWithChangedValue.Model.Value = (string)message.Argument;
@@ -409,8 +411,25 @@ namespace ClipboardMachinery.Components.Clip {
             eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
         }
 
-        public async Task ToggleFavorite(ActionButtonViewModel source) {
-            await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.ToggleFavorite));
+        public Task ToggleFavorite(ActionButtonViewModel source) {
+            TagModel favoriteTag = Model.Tags.FirstOrDefault(
+                tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name && tag.Value == "favorite"
+            );
+
+            return Task.Run(async () => {
+                if (favoriteTag == null) {
+                    favoriteTag = await dataRepository.CreateTag<TagModel>(
+                        clipId: Model.Id,
+                        tagType: SystemTagTypes.CategoryTagType.Name,
+                        value: "favorite"
+                    );
+
+                    await eventAggregator.PublishOnUIThreadAsync(TagEvent.CreateTagAddedEvent(Model.Id, favoriteTag));
+                } else {
+                    await dataRepository.DeleteTag(favoriteTag.Id);
+                    await eventAggregator.PublishOnUIThreadAsync(TagEvent.CreateTagRemovedEvent(favoriteTag));
+                }
+            });
         }
 
         public void ShowTagOverview() {

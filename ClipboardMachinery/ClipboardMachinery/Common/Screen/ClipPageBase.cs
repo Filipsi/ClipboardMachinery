@@ -6,6 +6,7 @@ using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.Tag;
+using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Pages;
 using ClipboardMachinery.Plumbing.Factories;
@@ -17,15 +18,17 @@ namespace ClipboardMachinery.Common.Screen {
         #region Fields
 
         protected readonly IDataRepository dataRepository;
+        protected readonly IEventAggregator eventAggregator;
         protected readonly IViewModelFactory vmFactory;
 
         #endregion
 
-        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IViewModelFactory vmFactory)
+        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory)
             : base(dataRepository.CreateLazyClipProvider(batchSize)) {
 
             this.dataRepository = dataRepository;
             this.vmFactory = vmFactory;
+            this.eventAggregator = eventAggregator;
         }
 
         #region Logic
@@ -63,31 +66,6 @@ namespace ClipboardMachinery.Common.Screen {
                         await Task.Run(() => dataRepository.DeleteClip(clipToRemove.Model.Id), cancellationToken);
                         await clipToRemove.TryCloseAsync();
                         vmFactory.Release(clipToRemove);
-                    }
-                    break;
-
-                case ClipEvent.ClipEventType.ToggleFavorite:
-                    ClipViewModel clipVm = Items.FirstOrDefault(vm => vm.Model.Id == message.Source.Id);
-                    if (clipVm != null) {
-                        ClipModel clip = clipVm.Model;
-                        TagModel favoriteTag = clip.Tags.FirstOrDefault(
-                            tag => tag.TypeName == "category" && tag.Value.ToString() == "favorite"
-                        );
-
-                        if (favoriteTag == null) {
-                            await Task.Run(async () => {
-                                TagModel newTag = await dataRepository.CreateTag<TagModel>(
-                                    clipId: clip.Id,
-                                    tagType: "category",
-                                    value: "favorite"
-                                );
-
-                                await Application.Current.Dispatcher.InvokeAsync(() => clip.Tags.Add(newTag));
-                            }, cancellationToken);
-                        } else {
-                            await Task.Run(() => dataRepository.DeleteTag(favoriteTag.Id), cancellationToken);
-                            clip.Tags.Remove(favoriteTag);
-                        }
                     }
                     break;
             }

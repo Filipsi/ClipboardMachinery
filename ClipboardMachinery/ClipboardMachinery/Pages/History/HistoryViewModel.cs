@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Clip;
@@ -24,7 +25,7 @@ namespace ClipboardMachinery.Pages.History {
 
         #endregion
 
-        public HistoryViewModel(IDataRepository dataRepository, IViewModelFactory vmFactory) : base(15, dataRepository, vmFactory) {
+        public HistoryViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
         }
 
         #region Logic

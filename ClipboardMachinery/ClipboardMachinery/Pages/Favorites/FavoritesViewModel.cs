@@ -1,4 +1,5 @@
-﻿using ClipboardMachinery.Common.Events;
+﻿using Caliburn.Micro;
+using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.DataStorage;
@@ -21,7 +22,7 @@ namespace ClipboardMachinery.Pages.Favorites {
 
         #endregion
 
-        public FavoritesViewModel(IDataRepository dataRepository, IViewModelFactory vmFactory) : base(15, dataRepository, vmFactory) {
+        public FavoritesViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
             DataProvider.ApplyTagFilter("category", "favorite");
         }
 

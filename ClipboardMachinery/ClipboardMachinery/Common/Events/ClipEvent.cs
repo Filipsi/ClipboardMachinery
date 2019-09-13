@@ -7,8 +7,7 @@ namespace ClipboardMachinery.Common.Events {
         public enum ClipEventType {
             Created,
             Remove,
-            Select,
-            ToggleFavorite
+            Select
         }
 
         #region Properties
