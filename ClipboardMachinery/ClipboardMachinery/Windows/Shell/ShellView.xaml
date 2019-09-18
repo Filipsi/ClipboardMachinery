@@ -25,7 +25,7 @@
             Mode="TwoWay" />
     </Window.Visibility>
 
-    <Grid Width="{Binding Path=AppWidth, FallbackValue=384}">
+    <Grid MinWidth="540" Width="{Binding Path=AppWidth}">
         <local:RotatingGear
             Height="64"
             VerticalAlignment="Top" />
