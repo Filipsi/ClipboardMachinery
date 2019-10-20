@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Core.DataStorage {
 
     public interface ILazyDataProvider {
+
+        /// <summary>
+        /// Type of a data model this provider is internally using.
+        /// </summary>
+        Type DataType { get; }
 
         /// <summary>
         /// Number of items that are provided when retrieving data.
@@ -31,6 +37,6 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <param name="value">Value of a tag to filter or null if you do no with to filter by this property.</param>
         void ApplyTagFilter(string name, string value);
 
-    };
+    }
 
 }

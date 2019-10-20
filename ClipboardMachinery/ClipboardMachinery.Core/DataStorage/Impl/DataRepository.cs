@@ -34,6 +34,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         #region Fields
 
         private readonly ITagKindManager tagKindManager;
+        private readonly List<WeakReference<ILazyDataProvider>> dataProviders;
 
         #endregion
 
@@ -41,6 +42,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             Database = databaseAdapter;
             Mapper = mapper;
             this.tagKindManager = tagKindManager;
+
+            // Create data providers list to tract instances
+            dataProviders = new List<WeakReference<ILazyDataProvider>>();
 
             // Load last saved clip
             IDbConnection db = Database.Connection;
@@ -51,7 +55,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         #region IDataRepository
 
         public ILazyDataProvider CreateLazyClipProvider(int batchSize) {
-            return new LazyDataProvider<Clip>(this, batchSize, LoadNestedClipReferences);
+            ILazyDataProvider clipProvider = new LazyDataProvider<Clip>(this, batchSize, LoadNestedClipReferences);
+            dataProviders.Add(new WeakReference<ILazyDataProvider>(clipProvider));
+            return clipProvider;
         }
 
         public async Task<T> CreateClip<T>(string content, KeyValuePair<string, object>[] tags = null) {
@@ -101,8 +107,10 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             bool wasSaveSuccessfull = await Database.Connection.SaveAsync(clip, references: true);
 
             // If we managed to successfully save the clip update last saved clip content
+            // ReSharper disable once InvertIf
             if (wasSaveSuccessfull) {
                 LastClipContent = clip.Content;
+                await UpdateDataProvidersOffeet<Clip>(1);
             }
 
             // Map it to the desired model
@@ -151,6 +159,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Save newly created tag
             await Database.Connection.SaveAsync(tag, references: true);
+            await UpdateDataProvidersOffeet<Tag>(1);
 
             // Map it to the desired model
             return Mapper.Map<T>(tag);
@@ -202,7 +211,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         }
 
         public ILazyDataProvider CreateLazyTagTypeProvider(int batchSize) {
-            return new LazyDataProvider<TagType>(this, batchSize);
+            ILazyDataProvider tagTypeProvider = new LazyDataProvider<TagType>(this, batchSize);
+            dataProviders.Add(new WeakReference<ILazyDataProvider>(tagTypeProvider));
+            return tagTypeProvider;
         }
 
         public async Task<T> CreateTagType<T>(string name, string description, Type kind, MediaColor? color = null) {
@@ -224,6 +235,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Save newly created tag type
             await Database.Connection.InsertAsync(tagType);
+            await UpdateDataProvidersOffeet<TagType>(1);
 
             // Map it to the desired model
             return Mapper.Map<T>(tagType);
@@ -300,6 +312,40 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             return schema.ToPersistentValue(value);
+        }
+
+        private async Task UpdateDataProvidersOffeet<T>(int value) {
+            // TODO: Change this to "SELECT MAX(_ROWID_) FROM "table" LIMIT 1;" depending on performance
+            long entryCount = await Database.Connection.CountAsync<T>();
+
+            DispatchToDataProvders<T>(dataProvider => {
+                // Skip this provider if it does not have all entries loaded.
+                // The offset should be updated only when new entry is added or existing one is removed.
+                if (dataProvider.Offset != entryCount - value) {
+                    return;
+                }
+
+                // Update the offset of the provider
+                dataProvider.Offset += value;
+            });
+        }
+
+        private void DispatchToDataProvders<T>(Action<ILazyDataProvider> action) {
+            foreach (WeakReference<ILazyDataProvider> providerRef in dataProviders.ToArray()) {
+                // Try to get reference target, if there is no target remove it from tracked providers pool
+                if (!providerRef.TryGetTarget(out ILazyDataProvider lazyDataProvider)) {
+                    dataProviders.Remove(providerRef);
+                    continue;
+                }
+
+                // Check if this provider is compatible with target type
+                if (lazyDataProvider.DataType != typeof(T)) {
+                    continue;
+                }
+
+                // Perform the action on target provider
+                action?.Invoke(lazyDataProvider);
+            }
         }
 
         private static async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {

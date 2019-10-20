@@ -11,6 +11,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #region Properties
 
+        public Type DataType { get; } = typeof(T);
+
         public int BatchSize { get; }
 
         public int Offset { get; set; }
