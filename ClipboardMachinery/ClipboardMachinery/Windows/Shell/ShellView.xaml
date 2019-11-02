@@ -5,13 +5,19 @@
     xmlns:local="clr-namespace:ClipboardMachinery.Windows.Shell"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
-    SnapsToDevicePixels="True" UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     RenderOptions.BitmapScalingMode="HighQuality"
-    Background="{x:Null}" AllowsTransparency="True" WindowStyle="None"
-    ShowInTaskbar="False" Topmost="True"
-    SizeToContent="Width" ResizeMode="NoResize">
+    Background="{x:Null}"
+    AllowsTransparency="True"
+    WindowStyle="None"
+    ShowInTaskbar="False"
+    Topmost="True"
+    SizeToContent="Width"
+    ResizeMode="NoResize">
 
     <Window.Resources>
         <BooleanToVisibilityConverter
@@ -37,7 +43,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="32" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="16" />
+                <RowDefinition Height="24" />
             </Grid.RowDefinitions>
 
             <!-- Top navigation panel -->
@@ -69,16 +75,79 @@
                 Grid.Row="2"
                 BorderBrush="{StaticResource PanelBackgroundBrush}"
                 Background="{StaticResource PanelBackgroundBrush}"
-                CornerRadius="0,0,10,10">
+                CornerRadius="0,0,10,10"
+                Padding="8,0">
 
                 <Grid>
+                    <TextBlock
+                        Foreground="{StaticResource BodyControlBrush}"
+                        VerticalAlignment="Center"
+                        FontSize="13">
+
+                        <TextBlock.Resources>
+                            <Style TargetType="Hyperlink">
+                                <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
+                                <Setter Property="TextDecorations" Value="None" />
+                                <Setter Property="helpers:HyperlinkExtensions.IsExternal" Value="True" />
+
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource PanelHoverBrush}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Resources>
+
+                        <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/issues">
+                            Issues
+
+                            <Hyperlink.ToolTip>
+                                <ToolTip>
+                                    Have you found a bug or you have a suggestion?
+                                </ToolTip>
+                            </Hyperlink.ToolTip>
+                        </Hyperlink>
+                        |
+                        <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/releases">
+                            Releases
+
+                            <Hyperlink.ToolTip>
+                                <ToolTip>
+                                    A place to download new versions and pre-releases.
+                                </ToolTip>
+                            </Hyperlink.ToolTip>
+                        </Hyperlink>
+                        |
+                        <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/projects">
+                            Roadmap
+
+                            <Hyperlink.ToolTip>
+                                <ToolTip>
+                                    Interested what is been worked on and where we are heading?
+                                </ToolTip>
+                            </Hyperlink.ToolTip>
+                        </Hyperlink>
+                        |
+                        <Hyperlink NavigateUri="https://www.paypal.me/Filipsi">
+                            Support
+
+                            <Hyperlink.ToolTip>
+                                <ToolTip>
+                                    Do you want to support this passion project? Buy me a cup of coffee.
+                                </ToolTip>
+                            </Hyperlink.ToolTip>
+                        </Hyperlink>
+                    </TextBlock>
+
                     <Label
                         x:Name="AppVersion"
                         Foreground="{StaticResource PanelControlBrush}"
                         HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
                         Padding="0"
-                        Margin="0,0,8,0"
-                        Content="1.0.0.0" />
+                        Margin="0,5"
+                        Content="1.0.0.0"
+                        FontSize="13" />
                 </Grid>
             </Border>
         </Grid>

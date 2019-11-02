@@ -45,6 +45,7 @@
                         HorizontalAlignment="Right" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ContentControl Margin="4" cal:View.Model="{Binding}" />
