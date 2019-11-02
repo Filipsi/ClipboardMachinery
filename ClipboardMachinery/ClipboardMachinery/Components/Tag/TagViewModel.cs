@@ -104,7 +104,12 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Helpers
 
-        private Size MeasureValueString(string candidate) {
+        private static Size MeasureValueString(string candidate) {
+            // Bail out when candidate text is empty
+            if (string.IsNullOrEmpty(candidate)) {
+                return Size.Empty;
+            }
+
             FormattedText formattedText = new FormattedText(
                 textToFormat: candidate,
                 culture: CultureInfo.CurrentCulture,
