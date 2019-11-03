@@ -13,7 +13,7 @@ install:
   cmd: git submodule -q update --init  
 
 before_build:
-  cmd: nuget restore Bibliotheque\Bibliotheque.sln & nuget restore ClipboardMachinery\ClipboardMachinery.sln
+  cmd: nuget restore ClipboardMachinery\ClipboardMachinery.sln
 
 assembly_info:
   patch: true
@@ -31,7 +31,7 @@ deploy:
     secure: wzztgAMUTfmbyw7/xz9gB5X8L4QvW8Mzaq006r8RmTS5YnbZ7VUvNtH4MTcc4s0O
   release: $(APPVEYOR_PROJECT_NAME) $(APPVEYOR_BUILD_VERSION)
   tag: $(APPVEYOR_BUILD_VERSION)
-  draft: false
+  draft: true
   prerelease: false
   on:
     branch: master

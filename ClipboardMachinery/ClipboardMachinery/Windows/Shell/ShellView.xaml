@@ -14,8 +14,8 @@
     Background="{x:Null}"
     AllowsTransparency="True"
     WindowStyle="None"
-    ShowInTaskbar="False"
-    Topmost="True"
+    ShowInTaskbar="{Binding IsVisibleInTaskbar}"
+    Topmost="{Binding IsTopmost}"
     SizeToContent="Width"
     ResizeMode="NoResize">
 

@@ -5,12 +5,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClipboardHistory")]
-[assembly: AssemblyDescription("A clipboard managing app. Access clipboard history, quickly paste entries from favorites. ")]
+[assembly: AssemblyTitle("ClipboardMachinery")]
+[assembly: AssemblyDescription("A clipboard managing app. Access clipboard history, quickly paste entries from favorites.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClipboardHistory")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyProduct("ClipboardMachinery")]
+[assembly: AssemblyCopyright("Copyright © 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

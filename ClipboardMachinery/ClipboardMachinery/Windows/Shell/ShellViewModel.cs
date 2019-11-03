@@ -54,6 +54,12 @@ namespace ClipboardMachinery.Windows.Shell {
         public double MaxContentHeight
             => SystemParameters.PrimaryScreenHeight / 1.5;
 
+        public bool IsVisibleInTaskbar
+            => Debugger.IsAttached;
+
+        public bool IsTopmost
+            => !Debugger.IsAttached;
+
         #endregion
 
         #region Fields
