@@ -8,7 +8,7 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
         IReadOnlyList<HotKey> HotKeys { get; }
 
-        void Register(Key key, KeyModifier keyModifiers, Action<HotKey> action);
+        HotKey Register(Key key, KeyModifier keyModifiers, Action<HotKey> action);
 
     }
 

@@ -1,7 +1,9 @@
-﻿<Application x:Class="ClipboardMachinery.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:plumbing="clr-namespace:ClipboardMachinery.Plumbing">
+﻿<Application
+    x:Class="ClipboardMachinery.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:plumbing="clr-namespace:ClipboardMachinery.Plumbing">
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

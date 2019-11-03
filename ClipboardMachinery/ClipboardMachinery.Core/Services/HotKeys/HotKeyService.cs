@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace ClipboardMachinery.Core.Services.HotKeys {
 
-    public class HotKeyService : IHotKeyService {
+    public class HotKeyService : IHotKeyService, IDisposable {
 
         #region Properties
 
@@ -27,8 +27,44 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
         #region IHotKeyService
 
-        public void Register(Key key, KeyModifier keyModifiers, Action<HotKey> action)
-            => hotKeys.Add(new HotKey(key, keyModifiers, action));
+        public HotKey Register(Key key, KeyModifier keyModifiers, Action<HotKey> action) {
+            // Bail out when service is disposed, no new key-binds can be registered
+            if (disposed) {
+                throw new ObjectDisposedException(nameof(HotKeyService));
+            }
+
+            // Register new key-bind
+            HotKey keyBind = new HotKey(key, keyModifiers, action);
+            hotKeys.Add(keyBind);
+            return keyBind;
+        }
+
+        #endregion
+
+        #region MyRegion
+
+        private bool disposed;
+
+        protected virtual void Dispose(bool disposing) {
+            if (disposed) {
+                return;
+            }
+
+            if (disposing) {
+                foreach (HotKey keyBind in HotKeys) {
+                    keyBind.Dispose();
+                }
+
+                hotKeys.Clear();
+            }
+
+            disposed = true;
+        }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
 

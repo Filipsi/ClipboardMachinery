@@ -1,0 +1,64 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.UpdateIndicator.UpdateIndicatorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:cal="http://www.caliburnproject.org"
+    mc:Ignorable="d"
+    d:DesignHeight="24"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
+    RenderOptions.BitmapScalingMode="HighQuality">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid
+        Margin="4,0"
+        Background="Transparent"
+        cal:Message.Attach="[Event MouseLeftButtonUp] = [Action HandleInteraction()]"
+        Cursor="{Binding InteractionType}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="24" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Foreground="{Binding StatusColor, FallbackValue=Gray}"
+            Text="{Binding DisplayText, FallbackValue='Unknown update status'}" />
+
+        <Path
+            Grid.Column="2"
+            Margin="6"
+            RenderTransformOrigin="0.5, 0.5"
+            Fill="{Binding StatusColor, FallbackValue=Gray}"
+            Data="{StaticResource IconLoading}"
+            Stretch="UniformToFill"
+            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <Path.RenderTransform>
+                <RotateTransform x:Name="NoFreeze" />
+            </Path.RenderTransform>
+
+            <Path.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                To="360"
+                                Duration="0:0:1"
+                                RepeatBehavior="Forever" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Path.Triggers>
+        </Path>
+    </Grid>
+</UserControl>

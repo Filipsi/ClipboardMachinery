@@ -13,6 +13,9 @@ namespace ClipboardMachinery.Plumbing {
 
         #region Fields
 
+        public const string REPOSITORY_OWNER = "Filipsi";
+        public const string REPOSITORY_NAME = "ClipboardMachinery";
+
         private readonly IWindsorContainer container = new WindsorContainer();
 
         #endregion

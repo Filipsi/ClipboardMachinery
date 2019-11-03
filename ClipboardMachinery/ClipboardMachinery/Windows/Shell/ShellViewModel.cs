@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +11,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Navigator;
+using ClipboardMachinery.Components.UpdateIndicator;
 using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.Services.Clipboard;
@@ -45,8 +45,12 @@ namespace ClipboardMachinery.Windows.Shell {
             get;
         }
 
+        public UpdateIndicatorViewModel UpdateIndicator {
+            get;
+        }
+
         public string AppVersion
-            => (Debugger.IsAttached ? "dev" : string.Empty) + Assembly.GetEntryAssembly()?.GetName().Version.ToString(3);
+            => App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
 
         public double AppWidth
             => SystemParameters.PrimaryScreenWidth / 3;
@@ -67,6 +71,7 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
         private readonly IClipboardService clipboardService;
+        private readonly HotKey visiblitiyKeyBind;
 
         private bool isVisible = true;
         private string lastAcceptedClipContent;
@@ -74,8 +79,8 @@ namespace ClipboardMachinery.Windows.Shell {
         #endregion
 
         public ShellViewModel(
-            IEventAggregator eventAggregator, NavigatorViewModel navigator, IDialogOverlayManager dialogOverlayManager,
-            IHotKeyService hotKeyService, IClipboardService clipboardService, IDataRepository dataRepository)  {
+            IEventAggregator eventAggregator, NavigatorViewModel navigator, UpdateIndicatorViewModel updateIndicator,
+            IDialogOverlayManager dialogOverlayManager, IHotKeyService hotKeyService, IClipboardService clipboardService, IDataRepository dataRepository)  {
 
             this.eventAggregator = eventAggregator;
             this.clipboardService = clipboardService;
@@ -88,8 +93,12 @@ namespace ClipboardMachinery.Windows.Shell {
             DialogOverlayPortal = dialogOverlayManager.Portal;
             DialogOverlayPortal.ConductWith(this);
 
+            // Update indicator
+            UpdateIndicator = updateIndicator;
+            UpdateIndicator.ConductWith(this);
+
             // HotKeys
-            hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
+            visiblitiyKeyBind = hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
 
             // Clipboard
             clipboardService.ClipboardChanged += OnClipboardChanged;
@@ -101,10 +110,15 @@ namespace ClipboardMachinery.Windows.Shell {
             Navigator.PropertyChanged += OnNavigatorPropertyChanged;
         }
 
+
         #region Handlers
 
-        private void OnAppVisiblityToggle(HotKey key) {
-            IsVisible = !IsVisible;
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            visiblitiyKeyBind.Unregister();
+            clipboardService.ClipboardChanged -= OnClipboardChanged;
+            Navigator.ExitButtonClicked -= OnNavigatorExitButtonClicked;
+            Navigator.PropertyChanged -= OnNavigatorPropertyChanged;
+            return Task.CompletedTask;
         }
 
         public Task HandleAsync(ClipEvent message, CancellationToken cancellationToken) {
@@ -116,6 +130,10 @@ namespace ClipboardMachinery.Windows.Shell {
             clipboardService.SetClipboardContent(message.Source.Content);
             IsVisible = false;
             return Task.CompletedTask;
+        }
+
+        private void OnAppVisiblityToggle(HotKey key) {
+            IsVisible = !IsVisible;
         }
 
         private async void OnNavigatorExitButtonClicked(object sender, EventArgs e) {

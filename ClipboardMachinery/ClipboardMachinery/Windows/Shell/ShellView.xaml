@@ -79,65 +79,75 @@
                 Padding="8,0">
 
                 <Grid>
-                    <TextBlock
-                        Foreground="{StaticResource BodyControlBrush}"
-                        VerticalAlignment="Center"
-                        FontSize="13">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Foreground="{StaticResource BodyControlBrush}"
+                            VerticalAlignment="Center"
+                            FontSize="13">
 
-                        <TextBlock.Resources>
-                            <Style TargetType="Hyperlink">
-                                <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
-                                <Setter Property="TextDecorations" Value="None" />
-                                <Setter Property="helpers:HyperlinkExtensions.IsExternal" Value="True" />
+                            <TextBlock.Resources>
+                                <Style TargetType="Hyperlink">
+                                    <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
+                                    <Setter Property="TextDecorations" Value="None" />
+                                    <Setter Property="helpers:HyperlinkExtensions.IsExternal" Value="True" />
 
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource PanelHoverBrush}" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Resources>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource PanelHoverBrush}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Resources>
 
-                        <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/issues">
-                            Issues
+                            <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/issues">
+                                Issues
 
-                            <Hyperlink.ToolTip>
-                                <ToolTip>
-                                    Have you found a bug or you have a suggestion?
-                                </ToolTip>
-                            </Hyperlink.ToolTip>
-                        </Hyperlink>
-                        |
-                        <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/releases">
-                            Releases
+                                <Hyperlink.ToolTip>
+                                    <ToolTip>
+                                        Have you found a bug or you have a suggestion?
+                                    </ToolTip>
+                                </Hyperlink.ToolTip>
+                            </Hyperlink>
 
-                            <Hyperlink.ToolTip>
-                                <ToolTip>
-                                    A place to download new versions and pre-releases.
-                                </ToolTip>
-                            </Hyperlink.ToolTip>
-                        </Hyperlink>
-                        |
-                        <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/projects">
-                            Roadmap
+                            <Run
+                                Foreground="Gray"
+                                Text="|" />
 
-                            <Hyperlink.ToolTip>
-                                <ToolTip>
-                                    Interested what is been worked on and where we are heading?
-                                </ToolTip>
-                            </Hyperlink.ToolTip>
-                        </Hyperlink>
-                        |
-                        <Hyperlink NavigateUri="https://www.paypal.me/Filipsi">
-                            Support
+                            <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/projects">
+                                Roadmap
 
-                            <Hyperlink.ToolTip>
-                                <ToolTip>
-                                    Do you want to support this passion project? Buy me a cup of coffee.
-                                </ToolTip>
-                            </Hyperlink.ToolTip>
-                        </Hyperlink>
-                    </TextBlock>
+                                <Hyperlink.ToolTip>
+                                    <ToolTip>
+                                        Interested what is been worked on and where we are heading?
+                                    </ToolTip>
+                                </Hyperlink.ToolTip>
+                            </Hyperlink>
+
+                            <Run
+                                Foreground="Gray"
+                                Text="|" />
+
+                            <Hyperlink NavigateUri="https://www.paypal.me/Filipsi">
+                                Support project
+
+                                <Hyperlink.ToolTip>
+                                    <ToolTip>
+                                        Do you want to support this passion project? Buy me a cup of coffee.
+                                    </ToolTip>
+                                </Hyperlink.ToolTip>
+                            </Hyperlink>
+
+                            <Run
+                                Foreground="Gray"
+                                Text="|" />
+                        </TextBlock>
+
+                        <ContentControl
+                            x:Name="UpdateIndicator"
+                            FontSize="13"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Left" />
+                    </StackPanel>
 
                     <Label
                         x:Name="AppVersion"

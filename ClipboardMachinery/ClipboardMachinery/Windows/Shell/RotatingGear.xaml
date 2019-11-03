@@ -15,16 +15,18 @@
                 </VisualBrush.Visual>
             </VisualBrush>
         </Rectangle.Fill>
+
         <Rectangle.RenderTransform>
             <RotateTransform x:Name="NoFreeze" />
         </Rectangle.RenderTransform>
+
         <Rectangle.Triggers>
             <EventTrigger RoutedEvent="Loaded">
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation
-                                Storyboard.TargetProperty="(Rectangle.RenderTransform).(RotateTransform.Angle)"
-                                To="360" Duration="0:0:20" RepeatBehavior="Forever" />
+                            Storyboard.TargetProperty="(Rectangle.RenderTransform).(RotateTransform.Angle)"
+                            To="360" Duration="0:0:20" RepeatBehavior="Forever" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
