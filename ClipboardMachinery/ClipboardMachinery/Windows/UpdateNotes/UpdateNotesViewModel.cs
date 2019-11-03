@@ -2,9 +2,11 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Markdig;
+using Markdig.Extensions.AutoLinks;
+using Markdig.Extensions.MediaLinks;
 using Newtonsoft.Json;
 
 namespace ClipboardMachinery.Windows.UpdateNotes {
@@ -12,6 +14,10 @@ namespace ClipboardMachinery.Windows.UpdateNotes {
     public class UpdateNotesViewModel : Screen {
 
         #region Properties
+
+        public MarkdownPipeline MarkdownPipeline {
+            get;
+        }
 
         public Uri Address {
             get;
@@ -75,6 +81,10 @@ namespace ClipboardMachinery.Windows.UpdateNotes {
             this.tagVersion = tagVersion;
             Address = new Uri(githubApi, $"repos/{repositoryOwner}/{repositoryName}/releases/tags/{tagVersion}");
             Title = $"Release notes for {tagVersion}";
+
+            MarkdownPipeline = new MarkdownPipelineBuilder()
+                .UseAutoLinks()
+                .Build();
         }
 
         #region Actions

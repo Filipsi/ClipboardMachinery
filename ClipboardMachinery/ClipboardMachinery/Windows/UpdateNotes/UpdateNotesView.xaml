@@ -13,6 +13,10 @@
         ResizeMode="NoResize"
         cal:Message.Attach="[Event Loaded] = [Action LoadContent()]">
 
+    <FrameworkElement.CommandBindings>
+        <CommandBinding Command="{x:Static wpf:Commands.Hyperlink}" Executed="OpenHyperlink" />
+    </FrameworkElement.CommandBindings>
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
@@ -28,6 +32,7 @@
             Background="{StaticResource BodyBackgroundBrush}">
 
             <wpf:MarkdownViewer
+                Pipeline="{Binding MarkdownPipeline}"
                 Markdown="{Binding Content}" />
 
             <Path
