@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace ClipboardMachinery.Core.Services.HotKeys {
 
-    public interface IHotKeyService {
+    public interface IHotKeyService : IDisposable {
 
         IReadOnlyList<HotKey> HotKeys { get; }
 
