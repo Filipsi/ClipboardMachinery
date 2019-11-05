@@ -72,6 +72,8 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
         public bool CanHandleInteraction =>
             State == IndicatorState.UP_TO_DATE ||
+            State == IndicatorState.REFRESH_FAILED ||
+            State ==  IndicatorState.UPDATE_FAILED ||
             State == IndicatorState.UPDATE_AVAILABLE ||
             State == IndicatorState.UPDATE_READY;
 
@@ -118,10 +120,24 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
         #region Logic
 
         public async Task CheckForUpdates() {
-            // Check for new version
+            // Change state to render working indicator
             State = IndicatorState.REFRESH;
-            lastUpdateCheckResult = await updateManager.CheckForUpdatesAsync();
             await Task.Delay(1500);
+
+            try {
+                // Check for new version with within specified time
+                Task<CheckForUpdatesResult> refreshTask = updateManager.CheckForUpdatesAsync();
+                if (await Task.WhenAny(refreshTask, Task.Delay(1000 * 10)) != refreshTask) {
+                    State = IndicatorState.REFRESH_FAILED;
+                    return;
+                }
+
+                // Store update check result
+                lastUpdateCheckResult = refreshTask.Result;
+            } catch (Exception) {
+                State = IndicatorState.REFRESH_FAILED;
+                return;
+            }
 
             // Do not allow updater to run in local development versions
             /*
@@ -164,6 +180,12 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                     IsLoading = true;
                     break;
 
+                case IndicatorState.REFRESH_FAILED:
+                    StatusColor = standbyColor;
+                    DisplayText = "Unable to check for updates.";
+                    IsLoading = false;
+                    break;
+
                 case IndicatorState.UPDATE_AVAILABLE:
                     StatusColor = updateAvailableColor;
                     DisplayText = $"New version {lastUpdateCheckResult?.LastVersion} is available!";
@@ -180,6 +202,12 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                     StatusColor = workingColor;
                     DisplayText = "Downloading update...";
                     IsLoading = true;
+                    break;
+
+                case IndicatorState.UPDATE_FAILED:
+                    StatusColor = standbyColor;
+                    DisplayText = "Update failed.";
+                    IsLoading = false;
                     break;
 
                 case IndicatorState.UPDATE_READY:
@@ -235,6 +263,8 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
             // Handle click interaction
             switch (State) {
                 case IndicatorState.UP_TO_DATE:
+                case IndicatorState.REFRESH_FAILED:
+                case IndicatorState.UPDATE_FAILED:
                     await CheckForUpdates();
                     break;
 
@@ -243,15 +273,28 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                     UpdateNotesViewModel updateNotes = windowFactory.CreateUpdateNotesWindow(lastUpdateCheckResult.LastVersion);
 
                     if (await windowManager.ShowDialogAsync(updateNotes) == true) {
+                        // Change state to indicate start of update download
                         State = IndicatorState.UPDATE_DOWNLOAD;
+
+                        // Create a progress tracker
                         Progress<double> downloadProgress = new Progress<double>();
                         downloadProgress.ProgressChanged += OnDownloadProgressProgressChanged;
-                        await Task.Run(() =>
-                            updateManager.PrepareUpdateAsync(lastUpdateCheckResult.LastVersion, downloadProgress)
-                        );
+
+                        // Try to download the update
+                        try {
+                            await updateManager.PrepareUpdateAsync(lastUpdateCheckResult.LastVersion, downloadProgress);
+                        } catch (Exception) {
+                            State = IndicatorState.UPDATE_FAILED;
+                            windowFactory.Release(updateNotes);
+                            downloadProgress.ProgressChanged -= OnDownloadProgressProgressChanged;
+                            break;
+                        }
+
+                        // Unhook progress handler from the tracker
                         downloadProgress.ProgressChanged -= OnDownloadProgressProgressChanged;
                     }
 
+                    // Release the dialog and refresh updater state
                     windowFactory.Release(updateNotes);
                     await CheckForUpdates();
                     break;
