@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Castle.Core.Logging;
 using Castle.Windsor;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.SelectableButton;
+using ClipboardMachinery.Core.TagKind;
 using static ClipboardMachinery.Common.Events.DialogOverlayEvent;
 
 namespace ClipboardMachinery.Components.Navigator {
@@ -17,6 +19,8 @@ namespace ClipboardMachinery.Components.Navigator {
     public class NavigatorViewModel : Screen, IHandle<DialogOverlayEvent> {
 
         #region Properties
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         public BindableCollection<SelectableButtonViewModel> Pages {
             get;
@@ -41,10 +45,17 @@ namespace ClipboardMachinery.Components.Navigator {
         #endregion
 
         public NavigatorViewModel(
-            IWindsorContainer container, Func<ActionButtonViewModel> actionButtonFactory, Func<SelectableButtonViewModel> selectableButtonFactory) {
+            IScreenPage[] availablePages, ILogger logger,
+            Func<ActionButtonViewModel> actionButtonFactory, Func<SelectableButtonViewModel> selectableButtonFactory) {
+
+            Logger = logger;
+            Logger.Info("Listing available pages for the navigator:");
+            foreach (IScreenPage page in availablePages) {
+                Logger.Info($" - Title={page.Title}, Type={page.GetType().FullName}");
+            }
 
             // Automatically create pages from ViewModels that implements IScreenPage
-            List<IScreenPage> pages = container.ResolveAll<IScreenPage>().ToList();
+            List<IScreenPage> pages = availablePages.ToList();
             pages.Sort((x, y) => x.Order.CompareTo(y.Order));
 
             Pages = new BindableCollection<SelectableButtonViewModel>(

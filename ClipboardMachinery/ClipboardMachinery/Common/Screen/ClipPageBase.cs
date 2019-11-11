@@ -1,14 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
-using ClipboardMachinery.Components.Tag;
-using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
-using ClipboardMachinery.Pages;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Common.Screen {

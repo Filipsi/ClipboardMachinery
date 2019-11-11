@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Castle.Core.Logging;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using ServiceStack.OrmLite;
 
@@ -8,6 +9,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
     public class DatabaseAdapter : IDatabaseAdapter {
 
         #region Properties
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         public IDbConnection Connection {
             get {
@@ -34,7 +37,10 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #endregion
 
-        public DatabaseAdapter(string databasePath, string databaseVersion) {
+        public DatabaseAdapter(string databasePath, string databaseVersion, ILogger logger) {
+            Logger = logger;
+            Logger.Info($"Creating sqlite database adapter with data source bound to '{databasePath}' with version '{databaseVersion}'...");
+
             // Create connection factory in order to connect to the database
             dbFactory = new OrmLiteConnectionFactory(
                 connectionString: $"Data Source={databasePath};Version={databaseVersion};",
@@ -42,19 +48,30 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             );
 
             // Initialize tables
-            Connection.CreateTableIfNotExists<Clip>();
-            Connection.CreateTableIfNotExists<Tag>();
-            Connection.CreateTableIfNotExists<TagType>();
+            EnsureTable<Clip>();
+            EnsureTable<Tag>();
+            EnsureTable<TagType>();
 
+            // FIXME: Migration from previous db version
             if (Connection.ColumnExists("Created", nameof(Clip))) {
+                Logger.Warn("Old clip format detected, removing old Clip table and creating empty one with new data format.");
                 Connection.DropAndCreateTable<Clip>();
             }
 
             // Make sure that  all system owned tag types are in the database
             foreach (TagType systemTagType in SystemTagTypes.TagTypes) {
-                if (!Connection.Exists<TagType>(new { systemTagType.Name })) {
-                    Connection.Insert(systemTagType);
+                if (Connection.Exists<TagType>(new {systemTagType.Name})) {
+                    continue;
                 }
+
+                Logger.Info($"Mandatory TagType '{systemTagType.Name}' not found, creating entry...");
+                Connection.Insert(systemTagType);
+            }
+        }
+
+        private void EnsureTable<T>() {
+            if (Connection.CreateTableIfNotExists<T>()) {
+                Logger.Info($"Table of type {typeof(T).Name} not found, creating...");
             }
         }
 

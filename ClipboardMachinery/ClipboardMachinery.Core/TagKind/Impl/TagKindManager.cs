@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Logging;
 
 namespace ClipboardMachinery.Core.TagKind.Impl {
 
     public class TagKindManager : ITagKindManager {
 
         #region Properties
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         public IReadOnlyList<ITagKindSchema> Schemas { get; }
 
@@ -18,8 +21,15 @@ namespace ClipboardMachinery.Core.TagKind.Impl {
 
         #endregion
 
-        public TagKindManager(ITagKindSchemaFactory kindSchemaFactory) {
+        public TagKindManager(ITagKindSchemaFactory kindSchemaFactory, ILogger logger) {
             ITagKindSchema[] schemas = kindSchemaFactory.GetAll();
+
+            Logger = logger;
+            Logger.Info("Listing available tag kind schemas:");
+            foreach (ITagKindSchema tagKindSchema in schemas) {
+                Logger.Info($" - Name={tagKindSchema.Name}, Type={tagKindSchema.GetType().FullName}");
+            }
+
             Schemas = Array.AsReadOnly(schemas);
             schemaMap = schemas.ToDictionary(sch => sch.Kind, sch => sch);
         }

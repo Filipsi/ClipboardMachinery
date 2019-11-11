@@ -23,6 +23,13 @@ namespace ClipboardMachinery.Core {
             B = 15
         };
 
+        private static readonly Color DarkBlueDBColor = new Color {
+            A = 255,
+            R = 96,
+            G = 125,
+            B = 139
+        };
+
         public static readonly MediaColor DefaultColor = MediaColor.FromArgb(
             DefaultDBColor.A,
             DefaultDBColor.R,
@@ -45,7 +52,7 @@ namespace ClipboardMachinery.Core {
             Name = "created",
             Description = "Timestamp created when clip was added to the clipboard.",
             Kind = typeof(DateTime),
-            Color = DefaultDBColor
+            Color = DarkBlueDBColor
         };
 
         public static readonly TagType CategoryTagType = new TagType {

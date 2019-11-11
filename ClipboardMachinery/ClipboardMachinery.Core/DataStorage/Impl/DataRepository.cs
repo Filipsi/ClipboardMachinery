@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Castle.Core.Logging;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using ClipboardMachinery.Core.TagKind;
 using ServiceStack.OrmLite;
@@ -15,6 +16,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
     public class DataRepository : IDataRepository {
 
         #region Properties
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         internal IDatabaseAdapter Database {
             get;
@@ -73,8 +76,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     string presistentValue = await ResolvePresistentValue(tagData.Key, tagData.Value);
 
                     if (presistentValue == null) {
-                        // TODO: Log this
-                        continue; ;
+                        Logger.Error($"Unable to create tag {tagData.Key}={tagData.Value} for clip: {content}");
+                        continue;
                     }
 
                     clip.Tags.Add(
@@ -111,6 +114,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             if (wasSaveSuccessfull) {
                 LastClipContent = clip.Content;
                 await UpdateDataProvidersOffeet<Clip>(1);
+            } else {
+                Logger.Error($"Unable to save clip: {content}");
             }
 
             // Map it to the desired model
@@ -131,7 +136,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             string presistentValue = await ResolvePresistentValue(tagType, value);
 
             if (presistentValue == null) {
-                // TODO: Log this
+                Logger.Error($"Unable to create tag {tagType}={value} for clip id '{clipId}'!");
                 return default(T);
             }
 
@@ -173,7 +178,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             Tag firstMatch = foundTags.FirstOrDefault();
 
             if (firstMatch == null) {
-                // TODO: Log this
+                Logger.Error($"Unable to find tag with id '{tagId}'!");
                 return default(T);
             }
 
@@ -185,14 +190,14 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             Tag tag = await FindTag<Tag>(id);
 
             if (tag == null) {
-                // TODO: Log this
+                Logger.Error($"Unable to update tag with id '{id}'!");
                 return string.Empty;
             }
 
             string presistentValue = await ResolvePresistentValue(tag.Type.Name, value);
 
             if (presistentValue == null) {
-                // TODO: Log this
+                Logger.Error($"Unable to save updated tag with id '{id}' due to failure while parsing value '{value}' for tag type '{tag.Type.Name}'!");
                 return string.Empty;
             }
 
@@ -219,7 +224,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         public async Task<T> CreateTagType<T>(string name, string description, Type kind, MediaColor? color = null) {
             // Check if there is already tag type with this name
             if (await TagTypeExists(name)) {
-                // TODO: Log this
+                Logger.Error($"Unable to create tag type with '{name}', tag type with this name already exists!");
                 return default(T);
             }
 
@@ -253,7 +258,14 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             );
 
             TagType firstMatch = foundTypes.FirstOrDefault();
-            return firstMatch == null ? default(T) : Mapper.Map<T>(firstMatch);
+
+            // ReSharper disable once InvertIf
+            if (firstMatch == null) {
+                Logger.Error($"Unable to find tag type with name '{name}'!");
+                return default(T);
+            }
+
+            return Mapper.Map<T>(firstMatch);
         }
 
         public async Task UpdateTagType(string name, MediaColor color) {
@@ -276,6 +288,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         public async Task DeleteTagType(string name) {
             if (!await TagTypeExists(name)) {
+                Logger.Error($"Unable to delete tag type with name '{name}', there is not tag type matching this name!");
                 return;
             }
 
@@ -297,7 +310,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Skip tag, non-existent tag type
             if (ttype == null) {
-                // TODO: Log this
+                Logger.Error($"Unable resolve persistent value for tag type with name '{tagType}', no tag type with this name was found!");
                 return null;
             }
 
@@ -306,8 +319,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // Skip tag if there is no schema that would allow parsing the value
             // ReSharper disable once ConvertIfStatementToReturnStatement
             // ReSharper disable once UseNullPropagation
+            // ReSharper disable once InvertIf
             if (schema == null) {
-                // TODO: Log this
+                Logger.Error($"Unable resolve persistent value for tag type with name '{tagType}', no schema defined for data kind '{ttype.Kind.Name}'!");
                 return null;
             }
 

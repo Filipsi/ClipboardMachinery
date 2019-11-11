@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using Caliburn.Micro;
 using Castle.Facilities.TypedFactory;
+using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using ClipboardMachinery.Plumbing.Facilities;
@@ -28,8 +29,14 @@ namespace ClipboardMachinery.Plumbing {
 
         protected override void Configure() {
             container
+                .Kernel
+                .Resolver
+                .AddSubResolver(new CollectionResolver(container.Kernel));
+
+            container
                 .AddFacility<TypedFactoryFacility>()
                 .AddFacility<EventAggregatorFacility>()
+                .Install(FromAssembly.Named("ClipboardMachinery.Core"))
                 .Install(FromAssembly.This());
         }
 

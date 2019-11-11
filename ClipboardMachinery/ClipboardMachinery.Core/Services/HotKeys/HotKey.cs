@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Castle.Core.Logging;
 
 namespace ClipboardMachinery.Core.Services.HotKeys {
 
     public class HotKey : IDisposable {
 
         #region Properties
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         public Key Key {
             get;
@@ -61,14 +64,17 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
             callbackMap.Add(Id, this);
 
-            Debug.Print($"{result}, {Id}, {virtualKeyCode}");
+            Logger.Info($"Resisting hot-key hook for '{Key}': Result={result}, HookId={Id}, KeyCode={virtualKeyCode}");
             return result;
         }
 
         public void Unregister() {
-            if (callbackMap.TryGetValue(Id, out _)) {
-                NativeMethods.UnregisterHotKey(IntPtr.Zero, Id);
+            if (!callbackMap.TryGetValue(Id, out _)) {
+                return;
             }
+
+            Logger.Info($"Removing hot-key hook with id '{Id}'.");
+            NativeMethods.UnregisterHotKey(IntPtr.Zero, Id);
         }
 
         private static void ComponentDispatcherThreadFilterMessage(ref MSG msg, ref bool handled) {

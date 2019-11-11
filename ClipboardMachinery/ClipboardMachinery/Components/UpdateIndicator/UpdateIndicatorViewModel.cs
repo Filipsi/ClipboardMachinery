@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -7,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Castle.Core.Logging;
 using ClipboardMachinery.Plumbing.Factories;
 using ClipboardMachinery.Windows.UpdateNotes;
 using Onova;
@@ -18,6 +18,8 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
     public class UpdateIndicatorViewModel : Screen {
 
         #region Properties
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
 
         public string DisplayText {
             get => displayText;
@@ -121,6 +123,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
         public async Task CheckForUpdates() {
             // Change state to render working indicator
+            Logger.Debug("Checking for updates...");
             State = IndicatorState.REFRESH;
             await Task.Delay(1500);
 
@@ -129,12 +132,14 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                 Task<CheckForUpdatesResult> refreshTask = updateManager.CheckForUpdatesAsync();
                 if (await Task.WhenAny(refreshTask, Task.Delay(1000 * 10)) != refreshTask) {
                     State = IndicatorState.REFRESH_FAILED;
+                    Logger.Error("Failed to check for updates, task failed due to timeout!");
                     return;
                 }
 
                 // Store update check result
                 lastUpdateCheckResult = refreshTask.Result;
-            } catch (Exception) {
+            } catch (Exception ex) {
+                Logger.Error("Failed to check for updates!", ex);
                 State = IndicatorState.REFRESH_FAILED;
                 return;
             }
@@ -151,13 +156,18 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
             // Check if there is a update package that is ready to be installed
             if (updateManager.IsUpdatePrepared(lastUpdateCheckResult.LastVersion)) {
                 State = IndicatorState.UPDATE_READY;
+                Logger.Info($"Update to version '{lastUpdateCheckResult.LastVersion}' is ready to be installed.");
                 return;
             }
 
-            // Update state according to result
-            State = lastUpdateCheckResult.CanUpdate
-                ? IndicatorState.UPDATE_AVAILABLE
-                : IndicatorState.UP_TO_DATE;
+            if (lastUpdateCheckResult.CanUpdate) {
+                Logger.Info($"Found update to version '{lastUpdateCheckResult.LastVersion}'! Current application version is '{App.CurrentVersion.ToString(3)}'.");
+                State = IndicatorState.UPDATE_AVAILABLE;
+                return;
+            }
+
+            Logger.Debug("No updates found. application is up to date");
+            State = IndicatorState.UP_TO_DATE;
         }
 
         private void UpdateState() {
@@ -275,6 +285,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                     if (await windowManager.ShowDialogAsync(updateNotes) == true) {
                         // Change state to indicate start of update download
                         State = IndicatorState.UPDATE_DOWNLOAD;
+                        Logger.Info($"Downloading update to version '{lastUpdateCheckResult.LastVersion}'...");
 
                         // Create a progress tracker
                         Progress<double> downloadProgress = new Progress<double>();
@@ -283,8 +294,9 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                         // Try to download the update
                         try {
                             await updateManager.PrepareUpdateAsync(lastUpdateCheckResult.LastVersion, downloadProgress);
-                        } catch (Exception) {
+                        } catch (Exception ex) {
                             State = IndicatorState.UPDATE_FAILED;
+                            Logger.Error("Failed while downloading application update!", ex);
                             windowFactory.Release(updateNotes);
                             downloadProgress.ProgressChanged -= OnDownloadProgressProgressChanged;
                             break;
@@ -295,11 +307,13 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                     }
 
                     // Release the dialog and refresh updater state
+                    Logger.Info("Update package successfully downloaded, refreshing...");
                     windowFactory.Release(updateNotes);
                     await CheckForUpdates();
                     break;
 
                 case IndicatorState.UPDATE_READY:
+                    Logger.Info("Restarting application by user request to update to newest version...");
                     updateManager.LaunchUpdater(lastUpdateCheckResult.LastVersion);
                     Application.Current.Shutdown();
                     break;

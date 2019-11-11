@@ -2,11 +2,18 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Castle.Core.Logging;
 using Forms = System.Windows.Forms;
 
 namespace ClipboardMachinery.Core.Services.Clipboard {
 
     public class ClipboardService : IClipboardService {
+
+        #region MyRegion
+
+        public ILogger Logger { get; set; } = NullLogger.Instance;
+
+        #endregion
 
         #region Events
 
@@ -70,8 +77,8 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
                     using (MemoryStream imageStream = new MemoryStream(rawImage, 0, rawImage.Length)) {
                         Forms.Clipboard.SetImage(Image.FromStream(imageStream));
                     }
-                } catch (FormatException) {
-                    // NO-OP
+                } catch (FormatException ex) {
+                    Logger.Error("Error while trying to set clipboard content!", ex);
                 }
 
                 return;
