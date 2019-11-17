@@ -1,8 +1,11 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using Castle.Facilities.Startable;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Core.DataStorage;
 using ClipboardMachinery.Core.DataStorage.Impl;
+using ClipboardMachinery.Core.Services.Clipboard;
+using ClipboardMachinery.Core.Services.HotKeys;
 
 namespace ClipboardMachinery.Plumbing.Installers {
 
@@ -28,12 +31,18 @@ namespace ClipboardMachinery.Plumbing.Installers {
             );
 
             container.Register(
-                Classes
-                    .FromAssemblyNamed("ClipboardMachinery.Core")
-                    .InNamespace("ClipboardMachinery.Core.Services", includeSubnamespaces: true)
-                    .If(type => type.Name.EndsWith("Service"))
-                    .WithServiceDefaultInterfaces()
-                    .LifestyleSingleton()
+                Component
+                    .For<IClipboardService>()
+                    .ImplementedBy<ClipboardService>()
+                    .StopUsingMethod(c => c.Stop)
+                    .LifeStyle.Singleton
+            );
+
+            container.Register(
+                Component
+                    .For<IHotKeyService>()
+                    .ImplementedBy<HotKeyService>()
+                    .LifeStyle.Singleton
             );
         }
 

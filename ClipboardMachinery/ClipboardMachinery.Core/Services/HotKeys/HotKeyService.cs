@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace ClipboardMachinery.Core.Services.HotKeys {
 
-    public class HotKeyService : IHotKeyService, IDisposable {
+    public class HotKeyService : IHotKeyService {
 
         #region Properties
 
@@ -41,7 +41,7 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
         #endregion
 
-        #region MyRegion
+        #region IDisposable
 
         private bool disposed;
 

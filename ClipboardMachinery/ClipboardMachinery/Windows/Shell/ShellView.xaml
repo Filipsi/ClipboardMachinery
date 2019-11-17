@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers"
+    xmlns:cal="http://www.caliburnproject.org"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     SnapsToDevicePixels="True"
@@ -17,7 +18,8 @@
     ShowInTaskbar="{Binding IsVisibleInTaskbar}"
     Topmost="{Binding IsTopmost}"
     SizeToContent="Width"
-    ResizeMode="NoResize">
+    ResizeMode="NoResize"
+    Loaded="OnLoaded">
 
     <Window.Resources>
         <BooleanToVisibilityConverter

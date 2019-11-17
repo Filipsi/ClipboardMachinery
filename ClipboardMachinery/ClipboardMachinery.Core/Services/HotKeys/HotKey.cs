@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -12,7 +11,10 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
         #region Properties
 
-        public ILogger Logger { get; set; } = NullLogger.Instance;
+        public ILogger Logger {
+            get;
+            set;
+        }
 
         public Key Key {
             get;
@@ -40,8 +42,9 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
         #endregion
 
-        internal HotKey(Key k, KeyModifier keyModifiers, Action<HotKey> action, bool register = true) {
-            Key = k;
+        internal HotKey(Key key, KeyModifier keyModifiers, Action<HotKey> action, bool register = true) {
+            Logger = NullLogger.Instance;
+            Key = key;
             KeyModifiers = keyModifiers;
             Action = action;
 
@@ -105,9 +108,7 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
 
         #endregion
 
-        #region Native
-
-        internal static class NativeMethods {
+        private static class NativeMethods {
             // Refer to https://msdn.microsoft.com/en-us/library/windows/desktop/ms646279(v=vs.85).aspx
             public const int WmHotKey = 0x0312;
 
@@ -119,8 +120,6 @@ namespace ClipboardMachinery.Core.Services.HotKeys {
             [DllImport("user32.dll")]
             public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
         }
-
-        #endregion
 
     }
 

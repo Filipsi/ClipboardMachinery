@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
@@ -110,7 +111,6 @@ namespace ClipboardMachinery.Windows.Shell {
             Navigator.PropertyChanged += OnNavigatorPropertyChanged;
         }
 
-
         #region Handlers
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
@@ -126,7 +126,7 @@ namespace ClipboardMachinery.Windows.Shell {
                 return Task.CompletedTask;
             }
 
-            clipboardService.IgnoreNextChange(message.Source.Content);
+            // TODO: clipboardService.IgnoreNextChange(message.Source.Content);
             clipboardService.SetClipboardContent(message.Source.Content);
             IsVisible = false;
             return Task.CompletedTask;
