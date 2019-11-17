@@ -122,6 +122,7 @@
     <Compile Include="DataStorage\Schema\Color.cs" />
     <Compile Include="DataStorage\Schema\Tag.cs" />
     <Compile Include="DataStorage\Schema\TagType.cs" />
+    <Compile Include="Services\Clipboard\BinaryStructConverter.cs" />
     <Compile Include="Services\Clipboard\ClipboardEventArgs.cs" />
     <Compile Include="Services\Clipboard\ClipboardService.cs" />
     <Compile Include="Services\Clipboard\IClipboardService.cs" />
