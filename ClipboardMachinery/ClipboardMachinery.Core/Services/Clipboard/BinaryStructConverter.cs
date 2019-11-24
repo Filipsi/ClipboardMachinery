@@ -3,7 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace ClipboardMachinery.Core.Services.Clipboard {
 
-    public static class BinaryStructConverter {
+    internal static class BinaryStructConverter {
+
         public static T FromByteArray<T>(byte[] bytes) where T : struct {
             IntPtr ptr = IntPtr.Zero;
 
@@ -35,6 +36,7 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
                 }
             }
         }
+
     }
 
 }

@@ -59,6 +59,11 @@ namespace ClipboardMachinery.Plumbing {
 
         protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
             logger.Fatal("Encountered fatal error!", e.Exception);
+
+            // Gracefully shut down the application
+            // This is needed to remove pinvoke hooks
+            e.Handled = true;
+            Application.Shutdown();
         }
 
         protected override void OnExit(object sender, EventArgs e) {

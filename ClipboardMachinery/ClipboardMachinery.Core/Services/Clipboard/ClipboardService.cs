@@ -3,7 +3,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Castle.Core.Logging;
 using WinClipboard = System.Windows.Clipboard;
@@ -101,7 +100,12 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
                 }
             }
             else {
-                WinClipboard.SetText(content);
+                try {
+                    WinClipboard.SetDataObject(content, true);
+                } catch (ExternalException ex) {
+                    Logger.Error("Error while trying to set clipboard text content!", ex);
+                    return;
+                }
             }
 
             lastSetContent = content;
@@ -114,59 +118,23 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
 
             // ReSharper disable once InvertIf
             if (WinClipboard.ContainsImage()) {
-                BitmapSource bitmap = GetBitmapFromClipboardDib();
+                MemoryStream imageStream = (MemoryStream)WinClipboard.GetData(DataFormats.Dib);
+                BitmapSource imageBitmap = DibToBitmapConverter.Read(imageStream);
 
-                if (bitmap != null) {
-                    using (MemoryStream rawImage = new MemoryStream()) {
-                        BitmapEncoder encoder = new PngBitmapEncoder();
-                        encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                        encoder.Save(rawImage);
-                        return $"{pngImageHeader}{Convert.ToBase64String(rawImage.ToArray())}";
-                    }
+                if (imageBitmap == null) {
+                    Logger.Error("Unable to create bitmap from image copied into the clipboard!");
+                    return null;
                 }
 
-                Logger.Error("Unable to create bitmap from image copied into the clipboard!");
+                using (MemoryStream rawImage = new MemoryStream()) {
+                    BitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(imageBitmap));
+                    encoder.Save(rawImage);
+                    return $"{pngImageHeader}{Convert.ToBase64String(rawImage.ToArray())}";
+                }
             }
 
-            return string.Empty;
-        }
-
-        private static BitmapSource GetBitmapFromClipboardDib() {
-            MemoryStream ms = (MemoryStream) WinClipboard.GetData(DataFormats.Dib);
-
-            if (ms == null) {
-                return null;
-            }
-
-            byte[] dibBuffer = new byte[ms.Length];
-            ms.Read(dibBuffer, 0, dibBuffer.Length);
-
-            BITMAPINFOHEADER infoHeader = BinaryStructConverter.FromByteArray<BITMAPINFOHEADER>(
-                bytes: dibBuffer
-            );
-
-            int fileHeaderSize = Marshal.SizeOf(typeof(BITMAPFILEHEADER));
-            int infoHeaderSize = infoHeader.biSize;
-            int fileSize = fileHeaderSize + infoHeader.biSize + infoHeader.biSizeImage;
-
-            BITMAPFILEHEADER fileHeader = new BITMAPFILEHEADER {
-                bfType = BITMAPFILEHEADER.BM,
-                bfSize = fileSize,
-                bfReserved1 = 0,
-                bfReserved2 = 0,
-                bfOffBits = fileHeaderSize + infoHeaderSize + infoHeader.biClrUsed * 4
-            };
-
-            byte[] fileHeaderBytes = BinaryStructConverter.ToByteArray(
-                obj: fileHeader
-            );
-
-            MemoryStream msBitmap = new MemoryStream();
-            msBitmap.Write(fileHeaderBytes, 0, fileHeaderSize);
-            msBitmap.Write(dibBuffer, 0, dibBuffer.Length);
-            msBitmap.Seek(0, SeekOrigin.Begin);
-
-            return BitmapFrame.Create(msBitmap);
+            return null;
         }
 
         #endregion
@@ -176,9 +144,31 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
             switch (msg) {
                 case NativeMethods.WM_CLIPBOARDUPDATE:
-                    string content = GetClipboardContent();
-                    if (content != lastSetContent) {
-                        ClipboardChanged?.Invoke(this, new ClipboardEventArgs(WindowHelper.GetActiveProcessName(), content));
+                    try {
+                        // Try to get clipboard content parsed as a string
+                        string content = GetClipboardContent();
+
+                        // Ignore invalid clipboard content
+                        if (string.IsNullOrEmpty(content)) {
+                            break;
+                        }
+
+                        // Ignore the content that was put back into the clipboard
+                        if (content == lastSetContent) {
+                            break;
+                        }
+
+                        // Notify about new clip
+                        ClipboardChanged?.Invoke(
+                            sender: this,
+                            e: new ClipboardEventArgs(
+                                source: WindowHelper.GetActiveProcessName(),
+                                payload: content
+                            )
+                        );
+                    }
+                    catch (Exception ex) {
+                        Logger.Error("Unable to read clipboard content during WM_CLIPBOARDUPDATE event!", ex);
                     }
                     break;
             }
@@ -187,32 +177,6 @@ namespace ClipboardMachinery.Core.Services.Clipboard {
         }
 
         #endregion
-
-        [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        private struct BITMAPFILEHEADER {
-            public static readonly short BM = 0x4d42;
-
-            public short bfType;
-            public int bfSize;
-            public short bfReserved1;
-            public short bfReserved2;
-            public int bfOffBits;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct BITMAPINFOHEADER {
-            public readonly int biSize;
-            private readonly int biWidth;
-            private readonly int biHeight;
-            private readonly short biPlanes;
-            private readonly short biBitCount;
-            private readonly int biCompression;
-            public readonly int biSizeImage;
-            private readonly int biXPelsPerMeter;
-            private readonly int biYPelsPerMeter;
-            public readonly int biClrUsed;
-            private readonly int biClrImportant;
-        }
 
         private static class NativeMethods {
 

@@ -125,6 +125,7 @@
     <Compile Include="Services\Clipboard\BinaryStructConverter.cs" />
     <Compile Include="Services\Clipboard\ClipboardEventArgs.cs" />
     <Compile Include="Services\Clipboard\ClipboardService.cs" />
+    <Compile Include="Services\Clipboard\DibToBitmapConverter.cs" />
     <Compile Include="Services\Clipboard\IClipboardService.cs" />
     <Compile Include="Services\Clipboard\WindowHelper.cs" />
     <Compile Include="Services\HotKeys\HotKey.cs" />
