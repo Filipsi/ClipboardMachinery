@@ -28,7 +28,7 @@ namespace ClipboardMachinery.Common.Screen {
                 // Handle infinite scrolling
                 // Load new batch of item when user scrolls to the bottom of a page.
                 // Initial load is handed by OnActivate method.
-                if (IsActive && DataLoading?.IsNotCompleted != true && remainingScrollableHeight < 16) {
+                if (IsActive && remainingScrollableHeight < 16 && DataLoading?.IsNotCompleted != true) {
                     DataLoading = NotifyTask.Create(Task.Run(LoadDataBatch));
                 }
             }
@@ -49,11 +49,7 @@ namespace ClipboardMachinery.Common.Screen {
 
         public NotifyTask DataLoading {
             get => dataLoading;
-            set {
-                if (dataLoading != value) {
-                    return;
-                }
-
+            private set {
                 dataLoading = value;
                 NotifyOfPropertyChange();
             }
@@ -69,6 +65,8 @@ namespace ClipboardMachinery.Common.Screen {
         #endregion
 
         #region Fields
+
+        private readonly object loadLock = new object();
 
         private double remainingScrollableHeight;
         private double verticalScrollOffset;
