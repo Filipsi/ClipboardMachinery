@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using ClipboardMachinery.Core.DataStorage.Impl;
 using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.Core.DataStorage {
@@ -19,7 +20,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="batchSize">Size of a batch of clips</param>
         /// <returns>A instance of lazy clip provider</returns>
-        ILazyDataProvider CreateLazyClipProvider(int batchSize);
+        ClipLazyProvider CreateLazyClipProvider(int batchSize);
 
         /// <summary>
         /// Create new clip with specified values and insert it into repository.

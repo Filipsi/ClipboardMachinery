@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataStorage\IDatabaseAdapter.cs" />
+    <Compile Include="DataStorage\Impl\ClipLazyProvider.cs" />
     <Compile Include="DataStorage\Impl\DatabaseAdapter.cs" />
     <Compile Include="DataStorage\Validation\DataRepositoryCheckAttribute.cs" />
     <Compile Include="Plumbing\Installers\LoggingInstaller.cs" />
@@ -117,7 +118,7 @@
     <Compile Include="DataStorage\Impl\DataRepository.cs" />
     <Compile Include="DataStorage\IDataRepository.cs" />
     <Compile Include="DataStorage\ILazyDataProvider.cs" />
-    <Compile Include="DataStorage\Impl\LazyDataProvider.cs" />
+    <Compile Include="DataStorage\Impl\GenericLazyProvider.cs" />
     <Compile Include="DataStorage\Schema\Clip.cs" />
     <Compile Include="DataStorage\Schema\Color.cs" />
     <Compile Include="DataStorage\Schema\Tag.cs" />

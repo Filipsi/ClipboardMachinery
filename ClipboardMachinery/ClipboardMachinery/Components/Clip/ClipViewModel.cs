@@ -111,7 +111,7 @@ namespace ClipboardMachinery.Components.Clip {
         #region Fields
 
         private static readonly Regex imageDataPattern = new Regex(
-            pattern: @"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif));base64,(?<data>[A-Z0-9\+\/\=]+)$",
+            pattern: @"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif|bmp|webp));base64,(?<data>[A-Z0-9\+\/\=]+)$",
             options: RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase
         );
 
@@ -318,9 +318,10 @@ namespace ClipboardMachinery.Components.Clip {
                     // FIXME: Unhook this
                     link.RequestNavigate += (sender, args) => Process.Start(new ProcessStartInfo(args.Uri.AbsoluteUri));
 
-                    TextBlock block = new TextBlock() {
+                    TextBlock block = new TextBlock {
                         TextWrapping = TextWrapping.Wrap
                     };
+
                     block.Inlines.Add(link);
                     return block;
 

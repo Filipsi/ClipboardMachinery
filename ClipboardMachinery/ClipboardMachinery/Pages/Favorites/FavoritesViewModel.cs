@@ -3,6 +3,7 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.DataStorage.Impl;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Pages.Favorites {
@@ -23,7 +24,7 @@ namespace ClipboardMachinery.Pages.Favorites {
         #endregion
 
         public FavoritesViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
-            DataProvider.ApplyTagFilter("category", "favorite");
+            ((ClipLazyProvider) DataProvider).ApplyTagFilter("category", "favorite");
         }
 
         #region Logic

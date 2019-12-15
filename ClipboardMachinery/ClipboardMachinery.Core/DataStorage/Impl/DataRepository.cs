@@ -57,8 +57,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #region IDataRepository
 
-        public ILazyDataProvider CreateLazyClipProvider(int batchSize) {
-            ILazyDataProvider clipProvider = new LazyDataProvider<Clip>(this, batchSize, LoadNestedClipReferences);
+        public ClipLazyProvider CreateLazyClipProvider(int batchSize) {
+            ClipLazyProvider clipProvider = new ClipLazyProvider(this, batchSize);
             dataProviders.Add(new WeakReference<ILazyDataProvider>(clipProvider));
             return clipProvider;
         }
@@ -113,7 +113,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // ReSharper disable once InvertIf
             if (wasSaveSuccessfull) {
                 LastClipContent = clip.Content;
-                await UpdateDataProvidersOffeet<Clip>(1);
+                await UpdateDataProvidersOffset<Clip>(1);
             } else {
                 Logger.Error($"Unable to save clip: {content}");
             }
@@ -164,7 +164,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Save newly created tag
             await Database.Connection.SaveAsync(tag, references: true);
-            await UpdateDataProvidersOffeet<Tag>(1);
+            await UpdateDataProvidersOffset<Tag>(1);
 
             // Map it to the desired model
             return Mapper.Map<T>(tag);
@@ -216,7 +216,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         }
 
         public ILazyDataProvider CreateLazyTagTypeProvider(int batchSize) {
-            ILazyDataProvider tagTypeProvider = new LazyDataProvider<TagType>(this, batchSize);
+            ILazyDataProvider tagTypeProvider = new GenericLazyProvider<TagType>(this, batchSize);
             dataProviders.Add(new WeakReference<ILazyDataProvider>(tagTypeProvider));
             return tagTypeProvider;
         }
@@ -240,7 +240,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Save newly created tag type
             await Database.Connection.InsertAsync(tagType);
-            await UpdateDataProvidersOffeet<TagType>(1);
+            await UpdateDataProvidersOffset<TagType>(1);
 
             // Map it to the desired model
             return Mapper.Map<T>(tagType);
@@ -328,7 +328,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return schema.ToPersistentValue(value);
         }
 
-        private async Task UpdateDataProvidersOffeet<T>(int value) {
+        private async Task UpdateDataProvidersOffset<T>(int value) {
             // TODO: Change this to "SELECT MAX(_ROWID_) FROM "table" LIMIT 1;" depending on performance
             long entryCount = await Database.Connection.CountAsync<T>();
 
@@ -359,20 +359,6 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
                 // Perform the action on target provider
                 action?.Invoke(lazyDataProvider);
-            }
-        }
-
-        private static async Task LoadNestedClipReferences(IDbConnection db, IList<Clip> batch) {
-            // Go thought every single clip in the batch
-            foreach (Clip clip in batch) {
-                // Load nested references for clip tags if there are any
-                if (clip.Tags == null) {
-                    continue;
-                }
-
-                foreach (Tag tag in clip.Tags) {
-                    await db.LoadReferencesAsync(tag);
-                }
             }
         }
 
