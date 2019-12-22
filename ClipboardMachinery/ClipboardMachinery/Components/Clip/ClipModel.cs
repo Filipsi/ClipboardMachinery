@@ -1,6 +1,7 @@
-﻿using Caliburn.Micro;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Caliburn.Micro;
 using ClipboardMachinery.Components.Tag;
-using System;
 
 namespace ClipboardMachinery.Components.Clip {
 
@@ -10,7 +11,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         public int Id {
             get => id;
-            set {
+            private set {
                 if (id == value) {
                     return;
                 }
@@ -22,7 +23,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         public string Content {
             get => rawContent;
-            set {
+            private set {
                 if (rawContent == value) {
                     return;
                 }
@@ -33,7 +34,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public BindableCollection<TagModel> Tags {
-            set; get;
+            get;
         }
 
         #endregion
@@ -45,8 +46,10 @@ namespace ClipboardMachinery.Components.Clip {
 
         #endregion
 
-        public ClipModel() {
-            Tags = new BindableCollection<TagModel>();
+        public ClipModel(int id, string content, IEnumerable<TagModel> tags) {
+            Id = id;
+            Content = content;
+            Tags = new BindableCollection<TagModel>(tags ?? Enumerable.Empty<TagModel>());
         }
 
     }

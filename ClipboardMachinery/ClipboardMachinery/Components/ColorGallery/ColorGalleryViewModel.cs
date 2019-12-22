@@ -2,6 +2,7 @@
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Plumbing.Factories;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,17 +55,14 @@ namespace ClipboardMachinery.Components.ColorGallery {
 
         #region Fields
 
-        private readonly IColorGalleryFactory colorGalleryFactory;
 
         private IColorPalette selectedPreset;
         private Color selectedColor;
 
         #endregion
 
-        public ColorGalleryViewModel(IColorGalleryFactory colorGalleryFactory, Func<ActionButtonViewModel> actionButtonFactory) {
-            this.colorGalleryFactory = colorGalleryFactory;
-
-            Presets = new BindableCollection<IColorPalette>(colorGalleryFactory.GetAllPresets());
+        public ColorGalleryViewModel(IEnumerable<IColorPalette> colorPalettes, Func<ActionButtonViewModel> actionButtonFactory) {
+            Presets = new BindableCollection<IColorPalette>(colorPalettes);
             SelectedPreset = Presets.FirstOrDefault();
 
             // Create control buttons
@@ -77,16 +75,6 @@ namespace ClipboardMachinery.Components.ColorGallery {
             NextPageButton.ToolTip = "Next preset";
             NextPageButton.Icon = (Geometry)Application.Current.FindResource("IconRightChevron");
             NextPageButton.ClickAction = HandleNextPresetClick;
-        }
-
-        protected override async Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
-            if (close) {
-                foreach (IColorPalette preset in Presets) {
-                    colorGalleryFactory.Release(preset);
-                }
-            }
-
-            await base.OnDeactivateAsync(close, cancellationToken);
         }
 
         #region Actions

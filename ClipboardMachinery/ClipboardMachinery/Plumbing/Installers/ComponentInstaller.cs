@@ -60,12 +60,6 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
-                    .For<IColorGalleryFactory>()
-                    .AsFactory()
-            );
-
-            container.Register(
-                Component
                     .For<ITagKindManager>()
                     .ImplementedBy<TagKindManager>()
                     .LifestyleSingleton()
@@ -93,19 +87,13 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
-                    .For<IViewModelFactory>()
+                    .For<IClipFactory>()
                     .AsFactory()
             );
 
             container.Register(
                 Component
                     .For<IDialogOverlayFactory>()
-                    .AsFactory()
-            );
-
-            container.Register(
-                Component
-                    .For<IClipFactory>()
                     .AsFactory()
             );
 

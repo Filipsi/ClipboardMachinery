@@ -46,7 +46,7 @@ namespace ClipboardMachinery.Pages.TagTypes {
 
         #endregion
 
-        public TagTypesViewModel(IDialogOverlayManager dialogOverlayManager, IDataRepository dataRepository, IViewModelFactory vmFactory)
+        public TagTypesViewModel(IDialogOverlayManager dialogOverlayManager, IDataRepository dataRepository, IClipFactory vmFactory)
             : base(dataRepository, vmFactory) {
 
             this.dialogOverlayManager = dialogOverlayManager;

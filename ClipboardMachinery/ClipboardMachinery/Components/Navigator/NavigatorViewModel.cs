@@ -45,19 +45,22 @@ namespace ClipboardMachinery.Components.Navigator {
         #endregion
 
         public NavigatorViewModel(
-            IScreenPage[] availablePages, ILogger logger,
+            IEnumerable<IScreenPage> availablePages, ILogger logger,
             Func<ActionButtonViewModel> actionButtonFactory, Func<SelectableButtonViewModel> selectableButtonFactory) {
 
             Logger = logger;
+            List<IScreenPage> pages = availablePages.ToList();
+
+            // Print out available pages into log
             Logger.Info("Listing available pages for the navigator:");
-            foreach (IScreenPage page in availablePages) {
+            foreach (IScreenPage page in pages) {
                 Logger.Info($" - Title={page.Title}, Type={page.GetType().FullName}");
             }
 
-            // Automatically create pages from ViewModels that implements IScreenPage
-            List<IScreenPage> pages = availablePages.ToList();
+            // Order pages by it's defined order
             pages.Sort((x, y) => x.Order.CompareTo(y.Order));
 
+            // Create view models from available page definitions
             Pages = new BindableCollection<SelectableButtonViewModel>(
                 pages.Select(page => {
                     SelectableButtonViewModel button = selectableButtonFactory.Invoke();

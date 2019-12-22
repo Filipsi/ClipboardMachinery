@@ -195,10 +195,8 @@
       <DependentUpon>TagTypesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TagTypes\TagTypesViewModel.cs" />
-    <Compile Include="Plumbing\Factories\IClipFactory.cs" />
     <Compile Include="Plumbing\Factories\ITagKindFactory.cs" />
-    <Compile Include="Plumbing\Factories\IViewModelFactory.cs" />
-    <Compile Include="Plumbing\Factories\IColorGalleryFactory.cs" />
+    <Compile Include="Plumbing\Factories\IClipFactory.cs" />
     <Compile Include="Plumbing\Factories\IDialogOverlayFactory.cs" />
     <Compile Include="Components\DialogOverlay\IOverlayDialog.cs" />
     <Compile Include="Components\DialogOverlay\Impl\Portal\DialogOverlayPortalView.xaml.cs">

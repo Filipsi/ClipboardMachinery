@@ -126,7 +126,6 @@ namespace ClipboardMachinery.Windows.Shell {
                 return Task.CompletedTask;
             }
 
-            // TODO: clipboardService.IgnoreNextChange(message.Source.Content);
             clipboardService.SetClipboardContent(message.Source.Content);
             IsVisible = false;
             return Task.CompletedTask;
@@ -150,7 +149,7 @@ namespace ClipboardMachinery.Windows.Shell {
             }
         }
 
-        private void OnClipboardChanged(object sender, ClipboardEventArgs e) {
+        private async void OnClipboardChanged(object sender, ClipboardEventArgs e) {
             // Check if there is anything to save
             if (string.IsNullOrWhiteSpace(e.Payload)) {
                 return;
@@ -163,7 +162,7 @@ namespace ClipboardMachinery.Windows.Shell {
             }
 
             // Accept new clip from clipboard change
-            Task.Run(() => AcceptClip(e.Payload, e.Source));
+            await Task.Run(() => AcceptClip(e.Payload, e.Source));
         }
 
         #endregion

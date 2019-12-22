@@ -25,7 +25,7 @@ namespace ClipboardMachinery.Pages.History {
 
         #endregion
 
-        public HistoryViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
+        public HistoryViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IClipFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
         }
 
         #region Logic

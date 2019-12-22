@@ -15,11 +15,11 @@ namespace ClipboardMachinery.Common.Screen {
 
         protected readonly IDataRepository dataRepository;
         protected readonly IEventAggregator eventAggregator;
-        protected readonly IViewModelFactory vmFactory;
+        protected readonly IClipFactory vmFactory;
 
         #endregion
 
-        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory)
+        protected ClipPageBase(int batchSize, IDataRepository dataRepository, IEventAggregator eventAggregator, IClipFactory vmFactory)
             : base(dataRepository.CreateLazyClipProvider(batchSize)) {
 
             this.dataRepository = dataRepository;

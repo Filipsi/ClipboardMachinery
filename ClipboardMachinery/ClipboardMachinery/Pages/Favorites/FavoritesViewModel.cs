@@ -23,7 +23,7 @@ namespace ClipboardMachinery.Pages.Favorites {
 
         #endregion
 
-        public FavoritesViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IViewModelFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
+        public FavoritesViewModel(IDataRepository dataRepository, IEventAggregator eventAggregator, IClipFactory vmFactory) : base(15, dataRepository, eventAggregator, vmFactory) {
             ((ClipLazyProvider) DataProvider).ApplyTagFilter("category", "favorite");
         }
 

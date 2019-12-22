@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using ServiceStack.OrmLite;
@@ -48,6 +49,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         }
 
         protected override Task OnQueryOrdering(SqlExpression<Clip> query) {
+            // Order clips by ID column
             query.OrderByDescending(clip => clip.Id);
             return Task.CompletedTask;
         }
@@ -56,12 +58,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             await base.OnBatchLoaded(db, batch);
 
             // Go thought every single clip in the batch
-            foreach (Clip clip in batch) {
-                // Skip empty tags
-                if (clip.Tags == null) {
-                    continue;
-                }
-
+            foreach (Clip clip in batch.Where(clip => clip.Tags != null)) {
                 // Load nested references for clip tags
                 foreach (Tag tag in clip.Tags) {
                     await db.LoadReferencesAsync(tag);

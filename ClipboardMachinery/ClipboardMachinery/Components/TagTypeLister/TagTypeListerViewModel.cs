@@ -30,12 +30,12 @@ namespace ClipboardMachinery.Components.TagTypeLister {
 
         #region Fields
 
-        private readonly IViewModelFactory vmFactory;
+        private readonly IClipFactory vmFactory;
         private TagTypeModel selectedItem;
 
         #endregion
 
-        public TagTypeListerViewModel(IDataRepository dataRepository, IViewModelFactory vmFactory) : base(dataRepository.CreateLazyTagTypeProvider(15)) {
+        public TagTypeListerViewModel(IDataRepository dataRepository, IClipFactory vmFactory) : base(dataRepository.CreateLazyTagTypeProvider(15)) {
             this.vmFactory = vmFactory;
         }
 
