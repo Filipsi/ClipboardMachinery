@@ -47,6 +47,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return base.OnQueryBuildingStarts(query);;
         }
 
+        protected override Task OnQueryOrdering(SqlExpression<Clip> query) {
+            query.OrderByDescending(clip => clip.Id);
+            return Task.CompletedTask;
+        }
+
         protected override async Task OnBatchLoaded(IDbConnection db, List<Clip> batch) {
             await base.OnBatchLoaded(db, batch);
 

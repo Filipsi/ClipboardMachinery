@@ -45,6 +45,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             query.Limit(BatchSize);
             query.Offset = Offset;
 
+            // Apply ordering function
+            await OnQueryOrdering(query);
+
             // Load entries of type T
             List<T> entries = await db.LoadSelectAsync(query);
 
