@@ -165,12 +165,23 @@
       <DependentUpon>ToggleButtonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Buttons\ToggleButton\ToggleButtonViewModel.cs" />
+    <Compile Include="Components\ContentPresenter\ContentScreen.cs" />
+    <Compile Include="Components\ContentPresenter\IContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentScreenView.xaml.cs">
+      <DependentUpon>TextContentScreenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentScreenViewModel.cs" />
     <Compile Include="Components\DialogOverlay\IDialogOverlayManager.cs" />
     <Compile Include="Components\DialogOverlay\Impl\DialogOverlayManager.cs" />
     <Compile Include="Components\TagKind\TagKindView.xaml.cs">
       <DependentUpon>TagKindView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\TagKind\TagKindViewModel.cs" />
+    <Compile Include="Components\TagLister\TagListerView.xaml.cs">
+      <DependentUpon>TagListerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TagLister\TagListerViewModel.cs" />
     <Compile Include="Components\TagTypeLister\TagTypeListerView.xaml.cs">
       <DependentUpon>TagTypeListerView.xaml</DependentUpon>
     </Compile>
@@ -195,6 +206,8 @@
       <DependentUpon>TagTypesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TagTypes\TagTypesViewModel.cs" />
+    <Compile Include="Plumbing\Customization\DoNotWireActiveItem.cs" />
+    <Compile Include="Plumbing\Factories\IContentScreenFactory.cs" />
     <Compile Include="Plumbing\Factories\ITagKindFactory.cs" />
     <Compile Include="Plumbing\Factories\IClipFactory.cs" />
     <Compile Include="Plumbing\Factories\IDialogOverlayFactory.cs" />
@@ -224,7 +237,7 @@
     <Compile Include="Components\Navigator\IScreenPage.cs" />
     <Compile Include="Plumbing\IShell.cs" />
     <Compile Include="Components\Clip\ClipModel.cs" />
-    <Compile Include="Plumbing\Facilities\EventAggregatorFacility.cs" />
+    <Compile Include="Plumbing\Customization\EventAggregatorFacility.cs" />
     <Compile Include="Plumbing\Installers\ComponentInstaller.cs" />
     <Compile Include="Plumbing\Installers\ServiceInstaller.cs" />
     <Compile Include="Plumbing\Installers\ShellInstaller.cs" />
@@ -319,7 +332,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ContentPresenter\Impl\TextPresenter\TextContentScreenView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\TagKind\TagKindView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\TagLister\TagListerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

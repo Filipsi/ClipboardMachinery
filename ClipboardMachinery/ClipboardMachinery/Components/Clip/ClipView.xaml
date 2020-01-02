@@ -4,9 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:cal="http://www.caliburnproject.org"
-    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
     mc:Ignorable="d" d:DesignWidth="512"
     UseLayoutRounding="True"
     BorderThickness="2,0,0,0"
@@ -71,12 +69,13 @@
             </Grid>
 
             <!-- Controls -->
-            <ItemsControl Grid.Column="2" x:Name="Controls">
+            <ItemsControl Grid.Column="2" x:Name="SideControls">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ContentControl cal:View.Model="{Binding}"/>
@@ -101,64 +100,12 @@
                     <ColumnDefinition Width="24" />
                 </Grid.ColumnDefinitions>
 
-                <Grid.Resources>
-                    <StackPanel
-                        x:Key="OverflowIndicator"
-                        Background="#DDEBF4"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Bottom"
-                        Width="64"
-                        Height="24">
-
-                        <TextBlock
-                            Padding="8,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource TagTextBrush}"
-                            FontFamily="Calibri Light"
-                            Text="+ " />
-
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource TagTextBrush}"
-                            FontFamily="Calibri"
-                            FontWeight="Bold"
-                            Text="{Binding OverflowElementsCount}" />
-
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource TagTextBrush}"
-                            FontFamily="Calibri Light"
-                            Text=" more" />
-                    </StackPanel>
-                </Grid.Resources>
-
-                <ItemsControl
-                    Grid.Column="1"
-                    x:Name="Items"
-                    VerticalAlignment="Bottom"
-                    Height="24">
-
-                    <b:Interaction.Behaviors>
-                        <behaviors:HideOverflowBehavior
-                            OverflowIndicatorElement="{StaticResource OverflowIndicator}"
-                            OverflowIndicatorOffset="4" />
-                    </b:Interaction.Behaviors>
-
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel
-                                VerticalAlignment="Stretch"
-                                Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-
                 <ContentControl
                     Grid.Column="1"
-                    HorizontalAlignment="Left"
-                    Content="{StaticResource OverflowIndicator}"
-                    Cursor="Hand"
-                    cal:Message.Attach="[Event MouseLeftButtonUp] = [Action ShowTagOverview()]" />
+                    x:Name="Tags"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,48,0"
+                    Height="24" />
 
                 <ContentControl
                     Grid.Column="3"

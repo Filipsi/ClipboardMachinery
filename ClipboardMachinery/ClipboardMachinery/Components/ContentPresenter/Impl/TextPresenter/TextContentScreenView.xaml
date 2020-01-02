@@ -1,0 +1,10 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter.TextContentScreenView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <TextBlock
+        Background="Transparent"
+        TextWrapping="Wrap"
+        Text="{Binding Clip.Model.Content}" />
+</UserControl>

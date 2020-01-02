@@ -66,8 +66,6 @@ namespace ClipboardMachinery.Common.Screen {
 
         #region Fields
 
-        private readonly object loadLock = new object();
-
         private double remainingScrollableHeight;
         private double verticalScrollOffset;
         private NotifyTask dataLoading;

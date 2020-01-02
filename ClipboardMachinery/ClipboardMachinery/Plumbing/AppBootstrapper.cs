@@ -8,7 +8,7 @@ using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
-using ClipboardMachinery.Plumbing.Facilities;
+using ClipboardMachinery.Plumbing.Customization;
 
 namespace ClipboardMachinery.Plumbing {
 
@@ -20,7 +20,7 @@ namespace ClipboardMachinery.Plumbing {
         public const string REPOSITORY_NAME = "ClipboardMachinery";
 
         private readonly IWindsorContainer container = new WindsorContainer();
-        private ILogger logger;
+        private ILogger logger = NullLogger.Instance;
 
         #endregion
 

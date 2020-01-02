@@ -3,6 +3,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Components.ColorGallery;
+using ClipboardMachinery.Components.ContentPresenter;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.DialogOverlay.Impl;
 using ClipboardMachinery.Components.Navigator;
@@ -54,7 +55,15 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 Classes
                     .FromThisAssembly()
                     .BasedOn<IColorPalette>()
-                    .WithServiceBase()
+                    .WithService.Base()
+                    .LifestyleSingleton()
+            );
+
+            container.Register(
+                Classes
+                    .FromThisAssembly()
+                    .BasedOn<IContentPresenter>()
+                    .WithService.FromInterface()
                     .LifestyleSingleton()
             );
 

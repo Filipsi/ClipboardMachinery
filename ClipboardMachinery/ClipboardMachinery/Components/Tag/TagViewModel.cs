@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using ClipboardMachinery.Components.DialogOverlay;
+using Castle.Core;
 
 namespace ClipboardMachinery.Components.Tag {
 
@@ -13,9 +14,10 @@ namespace ClipboardMachinery.Components.Tag {
 
         #region Properties
 
+        [DoNotWire]
         public TagModel Model {
             get => model;
-            set {
+            private set {
                 if (model == value) {
                     return;
                 }
@@ -35,18 +37,15 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
-        private bool HasModel
-            => Model != null;
-
         public bool HasDescription
-            => HasModel && !string.IsNullOrWhiteSpace(Model.Description);
+            => !string.IsNullOrWhiteSpace(Model?.Description);
 
         public bool IsValueOverflowing
-            => HasModel && MeasureValueString(Model.Value).Width >= 96;
+            => MeasureValueString(Model?.Value).Width >= 96;
 
         public SolidColorBrush BackgroundColor
-            => model.Color.HasValue
-                ? new SolidColorBrush(Color.FromArgb(40, model.Color.Value.R, model.Color.Value.G, model.Color.Value.B))
+            => Model?.Color.HasValue == true
+                ? new SolidColorBrush(Color.FromArgb(40, Model.Color.Value.R, Model.Color.Value.G, Model.Color.Value.B))
                 : Brushes.Transparent;
 
         #endregion
@@ -59,8 +58,9 @@ namespace ClipboardMachinery.Components.Tag {
 
         #endregion
 
-        public TagViewModel(IDialogOverlayManager dialogOverlayManager) {
+        public TagViewModel(TagModel tagModel, IDialogOverlayManager dialogOverlayManager) {
             this.dialogOverlayManager = dialogOverlayManager;
+            Model = tagModel;
         }
 
         #region Handlers
@@ -91,21 +91,9 @@ namespace ClipboardMachinery.Components.Tag {
 
         #endregion
 
-        #region Actions
-
-        public void Edit() {
-            dialogOverlayManager.OpenDialog(
-                () => dialogOverlayManager.Factory.CreateTagEditor(Model),
-                tagEditor => dialogOverlayManager.Factory.Release(tagEditor)
-            );
-        }
-
-        #endregion
-
-        #region Helpers
+        #region Logic
 
         private static Size MeasureValueString(string candidate) {
-            // Bail out when candidate text is empty
             if (string.IsNullOrEmpty(candidate)) {
                 return Size.Empty;
             }
@@ -122,6 +110,17 @@ namespace ClipboardMachinery.Components.Tag {
             );
 
             return new Size(formattedText.Width, formattedText.Height);
+        }
+
+        #endregion
+
+        #region Actions
+
+        public void Edit() {
+            dialogOverlayManager.OpenDialog(
+                () => dialogOverlayManager.Factory.CreateTagEditor(Model),
+                tagEditor => dialogOverlayManager.Factory.Release(tagEditor)
+            );
         }
 
         #endregion

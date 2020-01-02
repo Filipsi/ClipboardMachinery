@@ -1,0 +1,67 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.TagLister.TagListerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
+    mc:Ignorable="d"
+    d:DesignHeight="24" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <StackPanel
+            x:Key="OverflowIndicator"
+            Background="#DDEBF4"
+            Orientation="Horizontal"
+            VerticalAlignment="Bottom"
+            Width="64"
+            Height="24">
+
+            <TextBlock
+                Padding="8,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{StaticResource TagTextBrush}"
+                FontFamily="Calibri Light"
+                Text="+ " />
+
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="{StaticResource TagTextBrush}"
+                FontFamily="Calibri"
+                FontWeight="Bold"
+                Text="{Binding OverflowElementsCount}" />
+
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="{StaticResource TagTextBrush}"
+                FontFamily="Calibri Light"
+                Text=" more" />
+        </StackPanel>
+    </UserControl.Resources>
+
+    <Grid>
+        <ItemsControl x:Name="Items">
+            <b:Interaction.Behaviors>
+                <behaviors:HideOverflowBehavior
+                    OverflowIndicatorElement="{StaticResource OverflowIndicator}"
+                    OverflowIndicatorOffset="4" />
+            </b:Interaction.Behaviors>
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel
+                        VerticalAlignment="Stretch"
+                        Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <ContentControl
+            HorizontalAlignment="Left"
+            Content="{StaticResource OverflowIndicator}"
+            Cursor="Hand"
+            cal:Message.Attach="[Event MouseLeftButtonUp] = [Action OpenTagOverview()]" />
+    </Grid>
+</UserControl>

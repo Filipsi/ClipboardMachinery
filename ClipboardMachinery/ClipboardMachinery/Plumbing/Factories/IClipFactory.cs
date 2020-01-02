@@ -8,7 +8,7 @@ namespace ClipboardMachinery.Plumbing.Factories {
 
         ClipViewModel CreateClip(ClipModel model);
 
-        TagViewModel CreateTag();
+        TagViewModel CreateTag(TagModel tagModel);
 
         TagTypeViewModel CreateTagType(TagTypeModel model);
 
