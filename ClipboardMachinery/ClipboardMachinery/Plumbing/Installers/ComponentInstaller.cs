@@ -84,6 +84,19 @@ namespace ClipboardMachinery.Plumbing.Installers {
 
             container.Register(
                 Component
+                    .For<IContentDisplayResolver>()
+                    .ImplementedBy<ContentDisplayResolver>()
+                    .LifestyleSingleton()
+            );
+
+            container.Register(
+                Component
+                    .For<IContentScreenFactory>()
+                    .AsFactory()
+            );
+
+            container.Register(
+                Component
                     .For<ITagKindFactory>()
                     .AsFactory()
             );

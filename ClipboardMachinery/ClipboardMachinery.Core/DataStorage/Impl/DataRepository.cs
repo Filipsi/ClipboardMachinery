@@ -63,10 +63,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return clipProvider;
         }
 
-        public async Task<T> CreateClip<T>(string content, KeyValuePair<string, object>[] tags = null) {
+        public async Task<T> CreateClip<T>(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null) {
             // Create clip entity
             Clip clip = new Clip {
                 Content = content,
+                Presenter = contentPresenter,
                 Tags = new List<Tag>()
             };
 

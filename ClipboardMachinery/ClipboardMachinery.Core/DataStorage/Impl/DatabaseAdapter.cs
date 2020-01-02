@@ -53,9 +53,10 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             EnsureTable<TagType>();
 
             // FIXME: Migration from previous db version
-            if (Connection.ColumnExists("Created", nameof(Clip))) {
+            if (Connection.ColumnExists("Created", nameof(Clip)) || !Connection.ColumnExists("Presenter", nameof(Clip))) {
                 Logger.Warn("Old clip format detected, removing old Clip table and creating empty one with new data format.");
                 Connection.DropAndCreateTable<Clip>();
+                Connection.DropAndCreateTable<Tag>();
             }
 
             // Make sure that  all system owned tag types are in the database

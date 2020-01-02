@@ -16,7 +16,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
 
         public string Icon { get; } = "IconTextFile";
 
-        public bool CanBeAutoselected { get; } = true;
+        public bool CanBeDefault { get; } = true;
 
         #endregion
 

@@ -8,8 +8,10 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Caliburn.Micro;
+using Castle.Core.Logging;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.ContentPresenter;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Navigator;
 using ClipboardMachinery.Components.UpdateIndicator;
@@ -25,6 +27,11 @@ namespace ClipboardMachinery.Windows.Shell {
     public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IShell, IHandle<ClipEvent> {
 
         #region Properties
+
+        public ILogger Logger {
+            get;
+            set;
+        }
 
         public bool IsVisible {
             get => isVisible;
@@ -72,6 +79,7 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
         private readonly IClipboardService clipboardService;
+        private readonly IContentDisplayResolver contentDisplayResolver;
         private readonly HotKey visiblitiyKeyBind;
 
         private bool isVisible = true;
@@ -81,10 +89,13 @@ namespace ClipboardMachinery.Windows.Shell {
 
         public ShellViewModel(
             IEventAggregator eventAggregator, NavigatorViewModel navigator, UpdateIndicatorViewModel updateIndicator,
-            IDialogOverlayManager dialogOverlayManager, IHotKeyService hotKeyService, IClipboardService clipboardService, IDataRepository dataRepository)  {
+            IDialogOverlayManager dialogOverlayManager, IHotKeyService hotKeyService, IClipboardService clipboardService,
+            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver)  {
 
             this.eventAggregator = eventAggregator;
             this.clipboardService = clipboardService;
+            this.contentDisplayResolver = contentDisplayResolver;
+            Logger = NullLogger.Instance;
 
             // Data repository
             this.dataRepository = dataRepository;
@@ -126,7 +137,6 @@ namespace ClipboardMachinery.Windows.Shell {
                 return Task.CompletedTask;
             }
 
-            clipboardService.SetClipboardContent(message.Source.Content);
             IsVisible = false;
             return Task.CompletedTask;
         }
@@ -161,6 +171,9 @@ namespace ClipboardMachinery.Windows.Shell {
                 return;
             }
 
+            // Update last accepted content
+            lastAcceptedClipContent = e.Payload;
+
             // Accept new clip from clipboard change
             await Task.Run(() => AcceptClip(e.Payload, e.Source));
         }
@@ -170,18 +183,29 @@ namespace ClipboardMachinery.Windows.Shell {
         #region Logic
 
         private async Task AcceptClip(string content, string source) {
-            // Update last accepted content
-            lastAcceptedClipContent = content;
+            // Resolve default presenter for the clip
+            IContentPresenter defaultPresenter = contentDisplayResolver.GetDefaultPresenter(content);
+
+            // Bail out if the app doesn't know how to dispay the clip
+            if (defaultPresenter == null) {
+                Logger.Warn("Unable to determiante content presenter, new clip won't be captured.");
+                return;
+            }
+
+            Logger.Info($"Creating new clip from {source} with content presenter {defaultPresenter.Id} ({defaultPresenter.Name})...");
 
             // Save clip
             ClipModel model = await dataRepository.CreateClip<ClipModel>(
                 content: content,
+                contentPresenter: defaultPresenter.Id,
                 tags: new[] {
                     // TODO: Add config option to disable this
                     new KeyValuePair<string, object>(SystemTagTypes.SourceTagType.Name, source),
                     new KeyValuePair<string, object>(SystemTagTypes.CreatedTagType.Name, DateTime.Now)
                 }
             );
+
+            Logger.Info($"Clip entry saved with Id {model.Id}.");
 
             // Dispatch information about new clip creation
             await eventAggregator.PublishOnUIThreadAsync(

@@ -27,9 +27,10 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <typeparam name="T">A type of data model that created clip instance will be mapped to and returned back</typeparam>
         /// <param name="content">Content of a clip</param>
+        /// <param name="contentPresenter">Id of an presenter used to display the content</param>
         /// <param name="tags">Tags that clip have in format name=value</param>
         /// <returns>An instance of created clip mapped to T model</returns>
-        Task<T> CreateClip<T>(string content, KeyValuePair<string, object>[] tags = null);
+        Task<T> CreateClip<T>(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
         /// Remove clip with corresponding id and all related tags.

@@ -63,9 +63,7 @@
 
                 <ContentControl
                     Grid.Row="0"
-                    Content="{Binding Content, IsAsync=True}"
-                    Foreground="Black"
-                    FontSize="14" />
+                    x:Name="Content" />
             </Grid>
 
             <!-- Controls -->

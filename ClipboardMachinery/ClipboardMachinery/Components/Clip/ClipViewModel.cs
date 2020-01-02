@@ -8,14 +8,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Castle.Core.Logging;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
+using ClipboardMachinery.Components.ContentPresenter;
 using ClipboardMachinery.Components.DialogOverlay;
 using ClipboardMachinery.Components.Tag;
 using ClipboardMachinery.Components.TagLister;
 using ClipboardMachinery.Core;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.Services.Clipboard;
 using static ClipboardMachinery.Common.Events.ClipEvent;
 
 namespace ClipboardMachinery.Components.Clip {
@@ -39,25 +42,58 @@ namespace ClipboardMachinery.Components.Clip {
 
                 model = value;
                 Tags.Clip = value;
+                CompatibleContentPresenters.Clear();
 
                 if (value != null) {
                     value.PropertyChanged += OnModelPropertyChanged;
                     value.Tags.CollectionChanged += OnModelTagCollectionChanged;
                     OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags.ToArray()));
+
+                    CompatibleContentPresenters.AddRange(
+                        clipContentResolver.GetCompatiblePresenters(value.Content)
+                    );
+
+                    if (string.IsNullOrWhiteSpace(value.Presenter)) {
+                        Logger.Error($"Clip with Id={value.Id} does not specify any presenter, content won't be rendered.");
+                    } else if (CompatibleContentPresenters.Count == 0) {
+                        Logger.Error($"Clip with Id={value.Id} does not have any compatible presenter, content won't be rendered.");
+                    } else if (!CompatibleContentPresenters.Any(cp => cp.Id == value.Presenter)) {
+                        Logger.Error($"Clip with Id={value.Id} specifies a Presenter={value.Presenter}, but there is no available presenter with required Id, content won't be rendered.");
+                    } else {
+                        Content = clipContentResolver.GetPresenter(value.Presenter).CreateContentScreen(this);
+                    }
+                } else {
+                    Content = null;
                 }
 
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => Content);
-                NotifyOfPropertyChange(() => Icon);
-                NotifyOfPropertyChange(() => SelectionColor);
             }
         }
 
-        public object Content
-            => null;
+        public ContentScreen Content {
+            get => content;
+            private set {
+                if (content == value) {
+                    return;
+                }
 
-        public Geometry Icon
-            => null;
+                DeactivateItemAsync(content, true, CancellationToken.None);
+                content = value;
+                ActivateItemAsync(value, CancellationToken.None);
+
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => Icon);
+            }
+        }
+
+        public Geometry Icon {
+            get {
+                string iconKey = Content?.ContentPresenter.Icon;
+                return !string.IsNullOrWhiteSpace(iconKey)
+                    ? (Geometry)Application.Current.TryFindResource(iconKey)
+                    : null;
+            }
+        }
 
         public bool IsFocused {
             get => isFocused;
@@ -72,8 +108,16 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public SolidColorBrush SelectionColor
-            => FocusColors[IsFocused ? 1 : 0];
+        public ILogger Logger {
+            get;
+            set;
+        }
+
+        public SolidColorBrush SelectionColor {
+            get {
+                return FocusColors[IsFocused ? 1 : 0];
+            }
+        }
 
         public TagListerViewModel Tags {
             get;
@@ -84,6 +128,10 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public BindableCollection<ActionButtonViewModel> SideControls {
+            get;
+        }
+
+        public BindableCollection<IContentPresenter> CompatibleContentPresenters {
             get;
         }
 
@@ -101,22 +149,29 @@ namespace ClipboardMachinery.Components.Clip {
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
         private readonly IDialogOverlayManager dialogOverlayManager;
+        private readonly IContentDisplayResolver clipContentResolver;
+        private readonly IClipboardService clipboardService;
         private readonly ToggleButtonViewModel favoriteButton;
 
         private ClipModel model;
         private bool isFocused;
+        private ContentScreen content;
 
         #endregion
 
         public ClipViewModel(
             ClipModel model, ActionButtonViewModel removeButton, ActionButtonViewModel addTagButton, ToggleButtonViewModel favoriteButton,
             TagListerViewModel tagLister, IEventAggregator eventAggregator, IDataRepository dataRepository,
-            IDialogOverlayManager dialogOverlayManager) : base(false) {
+            IDialogOverlayManager dialogOverlayManager, IContentDisplayResolver clipContentResolver, IClipboardService clipboardService) : base(false) {
 
             this.eventAggregator = eventAggregator;
             this.dataRepository = dataRepository;
             this.dialogOverlayManager = dialogOverlayManager;
+            this.clipContentResolver = clipContentResolver;
+            this.clipboardService = clipboardService;
 
+            Logger = NullLogger.Instance;
+            CompatibleContentPresenters = new BindableCollection<IContentPresenter>();
             SideControls = new BindableCollection<ActionButtonViewModel>();
             SideControls.CollectionChanged += OnSideControlsCollectionChanged;
 
@@ -168,24 +223,24 @@ namespace ClipboardMachinery.Components.Clip {
         private async void OnSideControlsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
             case NotifyCollectionChangedAction.Add:
-                    foreach (ActionButtonViewModel newButton in e.NewItems) {
+                    foreach (ActionButtonViewModel newButton in e.NewItems.OfType<ActionButtonViewModel>()) {
                         await ActivateItemAsync(newButton, CancellationToken.None);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (ActionButtonViewModel oldButton in e.OldItems) {
+                    foreach (ActionButtonViewModel oldButton in e.OldItems.OfType<ActionButtonViewModel>()) {
                         await DeactivateItemAsync(oldButton, true, CancellationToken.None);
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (ActionButtonViewModel oldButton in Items.Where(btn => !SideControls.Contains(btn)).ToArray()) {
+                    foreach (ActionButtonViewModel oldButton in Items.OfType<ActionButtonViewModel>().Where(btn => !SideControls.Contains(btn)).ToArray()) {
                         await DeactivateItemAsync(oldButton, true, CancellationToken.None);
                     }
 
                     foreach (ActionButtonViewModel newButton in SideControls) {
-                        if (!newButton.IsActive || !Items.Contains(newButton)) {
+                        if (!newButton.IsActive || !Items.OfType<ActionButtonViewModel>().Contains(newButton)) {
                             await ActivateItemAsync(newButton, CancellationToken.None);
                         }
                     }
@@ -219,6 +274,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public async Task Select() {
+            clipboardService.SetClipboardContent(Content?.GetClipboardString() ?? Model.Content);
             await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
         }
 

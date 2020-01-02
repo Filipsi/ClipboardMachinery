@@ -30,6 +30,16 @@ namespace ClipboardMachinery.Components.ContentPresenter {
             this.ConductWith(owner);
         }
 
+        #region Logic
+
+        /// <summary>
+        /// Gets content of this screen that is supposed to be used when clip is clicked and the clipboard is filled with it's content.
+        /// </summary>
+        /// <returns>A string that will be put into the clipboard</returns>
+        public abstract string GetClipboardString();
+
+        #endregion
+
         #region Lifecycle
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {

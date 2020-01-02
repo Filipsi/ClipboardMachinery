@@ -22,13 +22,25 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public string Content {
-            get => rawContent;
+            get => content;
             private set {
-                if (rawContent == value) {
+                if (content == value) {
                     return;
                 }
 
-                rawContent = value;
+                content = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public string Presenter {
+            get => presenter;
+            set {
+                if (presenter == value) {
+                    return;
+                }
+
+                presenter = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -42,7 +54,8 @@ namespace ClipboardMachinery.Components.Clip {
         #region Fields
 
         private int id;
-        private string rawContent;
+        private string content;
+        private string presenter;
 
         #endregion
 

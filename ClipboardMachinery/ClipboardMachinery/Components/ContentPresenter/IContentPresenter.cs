@@ -33,7 +33,7 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         /// A flag indicating whatever the content provider can precipitate in selection to display data when new clip is created.
         /// When set to false, the provided can only be manually selected by the user.
         /// </summary>
-        bool CanBeAutoselected { get; }
+        bool CanBeDefault { get; }
 
         /// <summary>
         /// Determinants whenever the content can be displayed by the presenter or not.
@@ -43,10 +43,10 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         bool CanDisplayContent(string content);
 
         /// <summary>
-        /// Resolves confidence of a presenter in displaying the consent correctly.
+        /// Resolves confidence of a presenter in displaying the content correctly.
         /// This is used to resolve conflicts where multiple presenters vote that can display clip content.
         /// Higher number represents bigger continence in displaying content correctly.
-        /// Presenters that have negative continence numbers are not used in case of collision.
+        /// Presenters that have zero or negative continence numbers are not used in case of collision.
         /// </summary>
         /// <param name="content">Content of a clip.</param>
         /// <param name="voters">A list of colliding provides that voted that can display the content.</param>

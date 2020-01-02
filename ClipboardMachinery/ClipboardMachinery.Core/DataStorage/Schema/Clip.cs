@@ -11,6 +11,10 @@ namespace ClipboardMachinery.Core.DataStorage.Schema {
         [Required]
         public string Content { get; set; }
 
+
+        [Required]
+        public string Presenter { get; set; }
+
         [Reference]
         public List<Tag> Tags { get; set; }
 

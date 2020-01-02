@@ -6,5 +6,7 @@
     <TextBlock
         Background="Transparent"
         TextWrapping="Wrap"
-        Text="{Binding Clip.Model.Content}" />
+        Foreground="Black"
+        FontSize="14"
+        Text="{Binding Clip.Model.Content, IsAsync=True}" />
 </UserControl>
