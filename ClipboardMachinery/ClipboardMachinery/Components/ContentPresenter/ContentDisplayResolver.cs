@@ -40,25 +40,30 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         #region IClipContentResolver
 
         public IEnumerable<IContentPresenter> GetCompatiblePresenters(string content) {
-            return contentPresenters
+            // Filter out preseters that can display the content
+            List<IContentPresenter> compatiblePresenters = contentPresenters
                 .Where(cp => cp.CanDisplayContent(content))
-                .ToArray();
+                .ToList();
+
+            // Sort presenters in palce by ther confidence values
+            compatiblePresenters.Sort(
+                (x, y) => x.GetConfidence(content, y).CompareTo(y.GetConfidence(content, x))
+            );
+
+            return compatiblePresenters;
         }
 
         public IContentPresenter GetDefaultPresenter(string content) {
-            IContentPresenter[] candidates = GetCompatiblePresenters(content).ToArray();
-
-            return candidates
-               .Where(cp => cp.CanBeDefault)
-               .Select(cp => new { Presenter = cp, Confidence = cp.GetConfidence(content, candidates) })
-               .Where(info => info.Confidence > 0)
-               .OrderByDescending(info => info.Confidence)
-               .Select(info => info.Presenter)
-               .FirstOrDefault();
+            // Filter out compatible presenters that can be used as defaults
+            return GetCompatiblePresenters(content)
+                .Where(cp => cp.UsableAsDefault)
+                .FirstOrDefault();
         }
 
-        public IContentPresenter GetPresenter(string id) {
-            return idMap.ContainsKey(id) ? idMap[id] : null;
+        public bool TryGetPresenter(string id, out IContentPresenter contentPresenter) {
+            bool hasPresenter = idMap.ContainsKey(id);
+            contentPresenter = hasPresenter ? idMap[id] : null;
+            return hasPresenter;
         }
 
         #endregion

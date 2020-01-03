@@ -42,6 +42,7 @@ namespace ClipboardMachinery.Components.Clip {
 
                 model = value;
                 Tags.Clip = value;
+                Content = null;
                 CompatibleContentPresenters.Clear();
 
                 if (value != null) {
@@ -49,21 +50,21 @@ namespace ClipboardMachinery.Components.Clip {
                     value.Tags.CollectionChanged += OnModelTagCollectionChanged;
                     OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags.ToArray()));
 
-                    CompatibleContentPresenters.AddRange(
-                        clipContentResolver.GetCompatiblePresenters(value.Content)
-                    );
+                    CompatibleContentPresenters.AddRange(clipContentResolver.GetCompatiblePresenters(value.Content));
 
                     if (string.IsNullOrWhiteSpace(value.Presenter)) {
                         Logger.Error($"Clip with Id={value.Id} does not specify any presenter, content won't be rendered.");
+
                     } else if (CompatibleContentPresenters.Count == 0) {
                         Logger.Error($"Clip with Id={value.Id} does not have any compatible presenter, content won't be rendered.");
-                    } else if (!CompatibleContentPresenters.Any(cp => cp.Id == value.Presenter)) {
-                        Logger.Error($"Clip with Id={value.Id} specifies a Presenter={value.Presenter}, but there is no available presenter with required Id, content won't be rendered.");
+
                     } else {
-                        Content = clipContentResolver.GetPresenter(value.Presenter).CreateContentScreen(this);
+                        if (clipContentResolver.TryGetPresenter(value.Presenter, out IContentPresenter contentPresenter)) {
+                            Content = contentPresenter.CreateContentScreen(this);
+                        } else {
+                            Logger.Error($"Clip with Id={value.Id} specifies a Presenter={value.Presenter}, but there is no available presenter with required Id, content won't be rendered.");
+                        }
                     }
-                } else {
-                    Content = null;
                 }
 
                 NotifyOfPropertyChange();

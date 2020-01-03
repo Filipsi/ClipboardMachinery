@@ -11,7 +11,7 @@ namespace ClipboardMachinery.Components.ContentPresenter {
 
         IContentPresenter GetDefaultPresenter(string content);
 
-        IContentPresenter GetPresenter(string id);
+        bool TryGetPresenter(string id, out IContentPresenter contentPresenter);
 
     }
 

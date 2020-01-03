@@ -16,7 +16,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
 
         public string Icon { get; } = "IconTextFile";
 
-        public bool CanBeDefault { get; } = true;
+        public bool UsableAsDefault { get; } = true;
 
         #endregion
 
@@ -36,8 +36,8 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
             return true;
         }
 
-        public int GetConfidence(string content, IEnumerable<IContentPresenter> voters) {
-            return 1;
+        public int GetConfidence(string content, IContentPresenter contender) {
+            return -1;
         }
 
         public ContentScreen CreateContentScreen(ClipViewModel clip) {

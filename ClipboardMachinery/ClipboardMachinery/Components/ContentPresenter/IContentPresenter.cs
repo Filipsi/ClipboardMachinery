@@ -33,7 +33,7 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         /// A flag indicating whatever the content provider can precipitate in selection to display data when new clip is created.
         /// When set to false, the provided can only be manually selected by the user.
         /// </summary>
-        bool CanBeDefault { get; }
+        bool UsableAsDefault { get; }
 
         /// <summary>
         /// Determinants whenever the content can be displayed by the presenter or not.
@@ -46,12 +46,11 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         /// Resolves confidence of a presenter in displaying the content correctly.
         /// This is used to resolve conflicts where multiple presenters vote that can display clip content.
         /// Higher number represents bigger continence in displaying content correctly.
-        /// Presenters that have zero or negative continence numbers are not used in case of collision.
         /// </summary>
-        /// <param name="content">Content of a clip.</param>
-        /// <param name="voters">A list of colliding provides that voted that can display the content.</param>
-        /// <returns>Numerical continence in displaying provided content correctly.</returns>
-        int GetConfidence(string content, IEnumerable<IContentPresenter> voters);
+        /// <param name="content">Content of a clip that will be displayed.</param>
+        /// <param name="contender">A colliding provider that also voted that can correctly display the content.</param>
+        /// <returns>A value that indicates the relative order of the objects being compared <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.icomparable.compareto?view=netframework-4.8#returns"/>.</returns>
+        int GetConfidence(string content, IContentPresenter contender);
 
         /// <summary>
         /// Creates a screen that will display provided clip.

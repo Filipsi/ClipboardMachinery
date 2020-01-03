@@ -46,9 +46,22 @@
                 RenderOptions.BitmapScalingMode="NearestNeighbor"
                 RenderOptions.ClearTypeHint="Enabled"
                 Margin="8,0"
-                Data="{Binding Icon, FallbackValue={StaticResource IconTextFile}}"
-                Fill="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
-                Stretch="Uniform" />
+                Stretch="Uniform">
+
+                <Path.Style>
+                    <Style TargetType="Path">
+                        <Setter Property="Data" Value="{Binding Icon, FallbackValue={StaticResource IconTextFile}}" />
+                        <Setter Property="Fill" Value="{Binding SelectionColor}" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Content}" Value="{x:Null}">
+                                <Setter Property="Data" Value="{StaticResource IconExit}" />
+                                <Setter Property="Fill" Value="{StaticResource DangerousActionBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Path.Style>
+            </Path>
 
             <!-- Main content -->
             <Grid
@@ -61,9 +74,28 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ContentControl
-                    Grid.Row="0"
-                    x:Name="Content" />
+                <ContentControl x:Name="Content">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="cal:View.Model" Value="{Binding Content}" />
+                            <Setter Property="Content" Value="{Binding Content}" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Content}" Value="{x:Null}">
+                                    <Setter Property="cal:View.Model" Value="{x:Null}" />
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <TextBlock
+                                                FontSize="14"
+                                                Foreground="{StaticResource DangerousActionBrush}"
+                                                Text="{Binding Model.Presenter, StringFormat='{}Unable to render clip, content presenter {0} not found!'}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
             </Grid>
 
             <!-- Controls -->
