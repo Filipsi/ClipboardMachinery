@@ -254,7 +254,7 @@ namespace ClipboardMachinery.Components.Clip {
                 favoriteButton.IsToggled = false;
             } else {
                 favoriteButton.IsToggled = Model.Tags.Any(
-                    tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name && tag.Value.ToString() == "favorite"
+                    tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name && tag.Value == "favorite"
                 );
             }
         }

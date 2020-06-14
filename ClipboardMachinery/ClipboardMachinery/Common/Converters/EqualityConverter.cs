@@ -9,18 +9,21 @@ namespace ClipboardMachinery.Common.Converters {
 
         #region MarkupExtension
 
-        public override object ProvideValue(IServiceProvider serviceProvider)
-            => this;
+        public override object ProvideValue(IServiceProvider serviceProvider) {
+            return this;
+        }
 
         #endregion
 
         #region IMultiValueConverter
 
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-            => values.Length >= 2 && values[0].Equals(values[1]);
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+            return values.Length >= 2 && values[0].Equals(values[1]);
+        }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-            => throw new NotImplementedException();
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
+            throw new NotSupportedException("Conversion is supported only one-way!");
+        }
 
         #endregion
 

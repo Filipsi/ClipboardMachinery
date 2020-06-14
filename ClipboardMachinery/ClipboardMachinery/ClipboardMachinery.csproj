@@ -136,6 +136,7 @@
     <Compile Include="Common\Behaviors\HideOverflowBehavior.cs" />
     <Compile Include="Common\Behaviors\FocusAdornerBehavior.cs" />
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
+    <Compile Include="Common\Converters\Base64ToImageConverter.cs" />
     <Compile Include="Common\Helpers\HyperlinkExtensions.cs" />
     <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
     <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />
@@ -169,6 +170,11 @@
     <Compile Include="Components\ContentPresenter\ContentScreen.cs" />
     <Compile Include="Components\ContentPresenter\IContentDisplayResolver.cs" />
     <Compile Include="Components\ContentPresenter\IContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentScreenView.xaml.cs">
+      <DependentUpon>ImageContentScreenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentScreenViewModel.cs" />
     <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentPresenter.cs" />
     <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentScreenView.xaml.cs">
       <DependentUpon>TextContentScreenView.xaml</DependentUpon>
@@ -331,6 +337,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Buttons\ToggleButton\ToggleButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentScreenView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

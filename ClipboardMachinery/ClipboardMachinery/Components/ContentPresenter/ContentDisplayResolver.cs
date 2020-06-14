@@ -24,7 +24,7 @@ namespace ClipboardMachinery.Components.ContentPresenter {
             this.contentPresenters = contentPresenters;
             Logger = logger ?? NullLogger.Instance;
 
-            Logger.Info("Listing available content preseters...");
+            Logger.Info("Listing available content presenters...");
             foreach (IContentPresenter presenter in contentPresenters) {
                 Logger.Info($" - Id={presenter.Id}, Name={presenter.Name}");
             }
@@ -40,14 +40,14 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         #region IClipContentResolver
 
         public IEnumerable<IContentPresenter> GetCompatiblePresenters(string content) {
-            // Filter out preseters that can display the content
+            // Filter out presenters that can display the content
             List<IContentPresenter> compatiblePresenters = contentPresenters
                 .Where(cp => cp.CanDisplayContent(content))
                 .ToList();
 
-            // Sort presenters in palce by ther confidence values
+            // Sort presenters in place by their confidence values
             compatiblePresenters.Sort(
-                (x, y) => x.GetConfidence(content, y).CompareTo(y.GetConfidence(content, x))
+                (x, y) => x.GetConfidence(content, y).CompareTo(y.GetConfidence(content, x)) * -1
             );
 
             return compatiblePresenters;
@@ -55,9 +55,7 @@ namespace ClipboardMachinery.Components.ContentPresenter {
 
         public IContentPresenter GetDefaultPresenter(string content) {
             // Filter out compatible presenters that can be used as defaults
-            return GetCompatiblePresenters(content)
-                .Where(cp => cp.UsableAsDefault)
-                .FirstOrDefault();
+            return GetCompatiblePresenters(content).FirstOrDefault(cp => cp.UsableAsDefault);
         }
 
         public bool TryGetPresenter(string id, out IContentPresenter contentPresenter) {

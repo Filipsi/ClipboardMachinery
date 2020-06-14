@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ClipboardMachinery.Components.Clip;
+﻿using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {

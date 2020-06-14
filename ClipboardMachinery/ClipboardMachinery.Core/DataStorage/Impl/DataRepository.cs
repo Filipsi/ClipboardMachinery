@@ -138,7 +138,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             if (presistentValue == null) {
                 Logger.Error($"Unable to create tag {tagType}={value} for clip id '{clipId}'!");
-                return default(T);
+                return default;
             }
 
             // Create tag entity
@@ -180,7 +180,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             if (firstMatch == null) {
                 Logger.Error($"Unable to find tag with id '{tagId}'!");
-                return default(T);
+                return default;
             }
 
             await Database.Connection.LoadReferencesAsync(firstMatch);
@@ -226,7 +226,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // Check if there is already tag type with this name
             if (await TagTypeExists(name)) {
                 Logger.Error($"Unable to create tag type with '{name}', tag type with this name already exists!");
-                return default(T);
+                return default;
             }
 
             // Create new tag type
@@ -263,7 +263,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // ReSharper disable once InvertIf
             if (firstMatch == null) {
                 Logger.Error($"Unable to find tag type with name '{name}'!");
-                return default(T);
+                return default;
             }
 
             return Mapper.Map<T>(firstMatch);

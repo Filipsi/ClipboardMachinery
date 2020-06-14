@@ -36,7 +36,7 @@ namespace ClipboardMachinery.Components.ContentPresenter {
         bool UsableAsDefault { get; }
 
         /// <summary>
-        /// Determinants whenever the content can be displayed by the presenter or not.
+        /// Determinate whenever the content can be displayed by the presenter or not.
         /// </summary>
         /// <param name="content">Content of a clip.</param>
         /// <returns>True if the presenter can display provided content, false if not.</returns>

@@ -186,9 +186,9 @@ namespace ClipboardMachinery.Windows.Shell {
             // Resolve default presenter for the clip
             IContentPresenter defaultPresenter = contentDisplayResolver.GetDefaultPresenter(content);
 
-            // Bail out if the app doesn't know how to dispay the clip
+            // Bail out if the app doesn't know how to display the clip
             if (defaultPresenter == null) {
-                Logger.Warn("Unable to determiante content presenter, new clip won't be captured.");
+                Logger.Warn("Unable to determinate content presenter, new clip won't be captured.");
                 return;
             }
 
