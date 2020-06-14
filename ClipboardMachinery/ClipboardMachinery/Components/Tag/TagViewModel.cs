@@ -104,9 +104,7 @@ namespace ClipboardMachinery.Components.Tag {
                 flowDirection: FlowDirection.LeftToRight,
                 typeface: new Typeface("Calibri Light"),
                 emSize: 14D,
-                foreground: Brushes.Black,
-                numberSubstitution: new NumberSubstitution(),
-                textFormattingMode: TextFormattingMode.Display
+                foreground: Brushes.Black
             );
 
             return new Size(formattedText.Width, formattedText.Height);
