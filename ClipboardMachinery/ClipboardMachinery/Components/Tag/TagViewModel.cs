@@ -37,10 +37,8 @@ namespace ClipboardMachinery.Components.Tag {
         public bool HasDescription
             => !string.IsNullOrWhiteSpace(Model?.Description);
 
-        public SolidColorBrush BackgroundColor
-            => Model?.Color.HasValue == true
-                ? new SolidColorBrush(Color.FromArgb(40, Model.Color.Value.R, Model.Color.Value.G, Model.Color.Value.B))
-                : Brushes.Transparent;
+        public Color BackgroundColor
+            => Model?.Color.HasValue == true ? Model.Color.Value : Colors.Transparent;
 
         #endregion
 

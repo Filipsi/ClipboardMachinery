@@ -10,7 +10,7 @@
     Margin="0,0,8,0"
     cal:Message.Attach="[Event MouseLeftButtonUp] = [Action Edit()]"
     d:DesignWidth="96"
-    Background="{Binding BackgroundColor}"
+    Background="{Binding BackgroundColor, Converter={converters:ColorToSolidBrushConverter}, ConverterParameter='40'}"
     Cursor="Hand"
     FontFamily="Yu Gothic UI Light"
     FontSize="14"

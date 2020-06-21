@@ -28,9 +28,9 @@
             <Border
                 x:Name="border"
                 Grid.Row="0"
+                Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
-                Background="{TemplateBinding Background}"
                 SnapsToDevicePixels="True">
 
                 <ScrollViewer
@@ -43,25 +43,25 @@
             <TextBlock
                 x:Name="TagLabel"
                 Grid.Row="1"
-                Foreground="{StaticResource BodyControlBrush}"
-                FontSize="13"
                 Margin="1,4"
                 FontFamily="{StaticResource LatoThin}"
+                FontSize="13"
+                Foreground="{StaticResource BodyControlBrush}"
                 Text="{TemplateBinding Tag}" />
         </Grid>
 
         <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Opacity" TargetName="border" Value="0.56" />
+                <Setter TargetName="border" Property="Opacity" Value="0.56" />
             </Trigger>
 
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource PanelHoverBrush}" />
+                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PanelHoverBrush}" />
             </Trigger>
 
             <Trigger Property="IsFocused" Value="true">
-                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource ElementSelectBrush}" />
-                <Setter Property="Foreground" TargetName="TagLabel" Value="{StaticResource ElementSelectBrush}" />
+                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ElementSelectBrush}" />
+                <Setter TargetName="TagLabel" Property="Foreground" Value="{StaticResource ElementSelectBrush}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

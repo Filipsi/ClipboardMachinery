@@ -24,11 +24,15 @@ namespace ClipboardMachinery.Common.Converters {
                 return null;
             }
 
-            if (value is Color color) {
-                return new SolidColorBrush(color);
+            if (!(value is Color color)) {
+                throw new InvalidOperationException($"Unsupported type '{value.GetType().Name}'!");
             }
 
-            throw new InvalidOperationException($"Unsupported type '{value.GetType().Name}'!");
+            if (byte.TryParse(parameter as string, out byte alpha)) {
+                return new SolidColorBrush(Color.FromArgb(alpha, color.R, color.G, color.B));
+            }
+
+            return new SolidColorBrush(color);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

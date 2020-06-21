@@ -26,7 +26,7 @@
         <Style.BasedOn>
             <helpers:MergedStyles
                 BasedOn="{StaticResource ValidationStyle}"
-                MergeStyle="{StaticResource FieldStyle}"/>
+                MergeStyle="{StaticResource FieldStyle}" />
         </Style.BasedOn>
     </Style>
 </ResourceDictionary>
