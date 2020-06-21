@@ -149,6 +149,7 @@
     <Compile Include="Common\Behaviors\FocusAdornerBehavior.cs" />
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
     <Compile Include="Common\Converters\Base64ToImageConverter.cs" />
+    <Compile Include="Common\Converters\TextWidthTheasholdConverter.cs" />
     <Compile Include="Common\Helpers\HyperlinkExtensions.cs" />
     <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
     <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />
