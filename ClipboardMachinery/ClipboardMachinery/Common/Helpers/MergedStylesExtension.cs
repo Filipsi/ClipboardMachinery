@@ -18,7 +18,7 @@ namespace ClipboardMachinery.Common.Helpers {
         #region Logic
 
         public override object ProvideValue(IServiceProvider serviceProvider) {
-            if (null == MergeStyle) {
+            if (MergeStyle == null) {
                 return BasedOn;
             }
 
@@ -44,7 +44,8 @@ namespace ClipboardMachinery.Common.Helpers {
             }
         }
 
-
         #endregion
+
     }
+
 }

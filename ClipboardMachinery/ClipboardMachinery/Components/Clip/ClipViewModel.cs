@@ -42,7 +42,7 @@ namespace ClipboardMachinery.Components.Clip {
 
                 model = value;
                 Tags.Clip = value;
-                Content = null;
+                ClipContent = null;
                 CompatibleContentPresenters.Clear();
 
                 if (value != null) {
@@ -60,7 +60,7 @@ namespace ClipboardMachinery.Components.Clip {
 
                     } else {
                         if (clipContentResolver.TryGetPresenter(value.Presenter, out IContentPresenter contentPresenter)) {
-                            Content = contentPresenter.CreateContentScreen(this);
+                            ClipContent = contentPresenter.CreateContentScreen(this);
                         } else {
                             Logger.Error($"Clip with Id={value.Id} specifies a Presenter={value.Presenter}, but there is no available presenter with required Id, content won't be rendered.");
                         }
@@ -71,15 +71,15 @@ namespace ClipboardMachinery.Components.Clip {
             }
         }
 
-        public ContentScreen Content {
-            get => content;
+        public ContentScreen ClipContent {
+            get => clipContent;
             private set {
-                if (content == value) {
+                if (clipContent == value) {
                     return;
                 }
 
-                DeactivateItemAsync(content, true, CancellationToken.None);
-                content = value;
+                DeactivateItemAsync(clipContent, true, CancellationToken.None);
+                clipContent = value;
                 ActivateItemAsync(value, CancellationToken.None);
 
                 NotifyOfPropertyChange();
@@ -89,7 +89,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         public Geometry Icon {
             get {
-                string iconKey = Content?.ContentPresenter.Icon;
+                string iconKey = ClipContent?.ContentPresenter.Icon;
                 return !string.IsNullOrWhiteSpace(iconKey)
                     ? (Geometry)Application.Current.TryFindResource(iconKey)
                     : null;
@@ -156,7 +156,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         private ClipModel model;
         private bool isFocused;
-        private ContentScreen content;
+        private ContentScreen clipContent;
 
         #endregion
 
@@ -261,7 +261,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == nameof(ClipModel.Content)) {
-                NotifyOfPropertyChange(() => Content);
+                NotifyOfPropertyChange(() => ClipContent);
                 NotifyOfPropertyChange(() => Icon);
             }
         }
@@ -275,7 +275,7 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public async Task Select() {
-            clipboardService.SetClipboardContent(Content?.GetClipboardString() ?? Model.Content);
+            clipboardService.SetClipboardContent(ClipContent?.GetClipboardString() ?? Model.Content);
             await eventAggregator.PublishOnCurrentThreadAsync(new ClipEvent(model, ClipEventType.Select));
         }
 

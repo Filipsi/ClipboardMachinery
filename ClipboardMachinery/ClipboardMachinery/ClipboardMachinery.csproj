@@ -146,8 +146,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\Behaviors\HideOverflowBehavior.cs" />
-    <Compile Include="Common\Behaviors\FocusAdornerBehavior.cs" />
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
+    <Compile Include="Common\Behaviors\FocusPopupBehavior.cs" />
     <Compile Include="Common\Converters\Base64ToImageConverter.cs" />
     <Compile Include="Common\Converters\TextWidthTheasholdConverter.cs" />
     <Compile Include="Common\Helpers\HyperlinkExtensions.cs" />
@@ -158,6 +158,7 @@
     <Compile Include="Common\Events\TagEvent.cs" />
     <Compile Include="Common\Helpers\MergedStylesExtension.cs" />
     <Compile Include="Common\Helpers\TimingExtensions.cs" />
+    <Compile Include="Common\Helpers\VisualTreeExtensions.cs" />
     <Compile Include="Common\Screen\ValidationScreenBase.cs" />
     <Compile Include="Components\Buttons\ActionButton\ActionButtonView.xaml.cs">
       <DependentUpon>ActionButtonView.xaml</DependentUpon>

@@ -8,10 +8,9 @@
     xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
     Height="185"
     d:DesignWidth="800"
-    Initialized="OnInitialized"
-    Unloaded="OnUnloaded"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -57,18 +56,25 @@
                 Style="{StaticResource FieldHeaderStyle}"
                 Text="Tag" />
 
-            <TextBox
-                IsEnabled="{Binding IsCreatingNew}"
-                IsReadOnly="True"
-                Text="{Binding Tag, NotifyOnValidationError=True, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}">
+            <Grid>
+                <TextBox
+                    x:Name="TagTextBox"
+                    IsReadOnly="True"
+                    IsEnabled="{Binding IsCreatingNew}"
+                    Text="{Binding Tag, NotifyOnValidationError=True, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}" />
 
-                <b:Interaction.Behaviors>
-                    <behaviors:FocusAdornerBehavior
-                        x:Name="TagTypeAdorner"
-                        BorderThickness="0,0,1,1"
-                        Content="{Binding TagTypeLister}" />
-                </b:Interaction.Behaviors>
-            </TextBox>
+                <Popup Height="192">
+                    <b:Interaction.Behaviors>
+                        <behaviors:FocusPopupBehavior TriggerElement="{Binding ElementName=TagTextBox}" />
+                    </b:Interaction.Behaviors>
+
+                    <Border
+                        BorderBrush="Gray"
+                        BorderThickness="0,0,1,0">
+                        <ContentControl cal:View.Model="{Binding TagTypeLister}" />
+                    </Border>
+                </Popup>
+            </Grid>
 
             <ContentControl>
                 <ContentControl.Style>

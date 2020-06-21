@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +21,6 @@ using ClipboardMachinery.Core.DataStorage.Validation;
 using ClipboardMachinery.Core.TagKind;
 using ClipboardMachinery.Plumbing.Factories;
 using Color = System.Windows.Media.Color;
-// ReSharper disable SuggestBaseTypeForParameter
 
 namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
@@ -31,6 +29,18 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
         #region Properties
 
         public BindableCollection<ActionButtonViewModel> DialogControls {
+            get;
+        }
+
+        public TagModel Model {
+            get;
+        }
+
+        public IScreen TagTypeLister {
+            get;
+        }
+
+        public bool IsCreatingNew {
             get;
         }
 
@@ -56,18 +66,6 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 areControlsVisible = value;
                 NotifyOfPropertyChange();
             }
-        }
-
-        public TagModel Model {
-            get;
-        }
-
-        public IScreen TagTypeLister {
-            get;
-        }
-
-        private ITagKindManager TagKindManager {
-            get;
         }
 
         [DoNotWire]
@@ -116,7 +114,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
                     if (tagType != null) {
                         Color = tagType.Color;
-                        ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagType.Kind);
+                        ITagKindSchema tagKindSchema = tagKindManager.GetSchemaFor(tagType.Kind);
                         TagKind = tagKindSchema != null ? tagKindFactory.CreateTagKind(tagKindSchema) : null;
                     }
 
@@ -140,16 +138,13 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             }
         }
 
-        public bool IsCreatingNew {
-            get;
-        }
-
         #endregion
 
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
         private readonly IDataRepository dataRepository;
+        private readonly ITagKindManager tagKindManager;
         private readonly ITagKindFactory tagKindFactory;
         private readonly ActionButtonViewModel saveButton;
         private readonly ClipModel targetClip;
@@ -187,7 +182,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             this.tagKindFactory = tagKindFactory;
 
             DialogControls = new BindableCollection<ActionButtonViewModel>();
-            TagKindManager = tagKindManager;
+            this.tagKindManager = tagKindManager;
             TagTypeLister = tagTypeLister;
             TagTypeLister.ConductWith(this);
             TagTypeLister.PropertyChanged += OnTagTypeListerPropertyChanged;
@@ -197,7 +192,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
             }
 
             if (!string.IsNullOrWhiteSpace(tagModel.Value)) {
-                ITagKindSchema tagKindSchema = TagKindManager.GetSchemaFor(tagModel.ValueKind);
+                ITagKindSchema tagKindSchema = this.tagKindManager.GetSchemaFor(tagModel.ValueKind);
                 TagKind = tagKindSchema != null ? tagKindFactory.CreateTagKind(tagKindSchema) : null;
                 Value = tagModel.Value;
             }
@@ -235,7 +230,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 return ValidationResult.Success;
             }
 
-            return editor.TagKindManager.IsValid(editor.TagKind.Schema.Kind, newTagValue)
+            return editor.tagKindManager.IsValid(editor.TagKind.Schema.Kind, newTagValue)
                 ? ValidationResult.Success
                 : new ValidationResult($"Tag value is not valid, expected a {editor.TagKind.Schema.Name.ToLowerInvariant()} value.", new[] { nameof(Value) });
         }
