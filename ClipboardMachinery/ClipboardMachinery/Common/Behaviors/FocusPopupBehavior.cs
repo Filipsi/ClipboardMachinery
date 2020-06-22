@@ -26,8 +26,30 @@ namespace ClipboardMachinery.Common.Behaviors {
 
         #endregion
 
+        #region Fields
+
+        private bool isHookedUp;
+
+        #endregion
+
         protected override void OnAttached() {
             base.OnAttached();
+            AssociatedObject.Loaded += OnPopupLoaded;
+        }
+
+        protected override void OnDetaching() {
+            base.OnDetaching();
+            Cleanup();
+        }
+
+        private void Setup() {
+            // Make sure that we won't setup again after it was already processed
+            if (isHookedUp) {
+                return;
+            }
+
+            // Mark setup as processed
+            isHookedUp = true;
 
             // Set default properties to the pop-up
             AssociatedObject.PopupAnimation = PopupAnimation.Slide;
@@ -36,16 +58,24 @@ namespace ClipboardMachinery.Common.Behaviors {
 
             // Add hooks from pop-up element
             AssociatedObject.LostKeyboardFocus += OnPopupLostKeyboardFocus;
+            AssociatedObject.Unloaded += OnPopupUnloaded;
 
             // Bind the two elements together
             BindPopupToTrigger(TriggerElement);
         }
 
-        protected override void OnDetaching() {
-            base.OnDetaching();
+        private void Cleanup() {
+            // Make sure that we won't clean if there we are not set up
+            if (!isHookedUp) {
+                return;
+            }
+
+            // Mark cleanup as processed
+            isHookedUp = false;
 
             // Remove hooks from pop-up element
             AssociatedObject.LostKeyboardFocus -= OnPopupLostKeyboardFocus;
+            AssociatedObject.Unloaded -= OnPopupUnloaded;
 
             // Clear bound element in order to remove hooks
             TriggerElement = null;
@@ -70,6 +100,14 @@ namespace ClipboardMachinery.Common.Behaviors {
         }
 
         #region Handlers
+
+        private void OnPopupLoaded(object sender, RoutedEventArgs e) {
+            Setup();
+        }
+
+        private void OnPopupUnloaded(object sender, RoutedEventArgs e) {
+            Cleanup();
+        }
 
         private static void HandleTriggerElementChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             if (!(d is FocusPopupBehavior behavior)) {
@@ -107,7 +145,6 @@ namespace ClipboardMachinery.Common.Behaviors {
         }
 
         #endregion
-
 
     }
 
