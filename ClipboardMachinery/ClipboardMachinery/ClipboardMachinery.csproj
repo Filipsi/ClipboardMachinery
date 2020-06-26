@@ -149,6 +149,7 @@
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
     <Compile Include="Common\Behaviors\FocusPopupBehavior.cs" />
     <Compile Include="Common\Converters\Base64ToImageConverter.cs" />
+    <Compile Include="Common\Converters\StringToUriConverter.cs" />
     <Compile Include="Common\Converters\TextWidthTheasholdConverter.cs" />
     <Compile Include="Common\Helpers\HyperlinkExtensions.cs" />
     <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
@@ -189,6 +190,11 @@
       <DependentUpon>ImageContentScreenView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentScreenViewModel.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\LinkPresenter\LinkContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\LinkPresenter\LinkContentScreenView.xaml.cs">
+      <DependentUpon>LinkContentScreenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ContentPresenter\Impl\LinkPresenter\LinkContentScreenViewModel.cs" />
     <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentPresenter.cs" />
     <Compile Include="Components\ContentPresenter\Impl\TextPresenter\TextContentScreenView.xaml.cs">
       <DependentUpon>TextContentScreenView.xaml</DependentUpon>
@@ -355,6 +361,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentScreenView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ContentPresenter\Impl\LinkPresenter\LinkContentScreenView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

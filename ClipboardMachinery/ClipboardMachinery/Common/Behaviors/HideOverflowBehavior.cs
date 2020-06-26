@@ -80,7 +80,7 @@ namespace ClipboardMachinery.Common.Behaviors {
 
         public HideOverflowBehavior() {
             Action dispatchRecalculate = () => {
-                Application.Current.Dispatcher?.Invoke(Recalculate);
+                Application.Current?.Dispatcher?.Invoke(Recalculate);
             };
 
             beginRecalculate = dispatchRecalculate.Debounce(100);
