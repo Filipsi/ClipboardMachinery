@@ -22,7 +22,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter {
 
         #region Fields
 
-        private static readonly Regex imageDataPattern = new Regex(
+        public static readonly Regex Base64DataPattern = new Regex(
             pattern: @"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif|bmp|webp));base64,(?<data>[A-Z0-9\+\/\=]+)$",
             options: RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase
         );
@@ -38,7 +38,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter {
         #region Logic
 
         public bool CanDisplayContent(string content) {
-            return imageDataPattern.IsMatch(content);
+            return Base64DataPattern.IsMatch(content);
         }
 
         public int GetConfidence(string content, IContentPresenter contender) {

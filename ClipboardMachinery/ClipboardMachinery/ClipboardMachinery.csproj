@@ -55,6 +55,9 @@
     <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.5.0.1\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.0.1.278, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.0.1\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="Markdig, Version=0.18.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdig.0.18.0\lib\net40\Markdig.dll</HintPath>
     </Reference>
@@ -123,6 +126,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -145,6 +149,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common\Behaviors\AvalonEditBehaviour.cs" />
     <Compile Include="Common\Behaviors\HideOverflowBehavior.cs" />
     <Compile Include="Common\Behaviors\ScrollControlBehavior.cs" />
     <Compile Include="Common\Behaviors\FocusPopupBehavior.cs" />
@@ -185,6 +190,11 @@
     <Compile Include="Components\ContentPresenter\ContentScreen.cs" />
     <Compile Include="Components\ContentPresenter\IContentDisplayResolver.cs" />
     <Compile Include="Components\ContentPresenter\IContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\BatchScriptPresenter\BatchScriptContentPresenter.cs" />
+    <Compile Include="Components\ContentPresenter\Impl\BatchScriptPresenter\BatchScriptContentScreenView.xaml.cs">
+      <DependentUpon>BatchScriptContentScreenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ContentPresenter\Impl\BatchScriptPresenter\BatchScriptContentScreenViewModel.cs" />
     <Compile Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentPresenter.cs" />
     <Compile Include="Components\ContentPresenter\Impl\ImagePresenter\ImageContentScreenView.xaml.cs">
       <DependentUpon>ImageContentScreenView.xaml</DependentUpon>
@@ -322,6 +332,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Resources\Syntax\Batch.xshd" />
     <Resource Include="Resources\Fonts\Lato-Black.ttf" />
     <Resource Include="Resources\Fonts\Lato-BlackItalic.ttf" />
     <Resource Include="Resources\Fonts\Lato-Bold.ttf" />
@@ -357,6 +368,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Buttons\ToggleButton\ToggleButtonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ContentPresenter\Impl\BatchScriptPresenter\BatchScriptContentScreenView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

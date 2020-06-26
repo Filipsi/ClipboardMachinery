@@ -57,6 +57,11 @@
         x:Key="DangerousActionBrush"
         Color="{StaticResource DangerousActionColor}" />
 
+    <Color x:Key="DangerousActionHoverColor">#E67E22</Color>
+    <SolidColorBrush
+        x:Key="DangerousActionHoverBrush"
+        Color="{StaticResource DangerousActionHoverColor}" />
+
     <Color x:Key="PositiveActionColor">#2ECC71</Color>
     <SolidColorBrush
         x:Key="PositiveActionBrush"

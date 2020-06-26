@@ -1,0 +1,37 @@
+﻿<UserControl
+    x:Class="ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresenter.BatchScriptContentScreenView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:behaviors="clr-namespace:ClipboardMachinery.Common.Behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="128"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <StackPanel>
+        <avalonEdit:TextEditor
+            Height="96"
+            VerticalAlignment="Top"
+            FontFamily="Consolas"
+            FontSize="14"
+            HorizontalScrollBarVisibility="Hidden"
+            IsHitTestVisible="False"
+            IsReadOnly="True"
+            ShowLineNumbers="True"
+            SyntaxHighlighting="Batch"
+            VerticalScrollBarVisibility="Auto"
+            WordWrap="True">
+
+            <i:Interaction.Behaviors>
+                <behaviors:AvalonEditBehaviour Text="{Binding Clip.Model.Content, Mode=OneWay}" />
+            </i:Interaction.Behaviors>
+        </avalonEdit:TextEditor>
+
+        <TextBlock Text="{Binding ProcessOutput, Mode=OneWay}" />
+    </StackPanel>
+
+
+</UserControl>

@@ -1,0 +1,175 @@
+﻿<?xml version="1.0"?>
+<SyntaxDefinition xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008" name="Batch" extensions=".bat;.cmd;.nt;.btm">
+  <Color name="Comment" foreground="Green" exampleText="REM This Is rem"/>
+  <Color name="Expend" foreground="Purple" exampleText="%PATH%"/>
+  <Color name="String" foreground="Red" exampleText="SET text = &quot;Hello, World!&quot;"/>
+  <Color name="Char" foreground="Magenta" exampleText="char linefeed = '\n';"/>
+  <Color name="Punctuation" exampleText="a(b.c);"/>
+  <Color name="NumberLiteral" foreground="DarkBlue" exampleText="3.1415f"/>
+  <Color name="Keywords" fontWeight="bold" foreground="Navy" exampleText="if (a)"/>
+  <Color name="Variable" foreground="Maroon" exampleText="SET VAR= 1"/>
+  <Color name="ExceptionKeywords" fontWeight="bold" foreground="Teal"/>
+  <Color name="JumpKeywords" foreground="Navy"/>
+  <Color name="BatchLab" foreground="Maroon"/>
+  <Color name="ReferenceTypes" foreground="Red"/>
+  <Color name="Command" fontWeight="bold" foreground="Indigo"/>
+  <Color name="Operators" foreground="Black" exampleText="+-"/>
+  <RuleSet ignoreCase="true">
+    <Span color="Expend">
+      <Begin>%</Begin>
+      <End>%|dp\d</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>(?:^|\s)((?i)rem)(?:$|\s.*$) </Begin>
+    </Span>
+    <Span color="Comment">
+      <Begin>\s*:\s*:.*$</Begin>
+    </Span>
+    <Span color="BatchLab">
+      <Begin>^\s*:[^\n]+</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <!-- span for escape sequences -->
+        <Span begin="\\" end="."/>
+      </RuleSet>
+    </Span>
+    <Span color="Char">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <!-- span for escape sequences -->
+        <Span begin="\\" end="."/>
+      </RuleSet>
+    </Span>
+    <Keywords color="Keywords">
+      <Word>at</Word>
+      <Word>cd</Word>
+      <Word>call</Word>
+      <Word>copy</Word>
+      <Word>color</Word>
+      <Word>do</Word>
+      <Word>date</Word>
+      <Word>del</Word>
+      <Word>dir</Word>
+      <Word>doskey</Word>
+      <Word>else</Word>
+      <Word>exist</Word>
+      <Word>echo</Word>
+      <Word>endlocal</Word>
+      <Word>erase</Word>
+      <Word>for</Word>
+      <Word>ftype</Word>
+      <Word>off</Word>
+      <Word>if</Word>
+      <Word>in</Word>
+      <Word>mode</Word>
+      <Word>erase</Word>
+      <Word>dir</Word>
+      <Word>echo</Word>
+      <Word>exit</Word>
+      <Word>pause</Word>
+      <Word>prompt</Word>
+      <Word>print</Word>
+      <Word>popd</Word>
+      <Word>pushd</Word>
+      <Word>rename</Word>
+      <Word>ren</Word>
+      <Word>rmdir</Word>
+      <Word>replace</Word>
+      <Word>restore</Word>
+      <Word>rd</Word>
+      <Word>set</Word>
+      <Word>setlocal</Word>
+      <Word>start</Word>
+      <Word>shift</Word>
+      <Word>tree</Word>
+      <Word>type</Word>
+      <Word>verify</Word>
+      <Word>xcopy</Word>
+      <Word>title</Word>
+      <Word>time</Word>
+      <Word>vol</Word>
+      <Word>com</Word>
+      <Word>con</Word>
+      <Word>lpt</Word>
+      <Word>nul</Word>
+      <Word>defined</Word>
+      <Word>not</Word>
+    </Keywords>
+    <Keywords color="ExceptionKeywords">
+      <Word>catch</Word>
+      <Word>finally</Word>
+      <Word>throw</Word>
+      <Word>trap</Word>
+      <Word>try</Word>
+      <Word>loadfix</Word>
+      <Word>loadhigh</Word>
+      <Word>cmdextversion</Word>
+    </Keywords>
+    <Keywords color="JumpKeywords">
+      <Word>break</Word>
+      <Word>continue</Word>
+      <Word>return</Word>
+      <Word>goto</Word>
+    </Keywords>
+    <Keywords color="ReferenceTypes">
+      <Word>class</Word>
+    </Keywords>
+    <Keywords color="Operators">
+      <Word>-+</Word>
+      <Word>--</Word>
+      <Word>-*</Word>
+      <Word>@</Word>
+    </Keywords>
+    <Rule color="Variable">
+			\$[\d\w_]+
+		</Rule>
+    <Keywords color="Command">
+      <Word>comp</Word>
+      <Word>compact</Word>
+      <Word>convert</Word>
+      <Word>country</Word>
+      <Word>ctty</Word>
+      <Word>append</Word>
+      <Word>attrib</Word>
+      <Word>assoc</Word>
+      <Word>chcp</Word>
+      <Word>chdir</Word>
+      <Word>choice</Word>
+      <Word>cls</Word>
+      <Word>chkdsk</Word>
+      <Word>chkntfs</Word>
+      <Word>cmd</Word>
+      <Word>cacls</Word>
+      <Word>diskcomp</Word>
+      <Word>diskcopy</Word>
+      <Word>help</Word>
+      <Word>label</Word>
+      <Word>mkdir</Word>
+      <Word>md</Word>
+      <Word>more</Word>
+      <Word>move</Word>
+      <Word>fc</Word>
+      <Word>find</Word>
+      <Word>findstr</Word>
+      <Word>format</Word>
+      <Word>sort</Word>
+      <Word>subst</Word>
+    </Keywords>
+    <!-- Digits -->
+    <Rule color="NumberLiteral">
+			\b0[xX][0-9a-fA-F]+  # hex number
+		|	
+			(	\b\d+(\.[0-9]+)?   #number with optional floating point
+			|	\.[0-9]+           #or just starting with floating point
+			)
+			([eE][+-]?[0-9]+)? # optional exponent
+		</Rule>
+    <Rule color="Punctuation">
+			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
+		</Rule>
+  </RuleSet>
+</SyntaxDefinition>
