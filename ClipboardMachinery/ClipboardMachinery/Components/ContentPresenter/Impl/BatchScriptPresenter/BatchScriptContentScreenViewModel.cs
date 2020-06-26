@@ -74,9 +74,13 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
 
         #region Handlers
 
-        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
-            
-            return base.OnActivateAsync(cancellationToken);
+        protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
+            if (close) {
+                cts?.Cancel();
+                cts?.Dispose();
+            }
+
+            return base.OnDeactivateAsync(close, cancellationToken);
         }
 
         #endregion

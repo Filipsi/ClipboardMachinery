@@ -25,12 +25,12 @@ namespace ClipboardMachinery.Core.TagKind.Impl {
             ITagKindSchema[] schemas = kindSchemaFactory.GetAll();
 
             Logger = logger;
-            Logger.Info("Listing available tag kind schemas:");
+            Logger.Info("Listing available tag kind schema:");
             foreach (ITagKindSchema tagKindSchema in schemas) {
                 Logger.Info($" - Name={tagKindSchema.Name}, Type={tagKindSchema.GetType().FullName}");
             }
 
-            Schemas = Array.AsReadOnly(schemas);
+            Schemas = Array.AsReadOnly(schemas.Reverse().ToArray());
             schemaMap = schemas.ToDictionary(sch => sch.Kind, sch => sch);
         }
 
