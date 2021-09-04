@@ -2,11 +2,13 @@
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Core;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -106,26 +108,26 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
             ProcessOutput = null;
             cts?.Dispose();
             cts = new CancellationTokenSource();
-            
-            Task.Run(async () => {
+
+            return Task.Run(async () => {
                 PrintProcessOutput("Starting command line process...");
-                int exitCode = await RunCommandAsync(Clip.Model.Content, cts.Token);
+                string workingDirectory = Clip.Model.Tags.FirstOrDefault(t => t.TypeName == SystemTagTypes.WorkspaceTagType.Name)?.Value ?? Directory.GetCurrentDirectory();
+                int exitCode = await RunCommandAsync(Clip.Model.Content, workingDirectory, cts.Token).ConfigureAwait(false);
                 PrintProcessOutput($"Process exited with code {exitCode}.");
                 toggleButton.IsToggled = false;
                 cts.Dispose();
                 cts = null;
             }, cts.Token);
-
-            return Task.CompletedTask;
         }
 
-        private Task<int> RunCommandAsync(string command, CancellationToken cancellationToken = default) {
+        private Task<int> RunCommandAsync(string command, string workingDirectory, CancellationToken cancellationToken = default) {
             TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
 
             Process process = new Process {
                 StartInfo = {
                     FileName = "cmd.exe",
                     Arguments = $"/c {command}",
+                    WorkingDirectory = workingDirectory,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -147,7 +149,6 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
 
             process.OutputDataReceived += (sender, e) => PrintProcessOutput(e.Data);
             process.ErrorDataReceived += (sender, e) => PrintProcessOutput(e.Data);
-            
 
             process.Exited += (sender, args) => {
                 tcs.TrySetResult(process.ExitCode);
