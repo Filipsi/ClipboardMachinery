@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using ClipboardMachinery.Common.Helpers;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresenter {
 

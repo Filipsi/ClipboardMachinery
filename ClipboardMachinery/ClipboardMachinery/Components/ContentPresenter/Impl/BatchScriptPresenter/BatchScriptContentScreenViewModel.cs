@@ -30,6 +30,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
                 }
 
                 processOutput = value;
+                clearOutputButton.IsEnabled = value != null;
                 NotifyOfPropertyChange();
             }
         }
@@ -39,6 +40,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
         #region Fields
 
         private readonly ToggleButtonViewModel runScriptButton;
+        private readonly ActionButtonViewModel clearOutputButton;
         private CancellationTokenSource cts;
         private string processOutput;
 
@@ -58,7 +60,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
         }
 
         public BatchScriptContentScreenViewModel(IContentPresenter creator, ClipViewModel owner, Action<ContentScreen> releaseFn,
-            ToggleButtonViewModel toggleButton) : base(creator, owner, releaseFn) {
+            ToggleButtonViewModel toggleButton, ActionButtonViewModel actionButton) : base(creator, owner, releaseFn) {
 
             // Create run script button
             runScriptButton = toggleButton;
@@ -70,8 +72,16 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
             runScriptButton.ClickAction = RunScript;
             runScriptButton.ConductWith(this);
 
+            // Create clear ouput button
+            clearOutputButton = actionButton;
+            clearOutputButton.ToolTip = "Clear output";
+            clearOutputButton.Icon = (Geometry)Application.Current.FindResource("IconFileRemove");
+            clearOutputButton.ClickAction = ClearOutputLog;
+            clearOutputButton.ConductWith(this);
+
             // Add buttons to side controls of the clip
             Clip.SideControls.Add(runScriptButton);
+            Clip.SideControls.Add(clearOutputButton);
         }
 
         #region Handlers
@@ -93,6 +103,11 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
             return Clip.Model.Content;
         }
 
+        private Task ClearOutputLog(ActionButtonViewModel button) {
+            ProcessOutput = null;
+            return Task.CompletedTask;
+        }
+
         private Task RunScript(ActionButtonViewModel button) {
             if (!(button is ToggleButtonViewModel toggleButton)) {
                 return Task.CompletedTask;
@@ -106,6 +121,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
             }
 
             ProcessOutput = null;
+
             cts?.Dispose();
             cts = new CancellationTokenSource();
 

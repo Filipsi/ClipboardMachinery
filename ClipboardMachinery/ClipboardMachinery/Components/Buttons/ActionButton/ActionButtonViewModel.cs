@@ -145,8 +145,9 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
             }
         }
 
-        public bool HasToolTip
-            => !string.IsNullOrEmpty(ToolTip);
+        public bool HasToolTip {
+            get => !string.IsNullOrEmpty(ToolTip);
+        }
 
         #endregion
 
@@ -184,8 +185,9 @@ namespace ClipboardMachinery.Components.Buttons.ActionButton {
             }
         }
 
-        public virtual void Unfocus()
-            => IsFocused = false;
+        public virtual void Unfocus() {
+            IsFocused = false;
+        }
 
         #endregion
 

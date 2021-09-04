@@ -7,31 +7,66 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="128"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <StackPanel>
-        <avalonEdit:TextEditor
-            Height="96"
-            VerticalAlignment="Top"
-            FontFamily="Consolas"
-            FontSize="14"
-            HorizontalScrollBarVisibility="Hidden"
-            IsHitTestVisible="False"
-            IsReadOnly="True"
-            ShowLineNumbers="True"
-            SyntaxHighlighting="Batch"
-            VerticalScrollBarVisibility="Auto"
-            WordWrap="True">
+    <ContentControl>
+        <ContentControl.Style>
+            <Style TargetType="ContentControl">
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <ScrollViewer
+                            Height="91"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Visible">
 
-            <i:Interaction.Behaviors>
-                <behaviors:AvalonEditBehaviour Text="{Binding Clip.Model.Content, Mode=OneWay}" />
-            </i:Interaction.Behaviors>
-        </avalonEdit:TextEditor>
+                            <i:Interaction.Triggers>
+                                <i:PropertyChangedTrigger Binding="{Binding ProcessOutput}">
+                                    <i:CallMethodAction MethodName="ScrollToBottom" />
+                                </i:PropertyChangedTrigger>
+                            </i:Interaction.Triggers>
 
-        <TextBlock Text="{Binding ProcessOutput, Mode=OneWay}" />
-    </StackPanel>
+                            <TextBox
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontFamily="Consolas"
+                                FontSize="11"
+                                IsReadOnly="True"
+                                Text="{Binding ProcessOutput, Mode=OneWay}"
+                                TextChanged="OnOutputTextChanged"
+                                TextWrapping="Wrap" />
+                        </ScrollViewer>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ProcessOutput}" Value="{x:Null}">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <avalonEdit:TextEditor
+                                    Height="91"
+                                    VerticalAlignment="Top"
+                                    FontFamily="Consolas"
+                                    FontSize="13"
+                                    HorizontalScrollBarVisibility="Hidden"
+                                    IsHitTestVisible="False"
+                                    IsReadOnly="True"
+                                    ShowLineNumbers="True"
+                                    SyntaxHighlighting="Batch"
+                                    VerticalScrollBarVisibility="Auto"
+                                    WordWrap="True">
+
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:AvalonEditBehaviour Text="{Binding Clip.Model.Content, Mode=OneWay}" />
+                                    </i:Interaction.Behaviors>
+                                </avalonEdit:TextEditor>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ContentControl.Style>
 
 
+    </ContentControl>
 </UserControl>
