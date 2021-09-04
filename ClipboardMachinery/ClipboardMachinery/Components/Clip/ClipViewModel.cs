@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Castle.Core;
 using Castle.Core.Logging;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Buttons.ActionButton;
@@ -43,31 +44,39 @@ namespace ClipboardMachinery.Components.Clip {
                 model = value;
                 Tags.Clip = value;
                 ClipContent = null;
-                CompatibleContentPresenters.Clear();
 
                 if (value != null) {
                     value.PropertyChanged += OnModelPropertyChanged;
                     value.Tags.CollectionChanged += OnModelTagCollectionChanged;
                     OnModelTagCollectionChanged(value.Tags, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value.Tags.ToArray()));
-
-                    CompatibleContentPresenters.AddRange(clipContentResolver.GetCompatiblePresenters(value.Content));
-
-                    if (string.IsNullOrWhiteSpace(value.Presenter)) {
-                        Logger.Error($"Clip with Id={value.Id} does not specify any presenter, content won't be rendered.");
-
-                    } else if (CompatibleContentPresenters.Count == 0) {
-                        Logger.Error($"Clip with Id={value.Id} does not have any compatible presenter, content won't be rendered.");
-
-                    } else {
-                        if (clipContentResolver.TryGetPresenter(value.Presenter, out IContentPresenter contentPresenter)) {
-                            ClipContent = contentPresenter.CreateContentScreen(this);
-                        } else {
-                            Logger.Error($"Clip with Id={value.Id} specifies a Presenter={value.Presenter}, but there is no available presenter with required Id, content won't be rendered.");
-                        }
-                    }
                 }
 
+                UpdateClipContentPresenter(value);
                 NotifyOfPropertyChange();
+            }
+        }
+
+        [DoNotWire]
+        public IContentPresenter CurrentPresenter {
+            get => currentPresenter;
+            set {
+                if (currentPresenter == value) {
+                    return;
+                }
+
+                if (value != null && !CompatibleContentPresenters.Contains(value)) {
+                    return;
+                }
+
+                currentPresenter = value;
+                NotifyOfPropertyChange();
+
+                if (Model?.Id != null && !string.IsNullOrWhiteSpace(currentPresenter?.Id) && Model.Presenter != currentPresenter.Id) {
+                    // TODO: Do this aynchnously and block the control until finished
+                    dataRepository.UpdateClip(Model.Id, currentPresenter.Id);
+                }
+                
+                ClipContent = currentPresenter?.CreateContentScreen(this);
             }
         }
 
@@ -157,6 +166,7 @@ namespace ClipboardMachinery.Components.Clip {
         private ClipModel model;
         private bool isFocused;
         private ContentScreen clipContent;
+        private IContentPresenter currentPresenter;
 
         #endregion
 
@@ -264,6 +274,40 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange(() => ClipContent);
                 NotifyOfPropertyChange(() => Icon);
             }
+        }
+
+        #endregion
+
+        #region Logic
+
+        private void UpdateClipContentPresenter(ClipModel model) {
+            CompatibleContentPresenters.Clear();
+
+            if (model == null) {
+                return;
+            }
+
+            CompatibleContentPresenters.AddRange(clipContentResolver.GetCompatiblePresenters(model.Content));
+
+            if (string.IsNullOrWhiteSpace(model.Presenter)) {
+                Logger.Error($"Clip with Id={model.Id} does not specify any presenter, content won't be rendered.");
+                CurrentPresenter = null;
+                return;
+            }
+
+            if (CompatibleContentPresenters.Count == 0) {
+                Logger.Error($"Clip with Id={model.Id} does not have any compatible presenter, content won't be rendered.");
+                CurrentPresenter = null;
+                return;
+            }
+
+            if (!clipContentResolver.TryGetPresenter(model.Presenter, out IContentPresenter contentPresenter)) {
+                Logger.Error($"Clip with Id={model.Id} specifies a Presenter={Model.Presenter}, but there is no available presenter with required Id, content won't be rendered.");
+                CurrentPresenter = null;
+                return;
+            }
+
+            CurrentPresenter = contentPresenter;
         }
 
         #endregion

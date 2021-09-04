@@ -1,4 +1,5 @@
 ﻿using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter;
 using ClipboardMachinery.Plumbing.Factories;
 using System;
 
@@ -33,7 +34,8 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.LinkPresenter {
         #region Logic
 
         public bool CanDisplayContent(string content) {
-            return Uri.IsWellFormedUriString(content, UriKind.Absolute);
+            return !content.StartsWith(ImageContentPresenter.ImageDataPrefix)
+                && Uri.IsWellFormedUriString(content, UriKind.Absolute);
         }
 
         public int GetConfidence(string content, IContentPresenter contender) {

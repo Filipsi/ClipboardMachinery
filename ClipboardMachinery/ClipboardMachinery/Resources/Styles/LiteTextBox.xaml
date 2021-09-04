@@ -1,11 +1,6 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style
-        x:Key="LiteTextBoxStyle"
-        TargetType="{x:Type TextBox}">
-
+    <Style x:Key="LiteTextBoxStyle" TargetType="{x:Type TextBox}">
         <Setter Property="Margin" Value="4" />
         <Setter Property="Padding" Value="2" />
         <Setter Property="Background" Value="Transparent" />
@@ -15,10 +10,7 @@
         <Setter Property="Template" Value="{DynamicResource LiteTextBoxTemplate}" />
     </Style>
 
-    <ControlTemplate
-        x:Key="LiteTextBoxTemplate"
-        TargetType="{x:Type TextBox}">
-
+    <ControlTemplate x:Key="LiteTextBoxTemplate" TargetType="{x:Type TextBox}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

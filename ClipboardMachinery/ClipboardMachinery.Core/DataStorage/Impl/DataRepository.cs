@@ -123,6 +123,15 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return Mapper.Map<T>(clip);
         }
 
+        public Task UpdateClip(int id, string contentPresenter) {
+            return Database.Connection.UpdateAsync<Clip>(
+                new {
+                    Id = id,
+                    Presenter = contentPresenter
+                }
+            );
+        }
+
         public async Task DeleteClip(int id) {
             // Delete all related tags
             foreach (Tag relatedTag in await Database.Connection.SelectAsync<Tag>(t => t.ClipId == id)) {

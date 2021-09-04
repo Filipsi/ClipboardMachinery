@@ -33,6 +33,13 @@ namespace ClipboardMachinery.Core.DataStorage {
         Task<T> CreateClip<T>(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
+        /// Update content prevener of the specified clip id.
+        /// </summary>
+        /// <param name="id">Id of a clip to update</param>
+        /// <param name="contentPresenter">Id of an presenter used to display the content</param>
+        Task UpdateClip(int id, string contentPresenter);
+
+        /// <summary>
         /// Remove clip with corresponding id and all related tags.
         /// </summary>
         /// <param name="id">Id of a clip to remove</param>

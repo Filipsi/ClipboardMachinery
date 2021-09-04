@@ -20,6 +20,12 @@
     UseLayoutRounding="True"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -27,10 +33,7 @@
         </Grid.RowDefinitions>
 
         <!--  Clip  -->
-        <Grid
-            Grid.Row="0"
-            Margin="0,8,0,8">
-
+        <Grid Grid.Row="0" Margin="0,8,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48" />
                 <ColumnDefinition Width="*" />
@@ -38,32 +41,42 @@
             </Grid.ColumnDefinitions>
 
             <!--  Icon  -->
-            <Path
-                Grid.Column="0"
-                Margin="8,0"
-                VerticalAlignment="Top"
-                RenderOptions.BitmapScalingMode="NearestNeighbor"
-                RenderOptions.ClearTypeHint="Enabled"
-                Stretch="Uniform"
-                UseLayoutRounding="True">
+            <StackPanel Grid.Column="0">
+                <StackPanel.Resources>
+                    <ResourceDictionary Source="/Resources/Styles/ArrowDropDown.xaml" />
+                </StackPanel.Resources>
 
-                <Path.Style>
-                    <Style TargetType="Path">
-                        <Setter Property="Data" Value="{Binding Icon, FallbackValue={StaticResource IconTextFile}}" />
-                        <Setter Property="Fill" Value="{Binding SelectionColor}" />
+                <Path
+                    Margin="8,0,8,4"
+                    VerticalAlignment="Top"
+                    RenderOptions.BitmapScalingMode="NearestNeighbor"
+                    RenderOptions.ClearTypeHint="Enabled"
+                    Stretch="Uniform"
+                    UseLayoutRounding="True">
 
-                        <Style.Triggers>
-                            <DataTrigger
-                                Binding="{Binding ClipContent}"
-                                Value="{x:Null}">
+                    <Path.Style>
+                        <Style TargetType="Path">
+                            <Setter Property="Data" Value="{Binding Icon, FallbackValue={StaticResource IconTextFile}}" />
+                            <Setter Property="Fill" Value="{Binding SelectionColor}" />
 
-                                <Setter Property="Data" Value="{StaticResource IconExit}" />
-                                <Setter Property="Fill" Value="{StaticResource DangerousActionBrush}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Path.Style>
-            </Path>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ClipContent}" Value="{x:Null}">
+                                    <Setter Property="Data" Value="{StaticResource IconExit}" />
+                                    <Setter Property="Fill" Value="{StaticResource DangerousActionBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
+                </Path>
+
+                <ComboBox
+                    Margin="8,0"
+                    Background="Transparent"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding CompatibleContentPresenters}"
+                    SelectedItem="{Binding CurrentPresenter, Mode=TwoWay}"
+                    Visibility="{Binding IsFocused, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
 
             <!--  Main content  -->
             <Grid
@@ -83,9 +96,7 @@
                             <Setter Property="Content" Value="{Binding ClipContent}" />
 
                             <Style.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding ClipContent}"
-                                    Value="{x:Null}">
+                                <DataTrigger Binding="{Binding ClipContent}" Value="{x:Null}">
 
                                     <Setter Property="cal:View.Model" Value="{x:Null}" />
                                     <Setter Property="Content">
@@ -106,7 +117,9 @@
             <!--  Controls  -->
             <ItemsControl
                 x:Name="SideControls"
-                Grid.Column="2">
+                Grid.Column="2"
+                IsTabStop="False">
+
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
@@ -142,7 +155,8 @@
                     Grid.Column="1"
                     Height="24"
                     Margin="0,0,48,0"
-                    VerticalAlignment="Bottom" />
+                    VerticalAlignment="Bottom"
+                    IsTabStop="False" />
 
                 <ContentControl
                     x:Name="AddTagButton"

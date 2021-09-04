@@ -11,7 +11,6 @@ namespace ClipboardMachinery.Core.DataStorage.Schema {
         [Required]
         public string Content { get; set; }
 
-
         [Required]
         public string Presenter { get; set; }
 

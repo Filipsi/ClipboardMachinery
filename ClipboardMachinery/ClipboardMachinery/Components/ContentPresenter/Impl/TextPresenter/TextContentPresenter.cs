@@ -1,4 +1,5 @@
 ﻿using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
@@ -32,7 +33,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
         #region Logic
 
         public bool CanDisplayContent(string content) {
-            return true;
+            return !content.StartsWith(ImageContentPresenter.ImageDataPrefix);
         }
 
         public int GetConfidence(string content, IContentPresenter contender) {

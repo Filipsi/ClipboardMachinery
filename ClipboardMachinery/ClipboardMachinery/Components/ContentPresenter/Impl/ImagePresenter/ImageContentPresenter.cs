@@ -22,6 +22,8 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter {
 
         #region Fields
 
+        public static readonly string ImageDataPrefix = "data:image";
+
         public static readonly Regex Base64DataPattern = new Regex(
             pattern: @"^data\:(?<visiblityChangeType>image\/(png|tiff|jpg|gif|bmp|webp));base64,(?<data>[A-Z0-9\+\/\=]+)$",
             options: RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase

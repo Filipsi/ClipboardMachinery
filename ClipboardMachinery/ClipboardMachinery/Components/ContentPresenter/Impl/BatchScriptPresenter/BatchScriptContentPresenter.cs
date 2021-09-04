@@ -11,7 +11,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
 
         public string Id { get; } = "CM:BatchScript";
 
-        public string Name { get; } = "Batch script";
+        public string Name { get; } = "Script";
 
         public string Description { get; } = "Allows to run content as a batch script via the command line.";
 
@@ -34,7 +34,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
         #region Logic
 
         public bool CanDisplayContent(string content) {
-            return !ImageContentPresenter.Base64DataPattern.IsMatch(content)
+            return !content.StartsWith(ImageContentPresenter.ImageDataPrefix)
                 && !Uri.IsWellFormedUriString(content, UriKind.Absolute);
         }
 
