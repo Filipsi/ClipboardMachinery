@@ -75,7 +75,8 @@ namespace ClipboardMachinery.Components.Clip {
                     // TODO: Do this aynchnously and block the control until finished
                     dataRepository.UpdateClip(Model.Id, currentPresenter.Id);
                 }
-                
+
+                ResetSideControls();
                 ClipContent = currentPresenter?.CreateContentScreen(this);
             }
         }
@@ -133,11 +134,11 @@ namespace ClipboardMachinery.Components.Clip {
             get;
         }
 
-        public ActionButtonViewModel AddTagButton {
+        public BindableCollection<ActionButtonViewModel> SideControls {
             get;
         }
 
-        public BindableCollection<ActionButtonViewModel> SideControls {
+        public ActionButtonViewModel AddTagButton {
             get;
         }
 
@@ -161,6 +162,7 @@ namespace ClipboardMachinery.Components.Clip {
         private readonly IDialogOverlayManager dialogOverlayManager;
         private readonly IContentDisplayResolver clipContentResolver;
         private readonly IClipboardService clipboardService;
+        private readonly ActionButtonViewModel removeButton;
         private readonly ToggleButtonViewModel favoriteButton;
 
         private ClipModel model;
@@ -186,19 +188,12 @@ namespace ClipboardMachinery.Components.Clip {
             SideControls = new BindableCollection<ActionButtonViewModel>();
             SideControls.CollectionChanged += OnSideControlsCollectionChanged;
 
-            // Setup add tag button
-            AddTagButton = addTagButton;
-            AddTagButton.ToolTip = "Add tag";
-            AddTagButton.Icon = (Geometry)Application.Current.FindResource("IconAddTag");
-            AddTagButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
-            AddTagButton.ClickAction = AddTag;
-
             // Setup remove button
-            removeButton.ToolTip = "Remove";
-            removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
-            removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
-            removeButton.ClickAction = Remove;
-            SideControls.Add(removeButton);
+            this.removeButton = removeButton;
+            this.removeButton.ToolTip = "Remove";
+            this.removeButton.Icon = (Geometry)Application.Current.FindResource("IconRemove");
+            this.removeButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("DangerousActionBrush");
+            this.removeButton.ClickAction = Remove;
 
             // Setup favorite button
             this.favoriteButton = favoriteButton;
@@ -209,7 +204,15 @@ namespace ClipboardMachinery.Components.Clip {
             this.favoriteButton.DisabledColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteDisabledBrush");
             this.favoriteButton.ToggleColor = (SolidColorBrush)Application.Current.FindResource("ElementFavoriteBrush");
             this.favoriteButton.ClickAction = ToggleFavorite;
-            SideControls.Add(this.favoriteButton);
+
+            // Setup add tag button
+            AddTagButton = addTagButton;
+            AddTagButton.ToolTip = "Add tag";
+            AddTagButton.Icon = (Geometry)Application.Current.FindResource("IconAddTag");
+            AddTagButton.HoverColor = (SolidColorBrush)Application.Current.FindResource("ElementSelectBrush");
+            AddTagButton.ClickAction = AddTag;
+
+            ResetSideControls();
 
             // Set backing clip model
             Tags = tagLister;
@@ -308,6 +311,15 @@ namespace ClipboardMachinery.Components.Clip {
             }
 
             CurrentPresenter = contentPresenter;
+        }
+
+        private void ResetSideControls() {
+            SideControls.IsNotifying = false;
+            SideControls.Clear();
+            SideControls.Add(removeButton);
+            SideControls.Add(favoriteButton);
+            SideControls.IsNotifying = true;
+            SideControls.Refresh();
         }
 
         #endregion

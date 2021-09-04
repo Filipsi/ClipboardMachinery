@@ -22,8 +22,6 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
-
     </UserControl.Resources>
 
     <Grid>
@@ -40,14 +38,27 @@
                 <ColumnDefinition Width="24" />
             </Grid.ColumnDefinitions>
 
-            <!--  Icon  -->
+            <!--  Side panel  -->
             <StackPanel Grid.Column="0">
                 <StackPanel.Resources>
                     <ResourceDictionary Source="/Resources/Styles/ArrowDropDown.xaml" />
                 </StackPanel.Resources>
 
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Margin" Value="0,0,0,8" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFocused}" Value="True">
+                                <Setter Property="Margin" Value="0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <!--  Icon  -->
                 <Path
-                    Margin="8,0,8,4"
+                    Margin="8,0,8,2"
                     VerticalAlignment="Top"
                     RenderOptions.BitmapScalingMode="NearestNeighbor"
                     RenderOptions.ClearTypeHint="Enabled"
@@ -69,13 +80,22 @@
                     </Path.Style>
                 </Path>
 
+                <!--  Presenter picker  -->
                 <ComboBox
                     Margin="8,0"
-                    Background="Transparent"
-                    DisplayMemberPath="Name"
                     ItemsSource="{Binding CompatibleContentPresenters}"
                     SelectedItem="{Binding CurrentPresenter, Mode=TwoWay}"
-                    Visibility="{Binding IsFocused, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{Binding IsFocused, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="1" Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Foreground="Gray" Text="{Binding Description}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
 
             <!--  Main content  -->
@@ -97,7 +117,6 @@
 
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ClipContent}" Value="{x:Null}">
-
                                     <Setter Property="cal:View.Model" Value="{x:Null}" />
                                     <Setter Property="Content">
                                         <Setter.Value>

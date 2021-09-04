@@ -13,7 +13,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
 
         public string Name { get; } = "Script";
 
-        public string Description { get; } = "Allows to run content as a batch script via the command line.";
+        public string Description { get; } = "Execute content as a batch script using the command line.";
 
         public string Icon { get; } = "IconGears";
 

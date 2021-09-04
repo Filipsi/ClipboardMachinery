@@ -12,7 +12,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter {
 
         public string Name { get; } = "Image";
 
-        public string Description { get; } = "Displays content as bitmap image.";
+        public string Description { get; } = "Display content as bitmap image.";
 
         public string Icon { get; } = "IconPicture";
 

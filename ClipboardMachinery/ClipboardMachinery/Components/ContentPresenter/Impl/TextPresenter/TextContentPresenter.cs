@@ -12,7 +12,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
 
         public string Name { get; } = "Text";
 
-        public string Description { get; } = "Displays content as a raw text with default formatting.";
+        public string Description { get; } = "Display content as a raw text with default formatting.";
 
         public string Icon { get; } = "IconTextFile";
 

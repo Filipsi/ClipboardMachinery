@@ -13,7 +13,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.LinkPresenter {
 
         public string Name { get; } = "Link";
 
-        public string Description { get; } = "Displays content as a web link with meta-data preview.";
+        public string Description { get; } = "Display content as a clickable web link.";
 
         public string Icon { get; } = "IconLink";
 

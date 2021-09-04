@@ -79,10 +79,7 @@ namespace ClipboardMachinery.Common.Behaviors {
         #endregion
 
         public HideOverflowBehavior() {
-            Action dispatchRecalculate = () => {
-                Application.Current?.Dispatcher?.Invoke(Recalculate);
-            };
-
+            Action dispatchRecalculate = () => Application.Current?.Dispatcher?.Invoke(Recalculate);
             beginRecalculate = dispatchRecalculate.Debounce(100);
         }
 
