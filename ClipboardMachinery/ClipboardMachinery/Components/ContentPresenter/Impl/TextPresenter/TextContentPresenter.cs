@@ -43,7 +43,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.TextPresenter {
             return contentScreenFactory.CreateTextScreen(
                 creator: this,
                 owner: clip,
-                releaseFn: (screen) => contentScreenFactory.Release(screen)
+                releaseFn: contentScreenFactory.Release
             );
         }
 

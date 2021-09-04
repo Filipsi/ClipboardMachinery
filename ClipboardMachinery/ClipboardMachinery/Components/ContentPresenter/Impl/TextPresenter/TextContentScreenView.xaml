@@ -5,8 +5,8 @@
 
     <TextBlock
         Background="Transparent"
-        TextWrapping="Wrap"
-        Foreground="Black"
         FontSize="14"
-        Text="{Binding Clip.Model.Content, IsAsync=True}" />
+        Foreground="Black"
+        Text="{Binding Clip.Model.Content, IsAsync=True}"
+        TextWrapping="Wrap" />
 </UserControl>

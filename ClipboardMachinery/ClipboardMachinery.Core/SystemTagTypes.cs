@@ -16,6 +16,13 @@ namespace ClipboardMachinery.Core {
             B = 185
         };
 
+        public static readonly MediaColor DefaultColor = MediaColor.FromArgb(
+            DefaultDBColor.A,
+            DefaultDBColor.R,
+            DefaultDBColor.G,
+            DefaultDBColor.B
+        );
+
         private static readonly Color YellowDBColor = new Color {
             A = 255,
             R = 241,
@@ -30,12 +37,12 @@ namespace ClipboardMachinery.Core {
             B = 139
         };
 
-        public static readonly MediaColor DefaultColor = MediaColor.FromArgb(
-            DefaultDBColor.A,
-            DefaultDBColor.R,
-            DefaultDBColor.G,
-            DefaultDBColor.B
-        );
+        private static readonly Color GreenColor = new Color {
+            A = 255,
+            R = 39,
+            G = 174,
+            B = 96
+        };
 
         #endregion
 
@@ -62,11 +69,19 @@ namespace ClipboardMachinery.Core {
             Color = YellowDBColor
         };
 
+        public static readonly TagType WorkspaceTagType = new TagType {
+            Name = "workspace",
+            Description = "Specifies a working directory used by script runners.",
+            Kind = typeof(Uri),
+            Color = GreenColor
+        };
+
         public static readonly IReadOnlyCollection<TagType> TagTypes = Array.AsReadOnly(
             new[] {
                 SourceTagType,
                 CreatedTagType,
-                CategoryTagType
+                CategoryTagType,
+                WorkspaceTagType
             }
         );
 

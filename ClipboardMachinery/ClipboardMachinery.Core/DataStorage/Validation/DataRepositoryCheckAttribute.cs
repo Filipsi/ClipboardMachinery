@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Core.DataStorage.Validation {
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class DataRepositoryCheckAttribute : ValidationAttribute {
 
         #region Properties

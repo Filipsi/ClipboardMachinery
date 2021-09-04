@@ -2,10 +2,6 @@
 using ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter;
 using ClipboardMachinery.Plumbing.Factories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresenter {
 
@@ -50,7 +46,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
             return contentScreenFactory.CreateBatchScriptScreen(
                 creator: this,
                 owner: clip,
-                releaseFn: (screen) => contentScreenFactory.Release(screen)
+                releaseFn: contentScreenFactory.Release
             );
         }
 

@@ -49,7 +49,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.ImagePresenter {
             return contentScreenFactory.CreateImageScreen(
                 creator: this,
                 owner: clip,
-                releaseFn: (screen) => contentScreenFactory.Release(screen)
+                releaseFn: contentScreenFactory.Release
             );
         }
 

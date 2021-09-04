@@ -44,7 +44,7 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.LinkPresenter {
             return contentScreenFactory.CreateLinkScreen(
                 creator: this,
                 owner: clip,
-                releaseFn: (screen) => contentScreenFactory.Release(screen)
+                releaseFn: contentScreenFactory.Release
             );
         }
 

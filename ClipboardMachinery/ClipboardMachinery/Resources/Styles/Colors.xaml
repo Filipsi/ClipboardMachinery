@@ -1,70 +1,42 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Color x:Key="PanelBackgroundColor">#2C2C2C</Color>
-    <SolidColorBrush
-        x:Key="PanelBackgroundBrush"
-        Color="{StaticResource PanelBackgroundColor}" />
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{StaticResource PanelBackgroundColor}" />
 
     <Color x:Key="PanelControlColor">#A8A8A8</Color>
-    <SolidColorBrush
-        x:Key="PanelControlBrush"
-        Color="{StaticResource PanelControlColor}" />
+    <SolidColorBrush x:Key="PanelControlBrush" Color="{StaticResource PanelControlColor}" />
 
     <Color x:Key="PanelHoverColor">#CCCCCC</Color>
-    <SolidColorBrush
-        x:Key="PanelHoverBrush"
-        Color="{StaticResource PanelHoverColor}" />
+    <SolidColorBrush x:Key="PanelHoverBrush" Color="{StaticResource PanelHoverColor}" />
 
     <Color x:Key="PanelSelectedColor">#FFFFFF</Color>
-    <SolidColorBrush
-        x:Key="PanelSelectedBrush"
-        Color="{StaticResource PanelSelectedColor}" />
+    <SolidColorBrush x:Key="PanelSelectedBrush" Color="{StaticResource PanelSelectedColor}" />
 
     <Color x:Key="BodyBackgroundColor">#FFFFFF</Color>
-    <SolidColorBrush
-        x:Key="BodyBackgroundBrush"
-        Color="{StaticResource BodyBackgroundColor}" />
+    <SolidColorBrush x:Key="BodyBackgroundBrush" Color="{StaticResource BodyBackgroundColor}" />
 
     <Color x:Key="BodyControlColor">#A8A8A8</Color>
-    <SolidColorBrush
-        x:Key="BodyControlBrush"
-        Color="{StaticResource BodyControlColor}" />
+    <SolidColorBrush x:Key="BodyControlBrush" Color="{StaticResource BodyControlColor}" />
 
     <Color x:Key="TagTextColor">#2E3131</Color>
-    <SolidColorBrush
-        x:Key="TagTextBrush"
-        Color="{StaticResource TagTextColor}" />
+    <SolidColorBrush x:Key="TagTextBrush" Color="{StaticResource TagTextColor}" />
 
     <Color x:Key="ElementSelectColor">#446cb3</Color>
-    <SolidColorBrush
-        x:Key="ElementSelectBrush"
-        Color="{StaticResource ElementSelectColor}" />
+    <SolidColorBrush x:Key="ElementSelectBrush" Color="{StaticResource ElementSelectColor}" />
 
     <Color x:Key="ElementFavoriteColor">#F1C40F</Color>
-    <SolidColorBrush
-        x:Key="ElementFavoriteBrush"
-        Color="{StaticResource ElementFavoriteColor}" />
+    <SolidColorBrush x:Key="ElementFavoriteBrush" Color="{StaticResource ElementFavoriteColor}" />
 
     <Color x:Key="ElementFavoriteDisabledColor">#C6AB3F</Color>
-    <SolidColorBrush
-        x:Key="ElementFavoriteDisabledBrush"
-        Color="{StaticResource ElementFavoriteDisabledColor}" />
+    <SolidColorBrush x:Key="ElementFavoriteDisabledBrush" Color="{StaticResource ElementFavoriteDisabledColor}" />
 
     <Color x:Key="DangerousActionColor">#C0392B</Color>
-    <SolidColorBrush
-        x:Key="DangerousActionBrush"
-        Color="{StaticResource DangerousActionColor}" />
+    <SolidColorBrush x:Key="DangerousActionBrush" Color="{StaticResource DangerousActionColor}" />
 
     <Color x:Key="DangerousActionHoverColor">#E67E22</Color>
-    <SolidColorBrush
-        x:Key="DangerousActionHoverBrush"
-        Color="{StaticResource DangerousActionHoverColor}" />
+    <SolidColorBrush x:Key="DangerousActionHoverBrush" Color="{StaticResource DangerousActionHoverColor}" />
 
     <Color x:Key="PositiveActionColor">#2ECC71</Color>
-    <SolidColorBrush
-        x:Key="PositiveActionBrush"
-        Color="{StaticResource PositiveActionColor}" />
+    <SolidColorBrush x:Key="PositiveActionBrush" Color="{StaticResource PositiveActionColor}" />
 
 </ResourceDictionary>

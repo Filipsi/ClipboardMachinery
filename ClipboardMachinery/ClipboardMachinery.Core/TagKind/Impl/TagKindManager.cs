@@ -43,13 +43,13 @@ namespace ClipboardMachinery.Core.TagKind.Impl {
         }
 
         public bool IsValid(Type kindType, string input) {
-            return TryParse(kindType, input, out object result);
+            return TryParse(kindType, input, out _);
         }
 
         public bool TryParse(Type kindType, string input, out object result) {
             result = null;
             ITagKindSchema tagKindSchema = GetSchemaFor(kindType);
-            return tagKindSchema != null && tagKindSchema.TryParse(input, out result);
+            return tagKindSchema?.TryParse(input, out result) == true;
         }
 
         #endregion
