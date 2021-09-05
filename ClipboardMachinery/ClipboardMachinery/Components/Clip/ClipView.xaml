@@ -85,6 +85,7 @@
                     Margin="8,0"
                     ItemsSource="{Binding CompatibleContentPresenters}"
                     SelectedItem="{Binding CurrentPresenter, Mode=TwoWay}"
+                    ToolTip="Change presenter"
                     Visibility="{Binding IsFocused, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <ComboBox.ItemTemplate>

@@ -183,7 +183,11 @@ namespace ClipboardMachinery.Components.ContentPresenter.Impl.BatchScriptPresent
                 return;
             }
 
-            ProcessOutput += $"{Environment.NewLine}[{DateTime.Now:HH:mm:ss}] {line}";
+            if (string.IsNullOrWhiteSpace(ProcessOutput)) {
+                ProcessOutput += $"[{DateTime.Now:HH:mm:ss}] {line}";
+            } else {
+                ProcessOutput += $"{Environment.NewLine}[{DateTime.Now:HH:mm:ss}] {line}";
+            }
         }
 
         #endregion

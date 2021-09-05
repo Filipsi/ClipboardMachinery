@@ -18,7 +18,7 @@
                         <ScrollViewer
                             Height="91"
                             HorizontalScrollBarVisibility="Disabled"
-                            VerticalScrollBarVisibility="Visible">
+                            VerticalScrollBarVisibility="Auto">
 
                             <i:Interaction.Triggers>
                                 <i:PropertyChangedTrigger Binding="{Binding ProcessOutput}">

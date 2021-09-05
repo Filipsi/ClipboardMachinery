@@ -52,16 +52,22 @@ namespace ClipboardMachinery.Common.Behaviors {
         }
 
         private static void OnTextPropertyChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            AvalonEditBehaviour behavior = (AvalonEditBehaviour)d;
-
-            if (behavior.AssociatedObject is TextEditor textEditor) {
-                if (textEditor.Document != null) {
-                    string newText = e.NewValue?.ToString() ?? string.Empty;
-                    int caretOffset = textEditor.CaretOffset;
-                    textEditor.Document.Text = newText;
-                    textEditor.CaretOffset = caretOffset > newText.Length ? newText.Length : caretOffset;
-                }
+            if (!(d is AvalonEditBehaviour behavior)) {
+                return;
             }
+
+            if (!(behavior.AssociatedObject is TextEditor textEditor)) {
+                return;
+            }
+
+            if (textEditor.Document == null) {
+                return;
+            }
+
+            string newText = e.NewValue?.ToString() ?? string.Empty;
+            int caretOffset = textEditor.CaretOffset;
+            textEditor.Document.Text = newText;
+            textEditor.CaretOffset = caretOffset > newText.Length ? newText.Length : caretOffset;
         }
 
         #endregion
