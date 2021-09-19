@@ -5,6 +5,7 @@ using ClipboardMachinery.Core.DataStorage.Schema;
 using Microsoft.Extensions.DependencyInjection;
 using FluentMigrator.Runner;
 using ServiceStack.OrmLite;
+using NLog.Extensions.Logging;
 
 namespace ClipboardMachinery.Core.DataStorage.Impl {
 
@@ -81,7 +82,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     .AddSQLite()
                     .WithGlobalConnectionString(dbFactory.ConnectionString)
                     .ScanIn(typeof(DatabaseAdapter).Assembly).For.Migrations())
-                .AddLogging(lb => lb.AddFluentMigratorConsole())
+                .AddLogging(lb => lb.AddNLog())
                 .BuildServiceProvider(false);
         }
 
@@ -92,7 +93,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         }
 
         private void UpdateDatabase(IServiceProvider serviceProvider) {
-            serviceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
+            try {
+                serviceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
+            } catch(Exception ex) {
+                Logger.Error("Failed to upgrade database!", ex);
+            }
         }
 
         #endregion
