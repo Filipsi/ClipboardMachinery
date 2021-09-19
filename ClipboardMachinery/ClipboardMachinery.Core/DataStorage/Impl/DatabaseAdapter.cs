@@ -2,6 +2,8 @@
 using System.Data;
 using Castle.Core.Logging;
 using ClipboardMachinery.Core.DataStorage.Schema;
+using Microsoft.Extensions.DependencyInjection;
+using FluentMigrator.Runner;
 using ServiceStack.OrmLite;
 
 namespace ClipboardMachinery.Core.DataStorage.Impl {
@@ -22,11 +24,13 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
         }
 
-        public bool IsConnectionOpen
-            => db != null && (db.State != ConnectionState.Closed || db.State != ConnectionState.Broken);
+        public bool IsConnectionOpen {
+            get => db != null && (db.State != ConnectionState.Closed || db.State != ConnectionState.Broken);
+        }
 
-        public int Version
-            => Connection.Scalar<int>("PRAGMA user_version");
+        public int Version {
+            get => Connection.Scalar<int>("PRAGMA user_version");
+        }
 
         #endregion
 
@@ -52,11 +56,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             EnsureTable<Tag>();
             EnsureTable<TagType>();
 
-            // FIXME: Migration from previous db version
-            if (Connection.ColumnExists("Created", nameof(Clip)) || !Connection.ColumnExists("Presenter", nameof(Clip))) {
-                Logger.Warn("Old clip format detected, removing old Clip table and creating empty one with new data format.");
-                Connection.DropAndCreateTable<Clip>();
-                Connection.DropAndCreateTable<Tag>();
+            // Upgrade datebase if necessary
+            using (IServiceScope scope = SetupFluentMigratorServices().CreateScope()) {
+                UpdateDatabase(scope.ServiceProvider);
             }
 
             // Make sure that  all system owned tag types are in the database
@@ -70,11 +72,30 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
         }
 
+        #region Logic
+
+        private IServiceProvider SetupFluentMigratorServices() {
+            return new ServiceCollection()
+                .AddFluentMigratorCore()
+                .ConfigureRunner(rb => rb
+                    .AddSQLite()
+                    .WithGlobalConnectionString(dbFactory.ConnectionString)
+                    .ScanIn(typeof(DatabaseAdapter).Assembly).For.Migrations())
+                .AddLogging(lb => lb.AddFluentMigratorConsole())
+                .BuildServiceProvider(false);
+        }
+
         private void EnsureTable<T>() {
             if (Connection.CreateTableIfNotExists<T>()) {
                 Logger.Info($"Table of type {typeof(T).Name} not found, creating...");
             }
         }
+
+        private void UpdateDatabase(IServiceProvider serviceProvider) {
+            serviceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
+        }
+
+        #endregion
 
         #region IDisposable
 

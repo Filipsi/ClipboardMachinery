@@ -293,8 +293,8 @@ namespace ClipboardMachinery.Components.Clip {
             CompatibleContentPresenters.AddRange(clipContentResolver.GetCompatiblePresenters(model.Content));
 
             if (string.IsNullOrWhiteSpace(model.Presenter)) {
-                Logger.Error($"Clip with Id={model.Id} does not specify any presenter, content won't be rendered.");
-                CurrentPresenter = null;
+                CurrentPresenter = clipContentResolver.GetDefaultPresenter(model.Content);
+                Logger.Error($"Clip with Id={model.Id} does not specify any presenter, this might be old entry format! Using default presenter based on content Id={CurrentPresenter.Id}.");
                 return;
             }
 
