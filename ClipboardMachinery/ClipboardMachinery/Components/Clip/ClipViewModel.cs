@@ -72,7 +72,7 @@ namespace ClipboardMachinery.Components.Clip {
                 NotifyOfPropertyChange();
 
                 if (Model?.Id != null && !string.IsNullOrWhiteSpace(currentPresenter?.Id) && Model.Presenter != currentPresenter.Id) {
-                    // TODO: Do this aynchnously and block the control until finished
+                    // TODO: Do this asynchronously and block the control until finished
                     dataRepository.UpdateClip(Model.Id, currentPresenter.Id);
                 }
 
@@ -337,7 +337,7 @@ namespace ClipboardMachinery.Components.Clip {
 
         public Task ToggleFavorite(ActionButtonViewModel source) {
             TagModel favoriteTag = Model.Tags.FirstOrDefault(
-                tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name && tag.Value == "favorite"
+                tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name
             );
 
             return Task.Run(async () => {
