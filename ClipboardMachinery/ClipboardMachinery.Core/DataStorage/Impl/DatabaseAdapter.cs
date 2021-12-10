@@ -13,7 +13,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #region Properties
 
-        public ILogger Logger { get; set; } = NullLogger.Instance;
+        public ILogger Logger {
+            get; set;
+        }
 
         public IDbConnection Connection {
             get {
@@ -43,7 +45,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         #endregion
 
         public DatabaseAdapter(string databasePath, string databaseVersion, ILogger logger) {
-            Logger = logger;
+            Logger = logger ?? NullLogger.Instance;
             Logger.Info($"Creating sqlite database adapter with data source bound to '{databasePath}' with version '{databaseVersion}'...");
 
             // Create connection factory in order to connect to the database
@@ -57,7 +59,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             EnsureTable<Tag>();
             EnsureTable<TagType>();
 
-            // Upgrade datebase if necessary
+            // Upgrade database if necessary
             using (IServiceScope scope = SetupFluentMigratorServices().CreateScope()) {
                 UpdateDatabase(scope.ServiceProvider);
             }
