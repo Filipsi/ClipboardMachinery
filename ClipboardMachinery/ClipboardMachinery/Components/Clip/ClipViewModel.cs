@@ -263,20 +263,16 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         private void OnModelTagCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            if (Model == null) {
-                favoriteButton.IsToggled = false;
-            } else {
-                favoriteButton.IsToggled = Model.Tags.Any(
-                    tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name && tag.Value == "favorite"
-                );
-            }
+            favoriteButton.IsToggled = Model != null && Model.Tags.Any(tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name);
         }
 
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName == nameof(ClipModel.Content)) {
-                NotifyOfPropertyChange(() => ClipContent);
-                NotifyOfPropertyChange(() => Icon);
+            if (e.PropertyName != nameof(ClipModel.Content)) {
+                return;
             }
+
+            NotifyOfPropertyChange(() => ClipContent);
+            NotifyOfPropertyChange(() => Icon);
         }
 
         #endregion
@@ -336,13 +332,11 @@ namespace ClipboardMachinery.Components.Clip {
         }
 
         public Task ToggleFavorite(ActionButtonViewModel source) {
-            TagModel favoriteTag = Model.Tags.FirstOrDefault(
-                tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name
-            );
+            TagModel[] categoryTags = Model.Tags.Where(tag => tag.TypeName == SystemTagTypes.CategoryTagType.Name).ToArray();
 
             return Task.Run(async () => {
-                if (favoriteTag == null) {
-                    favoriteTag = await dataRepository.CreateTag<TagModel>(
+                if (categoryTags.Length == 0) {
+                    TagModel favoriteTag = await dataRepository.CreateTag<TagModel>(
                         clipId: Model.Id,
                         tagType: SystemTagTypes.CategoryTagType.Name,
                         value: "favorite"
@@ -350,8 +344,10 @@ namespace ClipboardMachinery.Components.Clip {
 
                     await eventAggregator.PublishOnUIThreadAsync(TagEvent.CreateTagAddedEvent(Model.Id, favoriteTag));
                 } else {
-                    await dataRepository.DeleteTag(favoriteTag.Id);
-                    await eventAggregator.PublishOnUIThreadAsync(TagEvent.CreateTagRemovedEvent(favoriteTag));
+                    foreach (TagModel categoryTag in categoryTags) {
+                        await dataRepository.DeleteTag(categoryTag.Id);
+                        await eventAggregator.PublishOnUIThreadAsync(TagEvent.CreateTagRemovedEvent(categoryTag));
+                    }
                 }
             });
         }
