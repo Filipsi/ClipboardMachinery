@@ -275,6 +275,7 @@
     <Compile Include="DataStorage\IDatabaseAdapter.cs" />
     <Compile Include="DataStorage\Impl\ClipLazyProvider.cs" />
     <Compile Include="DataStorage\Impl\DatabaseAdapter.cs" />
+    <Compile Include="DataStorage\Migrations\AddTagTypePriority.cs" />
     <Compile Include="DataStorage\Migrations\RemoveClipCreatedColumn.cs" />
     <Compile Include="DataStorage\Migrations\AddClipPresenterColumn.cs" />
     <Compile Include="DataStorage\Validation\DataRepositoryCheckAttribute.cs" />
