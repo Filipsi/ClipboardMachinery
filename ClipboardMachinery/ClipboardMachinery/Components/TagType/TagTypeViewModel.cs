@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
-using ClipboardMachinery.Components.TagKind;
 using ClipboardMachinery.Core.TagKind;
 
 namespace ClipboardMachinery.Components.TagType {

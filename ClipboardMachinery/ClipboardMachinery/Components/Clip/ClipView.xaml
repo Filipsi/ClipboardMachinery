@@ -31,7 +31,9 @@
         </Grid.RowDefinitions>
 
         <!--  Clip  -->
-        <Grid Grid.Row="0" Margin="0,8,0,8">
+        <Grid
+            Grid.Row="0"
+            Margin="0,8,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="48" />
                 <ColumnDefinition Width="*" />
@@ -49,7 +51,9 @@
                         <Setter Property="Margin" Value="0,0,0,8" />
 
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsFocused}" Value="True">
+                            <DataTrigger
+                                Binding="{Binding IsFocused}"
+                                Value="True">
                                 <Setter Property="Margin" Value="0" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -71,7 +75,9 @@
                             <Setter Property="Fill" Value="{Binding SelectionColor}" />
 
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ClipContent}" Value="{x:Null}">
+                                <DataTrigger
+                                    Binding="{Binding ClipContent}"
+                                    Value="{x:Null}">
                                     <Setter Property="Data" Value="{StaticResource IconExit}" />
                                     <Setter Property="Fill" Value="{StaticResource DangerousActionBrush}" />
                                 </DataTrigger>
@@ -90,9 +96,13 @@
 
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="1" Orientation="Vertical">
+                            <StackPanel
+                                Margin="1"
+                                Orientation="Vertical">
                                 <TextBlock Text="{Binding Name}" />
-                                <TextBlock Foreground="Gray" Text="{Binding Description}" />
+                                <TextBlock
+                                    Foreground="Gray"
+                                    Text="{Binding Description}" />
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -117,7 +127,9 @@
                             <Setter Property="Content" Value="{Binding ClipContent}" />
 
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ClipContent}" Value="{x:Null}">
+                                <DataTrigger
+                                    Binding="{Binding ClipContent}"
+                                    Value="{x:Null}">
                                     <Setter Property="cal:View.Model" Value="{x:Null}" />
                                     <Setter Property="Content">
                                         <Setter.Value>

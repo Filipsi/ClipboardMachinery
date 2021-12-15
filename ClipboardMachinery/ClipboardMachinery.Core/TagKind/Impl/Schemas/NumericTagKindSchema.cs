@@ -20,7 +20,7 @@ namespace ClipboardMachinery.Core.TagKind.Impl.Schemas {
         #region Logic
 
         public bool TryParse(string value, out object result) {
-            bool isSucessfulyParsed = decimal.TryParse(
+            bool isSuccessfullyParsed = decimal.TryParse(
                 s: value,
                 style: NumberStyles.AllowDecimalPoint | NumberStyles.AllowTrailingWhite,
                 provider: CultureInfo.InvariantCulture,
@@ -28,7 +28,7 @@ namespace ClipboardMachinery.Core.TagKind.Impl.Schemas {
             );
 
             result = numericValue;
-            return isSucessfulyParsed;
+            return isSuccessfullyParsed;
         }
 
         public string ToPersistentValue(object value) {

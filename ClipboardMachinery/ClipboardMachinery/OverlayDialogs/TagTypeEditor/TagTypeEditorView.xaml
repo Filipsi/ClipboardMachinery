@@ -1,14 +1,16 @@
 ﻿<UserControl
     x:Class="ClipboardMachinery.OverlayDialogs.TagTypeEditor.TagTypeEditorView"
-    x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:cal="http://www.caliburnproject.org"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers"
-    mc:Ignorable="d" d:DesignWidth="800"
-    MinHeight="288">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:numeric="http://gu.se/NumericInput"
+    x:Name="Root"
+    MinHeight="288"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <ResourceDictionary Source="pack://application:,,,/Resources/Styles/EditorFields.xaml" />
@@ -26,8 +28,8 @@
                 Width="96"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Stretch="Uniform"
-                Data="{StaticResource IconTag}">
+                Data="{StaticResource IconTag}"
+                Stretch="Uniform">
 
                 <Path.Fill>
                     <SolidColorBrush Color="{Binding ColorGallery.SelectedColor, FallbackValue={StaticResource BodyControlColor}}" />
@@ -41,25 +43,25 @@
             VerticalAlignment="Center">
 
             <TextBlock
-                Text="Name"
-                Style="{StaticResource FieldHeaderStyle}" />
+                Style="{StaticResource FieldHeaderStyle}"
+                Text="Name" />
 
             <TextBox
                 IsEnabled="{Binding IsCreatingNew}"
                 Text="{Binding Name, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
             <TextBlock
-                Text="Description"
-                Style="{StaticResource FieldHeaderStyle}" />
+                Style="{StaticResource FieldHeaderStyle}"
+                Text="Description" />
 
             <TextBox
                 Tag="Description"
-                TextWrapping="Wrap"
-                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
 
             <TextBlock
-                Text="Value type"
-                Style="{StaticResource FieldHeaderStyle}" />
+                Style="{StaticResource FieldHeaderStyle}"
+                Text="Value type" />
 
             <ComboBox
                 IsEnabled="{Binding IsCreatingNew}"
@@ -72,15 +74,13 @@
                     <helpers:ComboBoxItemTemplateSelector>
                         <helpers:ComboBoxItemTemplateSelector.ItemTemplate>
                             <DataTemplate>
-                                <ContentControl
-                                    cal:View.Model="{Binding .}" />
+                                <ContentControl cal:View.Model="{Binding .}" />
                             </DataTemplate>
                         </helpers:ComboBoxItemTemplateSelector.ItemTemplate>
 
                         <helpers:ComboBoxItemTemplateSelector.SelectedItemTemplate>
                             <DataTemplate>
-                                <TextBlock
-                                    Text="{Binding Schema.Name}"/>
+                                <TextBlock Text="{Binding Schema.Name}" />
                             </DataTemplate>
                         </helpers:ComboBoxItemTemplateSelector.SelectedItemTemplate>
                     </helpers:ComboBoxItemTemplateSelector>
@@ -88,8 +88,28 @@
             </ComboBox>
 
             <TextBlock
-                Text="Color"
-                Style="{StaticResource FieldHeaderStyle}" />
+                Style="{StaticResource FieldHeaderStyle}"
+                Text="Priority" />
+
+            <numeric:SpinnerDecorator
+                Padding="0"
+                Style="{StaticResource FieldStyle}">
+
+                <numeric:IntBox
+                    Margin="2,0"
+                    Padding="4"
+                    AllowSpinners="True"
+                    Increment="1"
+                    MaxValue="255"
+                    MinValue="0"
+                    TextAlignment="Left"
+                    ValidationTrigger="PropertyChanged"
+                    Value="{Binding Priority, UpdateSourceTrigger=PropertyChanged}" />
+            </numeric:SpinnerDecorator>
+
+            <TextBlock
+                Style="{StaticResource FieldHeaderStyle}"
+                Text="Color" />
 
             <ContentControl
                 x:Name="ColorGallery"

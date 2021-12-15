@@ -3,14 +3,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers">
 
-    <Style x:Key="FieldStyle" TargetType="Control">
+    <Style
+        x:Key="FieldStyle"
+        TargetType="Control">
 
         <Setter Property="Padding" Value="6" />
         <Setter Property="Margin" Value="0,0,0,16" />
         <Setter Property="FontFamily" Value="{StaticResource LatoRegular}" />
     </Style>
 
-    <Style x:Key="FieldHeaderStyle" TargetType="TextBlock">
+    <Style
+        x:Key="FieldHeaderStyle"
+        TargetType="TextBlock">
 
         <Setter Property="Margin" Value="0,0,0,3" />
         <Setter Property="Foreground" Value="{StaticResource BodyControlBrush}" />
@@ -20,7 +24,9 @@
 
     <Style TargetType="TextBox">
         <Style.BasedOn>
-            <helpers:MergedStyles BasedOn="{StaticResource ValidationStyle}" MergeStyle="{StaticResource FieldStyle}" />
+            <helpers:MergedStyles
+                BasedOn="{StaticResource ValidationStyle}"
+                MergeStyle="{StaticResource FieldStyle}" />
         </Style.BasedOn>
     </Style>
 </ResourceDictionary>

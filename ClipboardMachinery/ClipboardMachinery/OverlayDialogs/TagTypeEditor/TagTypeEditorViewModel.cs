@@ -88,14 +88,26 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
         [StringLength(75)]
         public string Description {
-            get => description;
+            get => description ?? string.Empty;
             set {
                 if (description == value) {
                     return;
                 }
 
-                description = value;
+                description = value ?? string.Empty;
                 ValidateProperty(value);
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public byte Priority {
+            get => priority;
+            set {
+                if (priority == value) {
+                    return;
+                }
+
+                priority = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -112,8 +124,9 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
             }
         }
 
-        public IReadOnlyCollection<TagKindViewModel> TagKinds
-            => tagKinds;
+        public IReadOnlyCollection<TagKindViewModel> TagKinds {
+            get => tagKinds;
+        }
 
         public ColorGalleryViewModel ColorGallery {
             get;
@@ -142,7 +155,8 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
         private bool areControlsVisible;
         private TagTypeModel model;
         private string name;
-        private string description;
+        private string description = string.Empty;
+        private byte priority;
         private ITagKindSchema selectedTagKind;
 
         #endregion
@@ -184,6 +198,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
             Model = tagTypeModel;
             Name = Model.Name;
             Description = Model.Description;
+            Priority = Model.Priority;
             IsSystemOwned = SystemTagTypes.TagTypes.Any(tt => tt.Name == Model.Name);
             DialogControls = new BindableCollection<ActionButtonViewModel>();
 
@@ -259,18 +274,31 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeAddedEvent(Model));
 
             } else {
+                bool isDirty = false;
+
                 // Update description if changed
                 if (Model.Description != Description) {
                     Model.Description = Description;
-                    await dataRepository.UpdateTagType(Model.Name, Description);
                     await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeDescriptionChangedEvent(Model));
+                    isDirty = true;
+                }
+
+                // Update priority if changed
+                if (Model.Priority != Priority) {
+                    Model.Priority = Priority;
+                    await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypePriorityChangedEvent(Model));
+                    isDirty = true;
                 }
 
                 // Update color if changed
                 if (Model.Color != ColorGallery.SelectedColor) {
                     Model.Color = ColorGallery.SelectedColor;
-                    await dataRepository.UpdateTagType(Model.Name, Model.Color);
                     await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeColorChangedEvent(Model));
+                    isDirty = true;
+                }
+
+                if (isDirty) {
+                    await dataRepository.UpdateTagType(Model.Name, Model.Description, model.Priority, Model.Color);
                 }
             }
 

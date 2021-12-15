@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Media;
 using Caliburn.Micro;
 
@@ -30,6 +28,18 @@ namespace ClipboardMachinery.Components.TagType {
                 }
 
                 kind = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public byte Priority {
+            get => priority;
+            set {
+                if (priority == value) {
+                    return;
+                }
+
+                priority = value;
                 NotifyOfPropertyChange();
             }
         }
@@ -64,6 +74,7 @@ namespace ClipboardMachinery.Components.TagType {
 
         private string name;
         private Type kind;
+        private byte priority;
         private string description;
         private Color color;
 

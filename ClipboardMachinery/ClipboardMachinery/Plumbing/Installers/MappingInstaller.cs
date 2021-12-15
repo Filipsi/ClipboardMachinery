@@ -35,6 +35,7 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .CreateMap<Tag, TagModel>()
                     .ForMember(dest => dest.TypeName, opt => opt.MapFrom(source => source.Type.Name))
                     .ForMember(dest => dest.ValueKind, opt => opt.MapFrom(source => source.Type.Kind))
+                    .ForMember(dest => dest.Priority, opt => opt.MapFrom(source => source.Type.Priority))
                     .ForMember(dest => dest.Description, opt => {
                         opt.MapFrom(source => source.Type.Description);
                         opt.AllowNull();

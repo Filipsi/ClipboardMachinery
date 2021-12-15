@@ -16,7 +16,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         string LastClipContent { get; }
 
         /// <summary>
-        /// Create clip provider that can be used to restive batches of clips sored by descending date.
+        /// Create clip provider that can be used to restive batches of clips sorted by descending date.
         /// </summary>
         /// <param name="batchSize">Size of a batch of clips</param>
         /// <returns>A instance of lazy clip provider</returns>
@@ -33,7 +33,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         Task<T> CreateClip<T>(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
-        /// Update content prevener of the specified clip id.
+        /// Update content presenter of the specified clip id.
         /// </summary>
         /// <param name="id">Id of a clip to update</param>
         /// <param name="contentPresenter">Id of an presenter used to display the content</param>
@@ -70,7 +70,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="id">Id of tag to update</param>
         /// <param name="value">A new value for the tag</param>
-        /// <returns>A task that will be completed after the operation is performed with new presisted value.</returns>
+        /// <returns>A task that will be completed after the operation is performed with new persisted value.</returns>
         Task<string> UpdateTag(int id, object value);
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace ClipboardMachinery.Core.DataStorage {
         Task DeleteTag(int id);
 
         /// <summary>
-        /// Create tag type provider that can be used to restive batches of tag types sored by descending creation date.
+        /// Create tag type provider that can be used to restive batches of tag types sorted by descending creation date.
         /// </summary>
         /// <param name="batchSize">Size of a batch of tag types</param>
         /// <returns>A instance of lazy tag type provider</returns>
@@ -119,17 +119,10 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="name">Id of TagType aka TagModel#Name</param>
         /// <param name="color">New color of TagType</param>
-        /// <returns>A task that will be completed after the operation is performed.</returns>
-        Task UpdateTagType(string name, Color color);
-
-        /// <summary>
-        /// Updates TagType with corresponding name (primary key).
-        /// TagType name is equivalent to TagModel#Name.
-        /// </summary>
-        /// <param name="name">Id of TagType aka TagModel#Name</param>
         /// <param name="description">New description of TagType</param>
+        /// <param name="priority">New priority of TagType</param>
         /// <returns>A task that will be completed after the operation is performed.</returns>
-        Task UpdateTagType(string name, string description);
+        Task UpdateTagType(string name, string description, byte? priority, Color? color);
 
         /// <summary>
         /// Removes tag type with given name along with all tags that were using this tag type.

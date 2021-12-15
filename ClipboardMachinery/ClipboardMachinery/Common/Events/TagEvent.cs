@@ -12,7 +12,8 @@ namespace ClipboardMachinery.Common.Events {
             TypeAdded,
             TypeRemoved,
             TypeColorChanged,
-            TypeDescriptionChanged
+            TypeDescriptionChanged,
+            TypePriorityChanged
         }
 
         #region Properties
@@ -70,6 +71,13 @@ namespace ClipboardMachinery.Common.Events {
             return new TagEvent(TagEventType.TypeDescriptionChanged) {
                 TagTypeName = tagType.Name,
                 Argument = tagType.Description
+            };
+        }
+
+        public static TagEvent CreateTypePriorityChangedEvent(TagTypeModel tagType) {
+            return new TagEvent(TagEventType.TypePriorityChanged) {
+                TagTypeName = tagType.Name,
+                Argument = tagType.Priority
             };
         }
 

@@ -45,7 +45,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     .Where<Tag>(tag => tag.Type.Name == filteredTagName && tag.Value.ToString() == filteredTagValue);
             }
 
-            return base.OnQueryBuildingStarts(query);;
+            return base.OnQueryBuildingStarts(query);
         }
 
         protected override Task OnQueryOrdering(SqlExpression<Clip> query) {
@@ -63,6 +63,10 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                 foreach (Tag tag in clip.Tags) {
                     await db.LoadReferencesAsync(tag);
                 }
+
+                // Sort the tags based on priority
+                // NOTE: UI does it's own sorting when priority changes
+                clip.Tags.Sort((a, b) => (-a.Type.Priority).CompareTo(-b.Type.Priority));
             }
         }
 

@@ -74,9 +74,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // Add tags if there are any
             if (tags != null) {
                 foreach (KeyValuePair<string, object> tagData in tags) {
-                    string presistentValue = await ResolvePresistentValue(tagData.Key, tagData.Value);
+                    string persistentValue = await ResolvePersistentValue(tagData.Key, tagData.Value);
 
-                    if (presistentValue == null) {
+                    if (persistentValue == null) {
                         Logger.Error($"Unable to create tag {tagData.Key}={tagData.Value} for clip: {content}");
                         continue;
                     }
@@ -84,7 +84,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     clip.Tags.Add(
                         new Tag {
                             TypeName = tagData.Key,
-                            Value = presistentValue
+                            Value = persistentValue
                         }
                     );
                 }
@@ -108,11 +108,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             // Save clips
-            bool wasSaveSuccessfull = await Database.Connection.SaveAsync(clip, references: true);
+            bool wasSaveSuccessful = await Database.Connection.SaveAsync(clip, references: true);
 
             // If we managed to successfully save the clip update last saved clip content
             // ReSharper disable once InvertIf
-            if (wasSaveSuccessfull) {
+            if (wasSaveSuccessful) {
                 LastClipContent = clip.Content;
                 await UpdateDataProvidersOffset<Clip>(1);
             } else {
@@ -143,9 +143,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         }
 
         public async Task<T> CreateTag<T>(int clipId, string tagType, object value) {
-            string presistentValue = await ResolvePresistentValue(tagType, value);
+            string persistentValue = await ResolvePersistentValue(tagType, value);
 
-            if (presistentValue == null) {
+            if (persistentValue == null) {
                 Logger.Error($"Unable to create tag {tagType}={value} for clip id '{clipId}'!");
                 return default;
             }
@@ -154,7 +154,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             Tag tag = new Tag {
                 ClipId = clipId,
                 TypeName = tagType,
-                Value = presistentValue
+                Value = persistentValue
             };
 
             // Check if TagType exits, if not create it
@@ -204,9 +204,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                 return string.Empty;
             }
 
-            string presistentValue = await ResolvePresistentValue(tag.Type.Name, value);
+            string persistentValue = await ResolvePersistentValue(tag.Type.Name, value);
 
-            if (presistentValue == null) {
+            if (persistentValue == null) {
                 Logger.Error($"Unable to save updated tag with id '{id}' due to failure while parsing value '{value}' for tag type '{tag.Type.Name}'!");
                 return string.Empty;
             }
@@ -214,11 +214,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             await Database.Connection.UpdateAsync<Tag>(
                 new {
                     Id = id,
-                    Value = presistentValue
+                    Value = persistentValue
                 }
             );
 
-            return presistentValue;
+            return persistentValue;
         }
 
         public async Task DeleteTag(int id) {
@@ -278,22 +278,24 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return Mapper.Map<T>(firstMatch);
         }
 
-        public async Task UpdateTagType(string name, MediaColor color) {
-            await Database.Connection.UpdateAsync<TagType>(
-                new {
-                    Name = name,
-                    Color = Mapper.Map<Color>(color)
-                }
-            );
-        }
+        public async Task UpdateTagType(string name, string description, byte? priority, MediaColor? color) {
+            Dictionary<string, object> fields = new Dictionary<string, object> {
+                { "Name", name }
+            };
 
-        public async Task UpdateTagType(string name, string description) {
-            await Database.Connection.UpdateAsync<TagType>(
-                new {
-                    Name = name,
-                    Description = description
-                }
-            );
+            if (description != null) {
+                fields.Add(nameof(TagType.Description), description);
+            }
+
+            if (priority.HasValue) {
+                fields.Add(nameof(TagType.Priority), priority.Value);
+            }
+
+            if (color.HasValue) {
+                fields.Add(nameof(TagType.Color), Mapper.Map<Color>(color.Value));
+            }
+
+            await Database.Connection.UpdateOnlyAsync<TagType>(fields);
         }
 
         public async Task DeleteTagType(string name) {
@@ -315,7 +317,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #region Helpers
 
-        private async Task<string> ResolvePresistentValue(string tagType, object value) {
+        private async Task<string> ResolvePersistentValue(string tagType, object value) {
             TagType ttype = await FindTagType<TagType>(tagType);
 
             // Skip tag, non-existent tag type
@@ -342,7 +344,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // TODO: Change this to "SELECT MAX(_ROWID_) FROM "table" LIMIT 1;" depending on performance
             long entryCount = await Database.Connection.CountAsync<T>();
 
-            DispatchToDataProvders<T>(dataProvider => {
+            DispatchToDataProviders<T>(dataProvider => {
                 // Skip this provider if it does not have all entries loaded.
                 // The offset should be updated only when new entry is added or existing one is removed.
                 if (dataProvider.Offset != entryCount - value) {
@@ -354,7 +356,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             });
         }
 
-        private void DispatchToDataProvders<T>(Action<ILazyDataProvider> action) {
+        private void DispatchToDataProviders<T>(Action<ILazyDataProvider> action) {
             foreach (WeakReference<ILazyDataProvider> providerRef in dataProviders.ToArray()) {
                 // Try to get reference target, if there is no target remove it from tracked providers pool
                 if (!providerRef.TryGetTarget(out ILazyDataProvider lazyDataProvider)) {

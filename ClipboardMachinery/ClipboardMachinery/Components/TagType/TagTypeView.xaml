@@ -2,21 +2,20 @@
     x:Class="ClipboardMachinery.Components.TagType.TagTypeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
     xmlns:cal="http://www.caliburnproject.org"
-    mc:Ignorable="d" d:DesignWidth="256"
-    UseLayoutRounding="True"
-    RenderOptions.BitmapScalingMode="NearestNeighbor"
-    SnapsToDevicePixels="True"
-    RenderOptions.ClearTypeHint="Enabled"
-    BorderThickness="2,0,0,0"
-    BorderBrush="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
+    xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Height="64"
-    cal:Message.Attach="
-        [Event MouseEnter] = [Action Focus()];
-        [Event MouseLeave] = [Action Unfocus()];">
+    cal:Message.Attach="[Event MouseEnter] = [Action Focus()]; [Event MouseLeave] = [Action Unfocus()]"
+    d:DesignWidth="256"
+    BorderBrush="{Binding SelectionColor, FallbackValue={StaticResource BodyControlBrush}}"
+    BorderThickness="2,0,0,0"
+    RenderOptions.BitmapScalingMode="NearestNeighbor"
+    RenderOptions.ClearTypeHint="Enabled"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <Style TargetType="TextBlock">
@@ -68,8 +67,8 @@
 
                 <TextBlock
                     Foreground="#7F8C8d"
-                    TextWrapping="Wrap"
-                    Text="{Binding Model.Description}" />
+                    Text="{Binding Model.Description}"
+                    TextWrapping="Wrap" />
             </StackPanel>
 
         </Grid>

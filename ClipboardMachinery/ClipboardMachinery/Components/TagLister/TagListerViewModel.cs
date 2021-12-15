@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using System.Collections;
+using Caliburn.Micro;
 using Castle.Core;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using ClipboardMachinery.Common.Helpers;
 
 namespace ClipboardMachinery.Components.TagLister {
 
@@ -90,15 +92,25 @@ namespace ClipboardMachinery.Components.TagLister {
 
                 case NotifyCollectionChangedAction.Reset:
                     // Remove view models that does not have matching tag model in the clip
-                    foreach (TagViewModel oldVm in Items.Where(vm => !Clip.Tags.Any(tag => tag.Id == vm.Model.Id)).ToArray()) {
+                    foreach (TagViewModel oldVm in Items.Where(vm => Clip.Tags.All(tag => tag.Id != vm.Model.Id)).ToArray()) {
                         await DeactivateItemAsync(oldVm, true, CancellationToken.None);
                     }
 
                     // Create view models for tags that are in the clip tag list
-                    foreach (TagModel tagModel in Clip.Tags.Where(tag => !Items.Any(vm => vm.Model.Id == tag.Id)).ToArray()) {
+                    foreach (TagModel tagModel in Clip.Tags.Where(tag => Items.All(vm => vm.Model.Id != tag.Id)).ToArray()) {
                         TagViewModel vm = clipFactory.CreateTag(tagModel);
                         await ActivateItemAsync(vm, CancellationToken.None);
                     }
+                    break;
+            }
+
+            // TODO, FIXME: Optimize this
+            switch (e.Action) {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Reset:
+                    ArrayList.Adapter((IList)Items).Sort(new ComparisonComparer<TagViewModel>(
+                        (a, b) => (-a.Model.Priority).CompareTo(-b.Model.Priority)
+                    ));
                     break;
             }
         }
@@ -127,6 +139,16 @@ namespace ClipboardMachinery.Components.TagLister {
                     foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
                         vm.Model.Color = (Color)message.Argument;
                     }
+                    break;
+
+                case TagEvent.TagEventType.TypePriorityChanged:
+                    foreach (TagViewModel vm in Items.Where(vm => vm.Model.TypeName == message.TagTypeName)) {
+                        vm.Model.Priority = (byte)message.Argument;
+                    }
+
+                    ArrayList.Adapter((IList)Items).Sort(new ComparisonComparer<TagViewModel>(
+                        (a, b) => (-a.Model.Priority).CompareTo(-b.Model.Priority)
+                    ));
                     break;
 
                 case TagEvent.TagEventType.TypeDescriptionChanged:

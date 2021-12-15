@@ -69,6 +69,18 @@ namespace ClipboardMachinery.Components.Tag {
             }
         }
 
+        public byte Priority {
+            get => priority;
+            set {
+                if (priority == value) {
+                    return;
+                }
+
+                priority = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         public Color? Color {
             get => color;
             set {
@@ -102,6 +114,7 @@ namespace ClipboardMachinery.Components.Tag {
         private Type valueKind;
         private Color? color = defaultColor;
         private string description;
+        private byte priority;
 
         #endregion
 
