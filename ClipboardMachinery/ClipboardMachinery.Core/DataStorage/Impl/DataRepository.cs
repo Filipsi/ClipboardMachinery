@@ -231,7 +231,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return tagTypeProvider;
         }
 
-        public async Task<T> CreateTagType<T>(string name, string description, Type kind, MediaColor? color = null) {
+        public async Task<T> CreateTagType<T>(string name, string description, Type kind, byte priority = 0, MediaColor? color = null) {
             // Check if there is already tag type with this name
             if (await TagTypeExists(name)) {
                 Logger.Error($"Unable to create tag type with '{name}', tag type with this name already exists!");
@@ -243,6 +243,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                 Name = name,
                 Description = description,
                 Kind = kind,
+                Priority = priority,
                 Color = color.HasValue
                     ? new Color {A = color.Value.A, R = color.Value.R, G = color.Value.G, B = color.Value.B}
                     : SystemTagTypes.DefaultDBColor

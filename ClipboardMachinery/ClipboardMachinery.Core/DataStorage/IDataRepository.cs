@@ -94,9 +94,10 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <param name="name">A name of newly created tag type.</param>
         /// <param name="description">Description for newly created tag type.</param>
         /// <param name="kind">A type of values that can be accepted by this tag type, the actual parsing logic is handled by corresponding <see cref="ITagKindSchema"/> implementation.</param>
+        /// <param name="priority">Display priority of the tag type</param>
         /// <param name="color">A color of newly created tag type, if color is not specified a default color will be used <see cref="SystemTagTypes.DefaultColor"/>.</param>
         /// <returns>An instance of created tag type mapped to T model</returns>
-        Task<T> CreateTagType<T>(string name, string description, Type kind, Color? color = null);
+        Task<T> CreateTagType<T>(string name, string description, Type kind, byte priority = 0, Color? color = null);
 
         /// <summary>
         /// Determinants whenever there is a tag type with given name.
