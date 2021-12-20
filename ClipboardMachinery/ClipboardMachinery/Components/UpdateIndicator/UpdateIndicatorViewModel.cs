@@ -165,7 +165,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                 return;
             }
 
-            if (App.CurrentVersion != lastUpdateCheckResult.LastVersion) {
+            if (App.CurrentVersion.CompareTo(lastUpdateCheckResult.LastVersion) != 0) {
                 Logger.Info($"Found update to version '{lastUpdateCheckResult.LastVersion}'! Current application version is '{App.CurrentVersion.ToString(3)}'.");
                 State = IndicatorState.UPDATE_AVAILABLE;
                 return;
@@ -227,7 +227,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
                 case IndicatorState.UPDATE_READY:
                     StatusColor = updateReadyColor;
-                    DisplayText = "Update is ready to be installed! Click here to restart.";
+                    DisplayText = string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch) ? "Update is ready to be installed! Click here to restart." : "Update is ready to be installed!";
                     IsLoading = false;
                     break;
             }
