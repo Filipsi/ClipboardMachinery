@@ -158,16 +158,17 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
             }
             */
 
+            if (lastUpdateCheckResult.LastVersion == null) {
+                Logger.Debug("Unknown latest update version!");
+                State = IndicatorState.REFRESH_FAILED;
+                return;
+            }
+
             // Check if there is a update package that is ready to be installed
             if (updateManager.IsUpdatePrepared(lastUpdateCheckResult.LastVersion)) {
                 State = IndicatorState.UPDATE_READY;
                 Logger.Info($"Update to version '{lastUpdateCheckResult.LastVersion}' is ready to be installed.");
                 return;
-            }
-
-            if (lastUpdateCheckResult.LastVersion == null) {
-                Logger.Debug("Unknown latest update version!");
-                State = IndicatorState.REFRESH_FAILED;
             }
 
             if (App.CurrentVersion.ToString(3) != lastUpdateCheckResult.LastVersion.ToString(3)) {
