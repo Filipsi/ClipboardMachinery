@@ -165,7 +165,12 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                 return;
             }
 
-            if (App.CurrentVersion.CompareTo(lastUpdateCheckResult.LastVersion) != 0) {
+            if (lastUpdateCheckResult.LastVersion == null) {
+                Logger.Debug("Unknown latest update version!");
+                State = IndicatorState.REFRESH_FAILED;
+            }
+
+            if (App.CurrentVersion.ToString(3) != lastUpdateCheckResult.LastVersion.ToString(3)) {
                 Logger.Info($"Found update to version '{lastUpdateCheckResult.LastVersion}'! Current application version is '{App.CurrentVersion.ToString(3)}'.");
                 State = IndicatorState.UPDATE_AVAILABLE;
                 return;
