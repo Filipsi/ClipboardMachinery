@@ -1,6 +1,6 @@
 ﻿namespace ClipboardMachinery.Components.UpdateIndicator {
 
-    internal enum IndicatorState {
+    public enum IndicatorState {
 
         UNKNOWN,
         UP_TO_DATE,

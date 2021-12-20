@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 using Caliburn.Micro;
 using Castle.Core.Logging;
 using ClipboardMachinery.Common.Events;
@@ -57,20 +56,28 @@ namespace ClipboardMachinery.Windows.Shell {
             get;
         }
 
-        public string AppVersion
-            => App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
+        public string AppVersion {
+            get {
+                string version = App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
+                return string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch) ? version : $"{version} ({launchOptions.UpdaterBranch})";
+            }
+        }
 
-        public double AppWidth
-            => SystemParameters.PrimaryScreenWidth / 3;
+        public double AppWidth {
+            get => SystemParameters.PrimaryScreenWidth / 3;
+        }
 
-        public double MaxContentHeight
-            => SystemParameters.PrimaryScreenHeight / 1.5;
+        public double MaxContentHeight {
+            get => SystemParameters.PrimaryScreenHeight / 1.5;
+        }
 
-        public bool IsVisibleInTaskbar
-            => Debugger.IsAttached;
+        public bool IsVisibleInTaskbar {
+            get => Debugger.IsAttached;
+        }
 
-        public bool IsTopmost
-            => !Debugger.IsAttached;
+        public bool IsTopmost {
+            get => !Debugger.IsAttached;
+        }
 
         #endregion
 
@@ -80,6 +87,7 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IDataRepository dataRepository;
         private readonly IClipboardService clipboardService;
         private readonly IContentDisplayResolver contentDisplayResolver;
+        private readonly LaunchOptions launchOptions;
         private readonly HotKey visiblitiyKeyBind;
 
         private bool isVisible = true;
@@ -90,11 +98,12 @@ namespace ClipboardMachinery.Windows.Shell {
         public ShellViewModel(
             IEventAggregator eventAggregator, NavigatorViewModel navigator, UpdateIndicatorViewModel updateIndicator,
             IDialogOverlayManager dialogOverlayManager, IHotKeyService hotKeyService, IClipboardService clipboardService,
-            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver)  {
+            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver, LaunchOptions launchOptions)  {
 
             this.eventAggregator = eventAggregator;
             this.clipboardService = clipboardService;
             this.contentDisplayResolver = contentDisplayResolver;
+            this.launchOptions = launchOptions;
             Logger = NullLogger.Instance;
 
             // Data repository

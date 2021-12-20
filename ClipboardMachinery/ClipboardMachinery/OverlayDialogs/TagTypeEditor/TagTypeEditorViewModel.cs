@@ -270,7 +270,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
             }
 
             if (IsCreatingNew) {
-                Model = await dataRepository.CreateTagType<TagTypeModel>(Name, Description, SelectedTagKind.Kind, ColorGallery.SelectedColor);
+                Model = await dataRepository.CreateTagType<TagTypeModel>(Name, Description, SelectedTagKind.Kind, Priority, ColorGallery.SelectedColor);
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeAddedEvent(Model));
 
             } else {

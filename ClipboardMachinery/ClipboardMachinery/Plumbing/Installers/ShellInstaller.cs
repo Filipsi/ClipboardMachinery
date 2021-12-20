@@ -5,6 +5,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using ClipboardMachinery.Plumbing.Customization;
 using ClipboardMachinery.Windows.Shell;
+using CommandLine;
 using Onova;
 using Onova.Services;
 
@@ -43,10 +44,10 @@ namespace ClipboardMachinery.Plumbing.Installers {
                 Component
                     .For<UpdateManager>()
                     .Instance(new UpdateManager(
-                        new GithubPackageResolver(AppBootstrapper.REPOSITORY_OWNER, AppBootstrapper.REPOSITORY_NAME, "ClipboardMachinery-*.zip"),
+                        GetPackageResolver(container.Resolve<LaunchOptions>()),
                         new ZipPackageExtractor()
                     ))
-                    .Named("GithubUpdateManager")
+                    .Named("ApplicationUpdateManager")
                     .LifestyleSingleton()
             );
 
@@ -56,6 +57,14 @@ namespace ClipboardMachinery.Plumbing.Installers {
                     .ImplementedBy<ShellViewModel>()
                     .LifestyleSingleton()
             );
+        }
+
+        private IPackageResolver GetPackageResolver(LaunchOptions launchOptions) {
+            if (string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch)) {
+                return new GithubPackageResolver(AppBootstrapper.REPOSITORY_OWNER, AppBootstrapper.REPOSITORY_NAME, "ClipboardMachinery-*.zip");
+            }
+
+            return new AppVeyorPackageResolver(AppBootstrapper.REPOSITORY_OWNER, AppBootstrapper.REPOSITORY_NAME, "ClipboardMachinery%2FClipboardMachinery%2Fbin%2FClipboardMachinery-{0}.zip", launchOptions.UpdaterBranch);
         }
 
     }

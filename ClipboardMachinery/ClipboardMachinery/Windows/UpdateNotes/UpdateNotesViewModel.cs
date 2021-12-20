@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Markdig;
-using Markdig.Extensions.AutoLinks;
-using Markdig.Extensions.MediaLinks;
 using Newtonsoft.Json;
 
 namespace ClipboardMachinery.Windows.UpdateNotes {
@@ -95,9 +93,9 @@ namespace ClipboardMachinery.Windows.UpdateNotes {
 
             try {
                 await Task.Run(async () => {
-                    string rawResponce = await MakeRequestAsync(Address);
-                    dynamic jsonResponce = JsonConvert.DeserializeObject(rawResponce);
-                    Content = (string) jsonResponce.body;
+                    string rawResponse= await MakeRequestAsync(Address);
+                    dynamic jsonResponse = JsonConvert.DeserializeObject(rawResponse);
+                    Content = (string)jsonResponse.body;
                 });
             } catch (Exception) {
                 Content = $"Unable to load release notes for version {tagVersion}.";
