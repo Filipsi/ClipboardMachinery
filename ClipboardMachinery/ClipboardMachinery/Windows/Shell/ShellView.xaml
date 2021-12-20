@@ -32,10 +32,16 @@
             Path="IsVisible" />
     </Window.Visibility>
 
-    <Grid Width="{Binding Path=AppWidth}" MinWidth="540">
-        <local:RotatingGear Height="64" VerticalAlignment="Top" />
+    <Grid
+        Width="{Binding Path=AppWidth}"
+        MinWidth="540">
+        <local:RotatingGear
+            Height="64"
+            VerticalAlignment="Top" />
 
-        <Grid Margin="0,32,0,0" VerticalAlignment="Top">
+        <Grid
+            Margin="0,32,0,0"
+            VerticalAlignment="Top">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="32" />
@@ -62,8 +68,12 @@
                 BorderThickness="1,0">
 
                 <Grid>
-                    <ContentControl x:Name="ActiveItem" IsTabStop="False" />
-                    <ContentControl x:Name="DialogOverlayPortal" IsTabStop="False" />
+                    <ContentControl
+                        x:Name="ActiveItem"
+                        IsTabStop="False" />
+                    <ContentControl
+                        x:Name="DialogOverlayPortal"
+                        IsTabStop="False" />
                 </Grid>
             </Border>
 
@@ -105,7 +115,9 @@
                                 </Hyperlink.ToolTip>
                             </Hyperlink>
 
-                            <Run Foreground="Gray" Text="|" />
+                            <Run
+                                Foreground="Gray"
+                                Text="|" />
 
                             <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/projects">
                                 Roadmap
@@ -116,7 +128,9 @@
                                 </Hyperlink.ToolTip>
                             </Hyperlink>
 
-                            <Run Foreground="Gray" Text="|" />
+                            <Run
+                                Foreground="Gray"
+                                Text="|" />
 
                             <Hyperlink NavigateUri="https://www.paypal.me/Filipsi">
                                 Support project
@@ -127,7 +141,9 @@
                                 </Hyperlink.ToolTip>
                             </Hyperlink>
 
-                            <Run Foreground="Gray" Text="|" />
+                            <Run
+                                Foreground="Gray"
+                                Text="|" />
                         </TextBlock>
 
                         <ContentControl

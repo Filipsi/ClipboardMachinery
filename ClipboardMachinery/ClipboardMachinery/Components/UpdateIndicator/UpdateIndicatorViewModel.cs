@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Castle.Core.Logging;
+using ClipboardMachinery.Plumbing;
 using ClipboardMachinery.Plumbing.Factories;
 using ClipboardMachinery.Windows.UpdateNotes;
 using Onova;
@@ -57,7 +58,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
             }
         }
 
-        internal IndicatorState State {
+        public IndicatorState State {
             get => state;
             private set {
                 if (state == value) {
@@ -72,15 +73,17 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
             }
         }
 
-        public bool CanHandleInteraction =>
-            State == IndicatorState.UP_TO_DATE ||
-            State == IndicatorState.REFRESH_FAILED ||
-            State ==  IndicatorState.UPDATE_FAILED ||
-            State == IndicatorState.UPDATE_AVAILABLE ||
-            State == IndicatorState.UPDATE_READY;
+        public bool CanHandleInteraction {
+            get => State == IndicatorState.UP_TO_DATE ||
+                State == IndicatorState.REFRESH_FAILED ||
+                State == IndicatorState.UPDATE_FAILED ||
+                State == IndicatorState.UPDATE_AVAILABLE ||
+                State == IndicatorState.UPDATE_READY;
+        }
 
-        public Cursor InteractionType
-            => CanHandleInteraction ? Cursors.Hand : Cursors.Arrow;
+        public Cursor InteractionType {
+            get => CanHandleInteraction ? Cursors.Hand : Cursors.Arrow;
+        }
 
         #endregion
 
@@ -92,6 +95,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
         private static readonly SolidColorBrush updateReadyColor = Application.Current.FindResource("ElementFavoriteBrush") as SolidColorBrush;
 
         private readonly UpdateManager updateManager;
+        private readonly LaunchOptions launchOptions;
         private readonly IWindowManager windowManager;
         private readonly IWindowFactory windowFactory;
         private readonly Timer refresh;
@@ -104,8 +108,9 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
         #endregion
 
-        public UpdateIndicatorViewModel(UpdateManager updateManager, IWindowManager windowManager, IWindowFactory windowFactory) {
+        public UpdateIndicatorViewModel(UpdateManager updateManager, LaunchOptions launchOptions, IWindowManager windowManager, IWindowFactory windowFactory) {
             this.updateManager = updateManager;
+            this.launchOptions = launchOptions;
             this.windowManager = windowManager;
             this.windowFactory = windowFactory;
 
@@ -160,7 +165,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                 return;
             }
 
-            if (lastUpdateCheckResult.CanUpdate) {
+            if (App.CurrentVersion != lastUpdateCheckResult.LastVersion) {
                 Logger.Info($"Found update to version '{lastUpdateCheckResult.LastVersion}'! Current application version is '{App.CurrentVersion.ToString(3)}'.");
                 State = IndicatorState.UPDATE_AVAILABLE;
                 return;
@@ -280,9 +285,8 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
                 case IndicatorState.UPDATE_AVAILABLE:
                     State = IndicatorState.UPDATE_AWAITING_CONFIRMATION;
-                    UpdateNotesViewModel updateNotes = windowFactory.CreateUpdateNotesWindow(lastUpdateCheckResult.LastVersion);
 
-                    if (await windowManager.ShowDialogAsync(updateNotes) == true) {
+                    if (await ConfirmUpdateDownload(lastUpdateCheckResult.LastVersion)) {
                         // Change state to indicate start of update download
                         State = IndicatorState.UPDATE_DOWNLOAD;
                         Logger.Info($"Downloading update to version '{lastUpdateCheckResult.LastVersion}'...");
@@ -297,7 +301,6 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                         } catch (Exception ex) {
                             State = IndicatorState.UPDATE_FAILED;
                             Logger.Error("Failed while downloading application update!", ex);
-                            windowFactory.Release(updateNotes);
                             downloadProgress.ProgressChanged -= OnDownloadProgressProgressChanged;
                             break;
                         }
@@ -308,7 +311,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
                     // Release the dialog and refresh updater state
                     Logger.Info("Update package successfully downloaded, refreshing...");
-                    windowFactory.Release(updateNotes);
+
                     await CheckForUpdates();
                     break;
 
@@ -318,6 +321,17 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
                     Application.Current.Shutdown();
                     break;
             }
+        }
+
+        private async Task<bool> ConfirmUpdateDownload(Version version) {
+            if (!string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch)) {
+                return true;
+            }
+
+            UpdateNotesViewModel updateNotes = windowFactory.CreateUpdateNotesWindow(version);
+            bool? result = await windowManager.ShowDialogAsync(updateNotes);
+            windowFactory.Release(updateNotes);
+            return result == true;
         }
 
         #endregion

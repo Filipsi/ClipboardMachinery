@@ -5,10 +5,13 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using Castle.Core.Logging;
 using Castle.Facilities.TypedFactory;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using ClipboardMachinery.Plumbing.Customization;
+using CommandLine;
+using Parser = CommandLine.Parser;
 
 namespace ClipboardMachinery.Plumbing {
 
@@ -27,10 +30,18 @@ namespace ClipboardMachinery.Plumbing {
         #region Bootstrapper
 
         public AppBootstrapper() {
+            // Parse launch options and add them to the container
+            Parser.Default
+                .ParseArguments<LaunchOptions>(Environment.GetCommandLineArgs())
+                .WithParsed(options => container.Register(Component.For<LaunchOptions>().Instance(options).LifestyleSingleton()))
+                .WithNotParsed(errors => container.Register(Component.For<LaunchOptions>().Instance(new LaunchOptions()).LifestyleSingleton()));
+
             Initialize();
         }
 
         protected override void Configure() {
+ 
+
             container
                 .Kernel
                 .Resolver
