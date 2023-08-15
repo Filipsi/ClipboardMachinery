@@ -28,7 +28,7 @@ artifacts:
 deploy:
   provider: GitHub
   auth_token:
-    secure: o6+A63J2X3TlacatcCXPh195CacVe6n1caG0S1uupeKw7Mzh+aMZ3ihKNUKbht0G
+    secure: O41NF5QmjIQEBgMrqkh+/k88YnPmao8ZXj2p4WcTFVZ+CTW7WERbsZqokwnAsk6H
   release: $(APPVEYOR_PROJECT_NAME) $(APPVEYOR_BUILD_VERSION)
   tag: $(APPVEYOR_BUILD_VERSION)
   draft: true
