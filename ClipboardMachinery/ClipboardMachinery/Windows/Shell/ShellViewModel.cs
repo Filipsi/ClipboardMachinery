@@ -57,10 +57,11 @@ namespace ClipboardMachinery.Windows.Shell {
         }
 
         public string AppVersion {
-            get {
-                string version = App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
-                return string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch) ? version : $"{version} ({launchOptions.UpdaterBranch})";
-            }
+            get => App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
+        }
+
+        public string UpdaterBranch {
+            get => !string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch) ? launchOptions.UpdaterBranch : null;
         }
 
         public double AppWidth {
@@ -88,7 +89,7 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IClipboardService clipboardService;
         private readonly IContentDisplayResolver contentDisplayResolver;
         private readonly LaunchOptions launchOptions;
-        private readonly HotKey visiblitiyKeyBind;
+        private readonly HotKey visibilityKeyBind;
 
         private bool isVisible = true;
         private string lastAcceptedClipContent;
@@ -119,7 +120,7 @@ namespace ClipboardMachinery.Windows.Shell {
             UpdateIndicator.ConductWith(this);
 
             // HotKeys
-            visiblitiyKeyBind = hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisiblityToggle);
+            visibilityKeyBind = hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisibilityToggle);
 
             // Clipboard
             clipboardService.ClipboardChanged += OnClipboardChanged;
@@ -134,7 +135,7 @@ namespace ClipboardMachinery.Windows.Shell {
         #region Handlers
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
-            visiblitiyKeyBind.Unregister();
+            visibilityKeyBind.Unregister();
             clipboardService.ClipboardChanged -= OnClipboardChanged;
             Navigator.ExitButtonClicked -= OnNavigatorExitButtonClicked;
             Navigator.PropertyChanged -= OnNavigatorPropertyChanged;
@@ -150,7 +151,7 @@ namespace ClipboardMachinery.Windows.Shell {
             return Task.CompletedTask;
         }
 
-        private void OnAppVisiblityToggle(HotKey key) {
+        private void OnAppVisibilityToggle(HotKey key) {
             IsVisible = !IsVisible;
         }
 

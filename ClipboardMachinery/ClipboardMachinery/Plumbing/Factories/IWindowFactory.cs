@@ -7,7 +7,7 @@ namespace ClipboardMachinery.Plumbing.Factories {
 
         UpdateNotesViewModel CreateUpdateNotesWindow(Version tagVersion);
 
-        void Release(UpdateNotesViewModel UpdateNotesVm);
+        void Release(UpdateNotesViewModel updateNotes);
 
     }
 
