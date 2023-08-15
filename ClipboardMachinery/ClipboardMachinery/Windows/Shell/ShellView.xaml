@@ -132,7 +132,7 @@
                                 Foreground="Gray"
                                 Text="|" />
 
-                            <Hyperlink NavigateUri="https://www.paypal.me/Filipsi">
+                            <Hyperlink NavigateUri="https://ko-fi.com/filipsi">
                                 Support project
                                 <Hyperlink.ToolTip>
                                     <ToolTip>
