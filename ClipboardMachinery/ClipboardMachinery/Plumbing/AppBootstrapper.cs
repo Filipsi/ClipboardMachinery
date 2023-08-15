@@ -40,8 +40,6 @@ namespace ClipboardMachinery.Plumbing {
         }
 
         protected override void Configure() {
- 
-
             container
                 .Kernel
                 .Resolver
@@ -74,6 +72,7 @@ namespace ClipboardMachinery.Plumbing {
             // Gracefully shut down the application
             // This is needed to remove pinvoke hooks
             e.Handled = true;
+
             Application.Shutdown();
         }
 
