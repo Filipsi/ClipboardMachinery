@@ -119,7 +119,7 @@
                                 Foreground="Gray"
                                 Text="|" />
 
-                            <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/projects">
+                            <Hyperlink NavigateUri="https://github.com/Filipsi/ClipboardMachinery/projects/1">
                                 Roadmap
                                 <Hyperlink.ToolTip>
                                     <ToolTip>
@@ -133,7 +133,7 @@
                                 Text="|" />
 
                             <Hyperlink NavigateUri="https://ko-fi.com/filipsi">
-                                Support project
+                                Support
                                 <Hyperlink.ToolTip>
                                     <ToolTip>
                                         Do you want to support this passion project? Buy me a cup of coffee.
