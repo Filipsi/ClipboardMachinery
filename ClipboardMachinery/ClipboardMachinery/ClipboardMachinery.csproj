@@ -178,6 +178,7 @@
     <Compile Include="Common\Converters\StringToUriConverter.cs" />
     <Compile Include="Common\Converters\TextWidthTheasholdConverter.cs" />
     <Compile Include="Common\Helpers\ComparisonComparer.cs" />
+    <Compile Include="Common\Helpers\FocusManager.cs" />
     <Compile Include="Common\Helpers\HyperlinkExtensions.cs" />
     <Compile Include="Common\Helpers\ComboBoxItemTemplateSelector.cs" />
     <Compile Include="Common\Converters\ColorToSolidBrushConverter.cs" />

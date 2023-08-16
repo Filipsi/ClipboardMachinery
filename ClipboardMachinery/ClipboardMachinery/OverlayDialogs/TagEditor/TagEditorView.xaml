@@ -7,9 +7,9 @@
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:converters="clr-namespace:ClipboardMachinery.Common.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:ClipboardMachinery.Common.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Root"
-    Height="185"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
@@ -59,8 +59,8 @@
             <Grid>
                 <TextBox
                     x:Name="TagTextBox"
-                    IsReadOnly="True"
                     IsEnabled="{Binding IsCreatingNew}"
+                    IsReadOnly="True"
                     Text="{Binding Tag, NotifyOnValidationError=True, UpdateSourceTrigger=LostFocus, ValidatesOnNotifyDataErrors=True}" />
 
                 <Popup Height="192">
@@ -120,7 +120,9 @@
                 </ContentControl.Style>
             </ContentControl>
 
-            <TextBox Text="{Binding Value, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
+            <TextBox
+                helpers:FocusManager.FocusOnLoad="True"
+                Text="{Binding Value, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" />
 
         </StackPanel>
     </Grid>

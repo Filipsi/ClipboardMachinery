@@ -47,6 +47,7 @@
                 Text="Name" />
 
             <TextBox
+                helpers:FocusManager.FocusOnLoad="{Binding IsCreatingNew}"
                 IsEnabled="{Binding IsCreatingNew}"
                 Text="{Binding Name, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
