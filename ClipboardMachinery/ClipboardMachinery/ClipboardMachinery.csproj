@@ -308,7 +308,6 @@
     <Compile Include="Pages\Favorites\FavoritesViewModel.cs" />
     <Compile Include="Pages\History\HistoryViewModel.cs" />
     <Compile Include="Components\Clip\ClipViewModel.cs" />
-    <Compile Include="Pages\Search\SearchViewModel.cs" />
     <Compile Include="Components\Navigator\NavigatorView.xaml.cs">
       <DependentUpon>NavigatorView.xaml</DependentUpon>
     </Compile>
@@ -323,9 +322,6 @@
     </Compile>
     <Compile Include="Components\Clip\ClipView.xaml.cs">
       <DependentUpon>ClipView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Search\SearchView.xaml.cs">
-      <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\UpdateNotes\UpdateNotesView.xaml.cs">
       <DependentUpon>UpdateNotesView.xaml</DependentUpon>
@@ -503,10 +499,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Clip\ClipView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Search\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
