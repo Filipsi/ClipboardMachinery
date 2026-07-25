@@ -10,13 +10,14 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: write
-    env:
-      VERSION: 1.2.${{ 65 + github.run_number }}
 
     steps:
       - uses: actions/checkout@v5
 
       - uses: microsoft/setup-msbuild@v2
+
+      - name: Resolve version
+        run: echo "VERSION=1.2.$(65 + [int]$env:GITHUB_RUN_NUMBER)" >> $env:GITHUB_ENV
 
       - name: Patch assembly version
         run: |
