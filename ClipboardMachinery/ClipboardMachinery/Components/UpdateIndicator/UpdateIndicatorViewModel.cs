@@ -241,7 +241,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
         #region Handlers
 
-        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+        protected override Task OnActivatedAsync(CancellationToken cancellationToken) {
             if (refresh != null) {
                 refresh.Enabled = true;
             }
@@ -252,7 +252,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
             // Initial check for updates
             Task.Run(CheckForUpdates, cancellationToken);
 
-            return base.OnActivateAsync(cancellationToken);
+            return base.OnActivatedAsync(cancellationToken);
         }
 
         private async void OnRefreshTimerTick(object sender, ElapsedEventArgs e) {

@@ -234,9 +234,9 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
 
         #region Handlers
 
-        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+        protected override Task OnActivatedAsync(CancellationToken cancellationToken) {
             SelectedTagKind = tagKindManager.GetSchemaFor(Model.Kind);
-            return base.OnActivateAsync(cancellationToken);
+            return base.OnActivatedAsync(cancellationToken);
         }
 
         internal override void OnValidationProcessCompleted() {

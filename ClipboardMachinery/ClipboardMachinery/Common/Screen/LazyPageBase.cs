@@ -127,7 +127,7 @@ namespace ClipboardMachinery.Common.Screen {
 
         #region Handlers
 
-        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+        protected override Task OnActivatedAsync(CancellationToken cancellationToken) {
             // Initial item load after page activates.
             // This logic was moved here from RemainingScrollableHeight property, to prevent item pre-loading.
             StartLoadingBatch(cancellationToken);

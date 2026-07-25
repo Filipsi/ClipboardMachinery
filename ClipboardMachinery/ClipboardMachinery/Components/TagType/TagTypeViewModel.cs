@@ -59,9 +59,9 @@ namespace ClipboardMachinery.Components.TagType {
 
         #region Handlers
 
-        protected override Task OnActivateAsync(CancellationToken cancellationToken) {
+        protected override Task OnActivatedAsync(CancellationToken cancellationToken) {
             Model.PropertyChanged += OnModelPropertyChanged;
-            return base.OnActivateAsync(cancellationToken);
+            return base.OnActivatedAsync(cancellationToken);
         }
 
         protected override Task OnDeactivateAsync(bool close, CancellationToken cancellationToken) {
