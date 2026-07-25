@@ -95,7 +95,6 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
         private static readonly SolidColorBrush updateReadyColor = Application.Current.FindResource("ElementFavoriteBrush") as SolidColorBrush;
 
         private readonly UpdateManager updateManager;
-        private readonly LaunchOptions launchOptions;
         private readonly IWindowManager windowManager;
         private readonly IWindowFactory windowFactory;
         private readonly Timer refresh;
@@ -108,9 +107,8 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
         #endregion
 
-        public UpdateIndicatorViewModel(UpdateManager updateManager, LaunchOptions launchOptions, IWindowManager windowManager, IWindowFactory windowFactory) {
+        public UpdateIndicatorViewModel(UpdateManager updateManager, IWindowManager windowManager, IWindowFactory windowFactory) {
             this.updateManager = updateManager;
-            this.launchOptions = launchOptions;
             this.windowManager = windowManager;
             this.windowFactory = windowFactory;
 
@@ -233,7 +231,7 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
 
                 case IndicatorState.UPDATE_READY:
                     StatusColor = updateReadyColor;
-                    DisplayText = string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch) ? "Update is ready to be installed! Click here to restart." : "Update is ready to be installed!";
+                    DisplayText = "Update is ready to be installed! Click here to restart.";
                     IsLoading = false;
                     break;
             }
@@ -330,10 +328,6 @@ namespace ClipboardMachinery.Components.UpdateIndicator {
         }
 
         private async Task<bool> ConfirmUpdateDownload(Version version) {
-            if (!string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch)) {
-                return true;
-            }
-
             UpdateNotesViewModel updateNotes = windowFactory.CreateUpdateNotesWindow(version);
             bool? result = await windowManager.ShowDialogAsync(updateNotes);
             windowFactory.Release(updateNotes);

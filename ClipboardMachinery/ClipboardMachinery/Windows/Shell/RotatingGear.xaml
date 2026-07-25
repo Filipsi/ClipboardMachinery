@@ -12,7 +12,9 @@
         <Rectangle.Fill>
             <VisualBrush Stretch="Uniform">
                 <VisualBrush.Visual>
-                    <Path Data="{StaticResource IconGear}" Fill="{StaticResource PanelControlBrush}" />
+                    <Path
+                        Data="{StaticResource IconGear}"
+                        Fill="{StaticResource PanelControlBrush}" />
                 </VisualBrush.Visual>
             </VisualBrush>
         </Rectangle.Fill>

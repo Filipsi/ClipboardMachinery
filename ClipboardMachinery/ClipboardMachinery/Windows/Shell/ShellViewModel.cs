@@ -60,10 +60,6 @@ namespace ClipboardMachinery.Windows.Shell {
             get => App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
         }
 
-        public string UpdaterBranch {
-            get => !string.IsNullOrWhiteSpace(launchOptions.UpdaterBranch) ? launchOptions.UpdaterBranch : null;
-        }
-
         public double AppWidth {
             get => SystemParameters.PrimaryScreenWidth / 3;
         }
@@ -88,7 +84,6 @@ namespace ClipboardMachinery.Windows.Shell {
         private readonly IDataRepository dataRepository;
         private readonly IClipboardService clipboardService;
         private readonly IContentDisplayResolver contentDisplayResolver;
-        private readonly LaunchOptions launchOptions;
         private readonly HotKey visibilityKeyBind;
 
         private bool isVisible = true;
@@ -99,12 +94,11 @@ namespace ClipboardMachinery.Windows.Shell {
         public ShellViewModel(
             IEventAggregator eventAggregator, NavigatorViewModel navigator, UpdateIndicatorViewModel updateIndicator,
             IDialogOverlayManager dialogOverlayManager, IHotKeyService hotKeyService, IClipboardService clipboardService,
-            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver, LaunchOptions launchOptions)  {
+            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver)  {
 
             this.eventAggregator = eventAggregator;
             this.clipboardService = clipboardService;
             this.contentDisplayResolver = contentDisplayResolver;
-            this.launchOptions = launchOptions;
             Logger = NullLogger.Instance;
 
             // Data repository
