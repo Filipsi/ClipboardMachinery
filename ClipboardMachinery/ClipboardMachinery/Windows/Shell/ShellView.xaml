@@ -143,6 +143,7 @@
                         </TextBlock>
 
                         <TextBlock
+                            Margin="4,0,0,0"
                             VerticalAlignment="Center"
                             FontSize="13"
                             Foreground="Gray"
