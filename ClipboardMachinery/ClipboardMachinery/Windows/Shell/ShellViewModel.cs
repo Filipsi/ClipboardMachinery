@@ -60,6 +60,10 @@ namespace ClipboardMachinery.Windows.Shell {
             get => App.CurrentVersion == App.DevelopmentVersion ? "DEVELOPMENT" : App.CurrentVersion.ToString(3);
         }
 
+        public bool IsUpdaterEnabled {
+            get;
+        }
+
         public double AppWidth {
             get => SystemParameters.PrimaryScreenWidth / 3;
         }
@@ -94,7 +98,7 @@ namespace ClipboardMachinery.Windows.Shell {
         public ShellViewModel(
             IEventAggregator eventAggregator, NavigatorViewModel navigator, UpdateIndicatorViewModel updateIndicator,
             IDialogOverlayManager dialogOverlayManager, IHotKeyService hotKeyService, IClipboardService clipboardService,
-            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver)  {
+            IDataRepository dataRepository, IContentDisplayResolver contentDisplayResolver, LaunchOptions launchOptions)  {
 
             this.eventAggregator = eventAggregator;
             this.clipboardService = clipboardService;
@@ -110,8 +114,13 @@ namespace ClipboardMachinery.Windows.Shell {
             DialogOverlayPortal.ConductWith(this);
 
             // Update indicator
+            // NOTE: Not conducting it keeps it deactivated, so it never checks for updates.
+            IsUpdaterEnabled = !launchOptions.DisableUpdater;
             UpdateIndicator = updateIndicator;
-            UpdateIndicator.ConductWith(this);
+
+            if (IsUpdaterEnabled) {
+                UpdateIndicator.ConductWith(this);
+            }
 
             // HotKeys
             visibilityKeyBind = hotKeyService.Register(Key.H, KeyModifier.Ctrl, OnAppVisibilityToggle);

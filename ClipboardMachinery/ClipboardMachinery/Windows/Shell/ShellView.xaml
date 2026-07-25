@@ -140,17 +140,21 @@
                                     </ToolTip>
                                 </Hyperlink.ToolTip>
                             </Hyperlink>
-
-                            <Run
-                                Foreground="Gray"
-                                Text="|" />
                         </TextBlock>
+
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="13"
+                            Foreground="Gray"
+                            Text="|"
+                            Visibility="{Binding IsUpdaterEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <ContentControl
                             x:Name="UpdateIndicator"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Stretch"
-                            FontSize="13" />
+                            FontSize="13"
+                            Visibility="{Binding IsUpdaterEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
 
                     <StackPanel
