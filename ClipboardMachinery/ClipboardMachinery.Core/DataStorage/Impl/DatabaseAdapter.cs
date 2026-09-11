@@ -55,9 +55,9 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             );
 
             // Initialize tables
-            EnsureTable<Clip>();
-            EnsureTable<Tag>();
-            EnsureTable<TagType>();
+            EnsureTable<ClipEntity>();
+            EnsureTable<TagEntity>();
+            EnsureTable<TagTypeEntity>();
 
             // Upgrade database if necessary
             using (IServiceScope scope = SetupFluentMigratorServices().CreateScope()) {
@@ -65,8 +65,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             // Make sure that  all system owned tag types are in the database
-            foreach (TagType systemTagType in SystemTagTypes.TagTypes) {
-                if (Connection.Exists<TagType>(new {systemTagType.Name})) {
+            foreach (TagTypeEntity systemTagType in SystemTagTypes.TagTypes) {
+                if (Connection.Exists<TagTypeEntity>(new {systemTagType.Name})) {
                     continue;
                 }
 

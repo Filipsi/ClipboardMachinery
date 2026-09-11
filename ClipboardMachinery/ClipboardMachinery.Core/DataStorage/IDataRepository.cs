@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using ClipboardMachinery.Core.DataStorage.Impl;
+using ClipboardMachinery.Core.DataStorage.Schema;
 using ClipboardMachinery.Core.TagKind;
+using System.Windows.Media;
 
 namespace ClipboardMachinery.Core.DataStorage {
 
@@ -25,12 +26,11 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <summary>
         /// Create new clip with specified values and insert it into repository.
         /// </summary>
-        /// <typeparam name="T">A type of data model that created clip instance will be mapped to and returned back</typeparam>
         /// <param name="content">Content of a clip</param>
         /// <param name="contentPresenter">Id of an presenter used to display the content</param>
         /// <param name="tags">Tags that clip have in format name=value</param>
-        /// <returns>An instance of created clip mapped to T model</returns>
-        Task<T> CreateClip<T>(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null);
+        /// <returns>The created clip entity</returns>
+        Task<ClipEntity> CreateClip(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null);
 
         /// <summary>
         /// Update content presenter of the specified clip id.
@@ -50,20 +50,18 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// Create new tag for a clip.
         /// When TagType specified by the name does not exist, it will be created with supplied value type used as a data type.
         /// </summary>
-        /// <typeparam name="T">A type of data model that created tag instance will be mapped to and returned back</typeparam>
         /// <param name="clipId">Id of a clip that this tag is related to</param>
         /// <param name="tagType">Name of the tag that should be created. This corresponds to tag type definition.</param>
         /// <param name="value">Value of the tag that will be created. If TagType specified by the name does not exist, this value data type will be used as newly created TagType's data type.</param>
-        /// <returns>An instance of created tag mapped to T model</returns>
-        Task<T> CreateTag<T>(int clipId, string tagType, object value);
+        /// <returns>The created tag entity, or null when the value could not be persisted</returns>
+        Task<TagEntity> CreateTag(int clipId, string tagType, object value);
 
         /// <summary>
         /// Attempts to find a Tag based on it's id property.
         /// </summary>
-        /// <typeparam name="T">Type of data model that found tag type instance will be mapped to and returned back.</typeparam>
         /// <param name="tagId">Id of a tag that should be found.</param>
-        /// <returns>An instance of tag mapped to T</returns>
-        Task<T> FindTag<T>(int tagId);
+        /// <returns>The matching tag entity, or null when there is none</returns>
+        Task<TagEntity> FindTag(int tagId);
 
         /// <summary>
         /// Update value of tag with corresponding id.
@@ -85,19 +83,18 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         /// <param name="batchSize">Size of a batch of tag types</param>
         /// <returns>A instance of lazy tag type provider</returns>
-        ILazyDataProvider CreateLazyTagTypeProvider(int batchSize);
+        ILazyDataProvider<TagTypeEntity> CreateLazyTagTypeProvider(int batchSize);
 
         /// <summary>
         /// Create a new tag type with given properties.
         /// </summary>
-        /// <typeparam name="T">Type of data model that created tag instance will be mapped to and returned back.</typeparam>
         /// <param name="name">A name of newly created tag type.</param>
         /// <param name="description">Description for newly created tag type.</param>
         /// <param name="kind">A type of values that can be accepted by this tag type, the actual parsing logic is handled by corresponding <see cref="ITagKindSchema"/> implementation.</param>
         /// <param name="priority">Display priority of the tag type</param>
         /// <param name="color">A color of newly created tag type, if color is not specified a default color will be used <see cref="SystemTagTypes.DefaultColor"/>.</param>
-        /// <returns>An instance of created tag type mapped to T model</returns>
-        Task<T> CreateTagType<T>(string name, string description, Type kind, byte priority = 0, Color? color = null);
+        /// <returns>The created tag type entity, or null when the name is already taken</returns>
+        Task<TagTypeEntity> CreateTagType(string name, string description, Type kind, byte priority = 0, Color? color = null);
 
         /// <summary>
         /// Determinants whenever there is a tag type with given name.
@@ -109,10 +106,9 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// <summary>
         /// Attempts to find a TagType based on it's name property.
         /// </summary>
-        /// <typeparam name="T">Type of data model that found tag type instance will be mapped to and returned back.</typeparam>
         /// <param name="name">Name of a tag type that should be found.</param>
-        /// <returns>An instance of tag type mapped to T</returns>
-        Task<T> FindTagType<T>(string name);
+        /// <returns>The matching tag type entity, or null when there is none</returns>
+        Task<TagTypeEntity> FindTagType(string name);
 
         /// <summary>
         /// Updates TagType with corresponding name (primary key).

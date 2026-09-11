@@ -68,7 +68,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Caliburn.Micro" Version="5.0.258" />
     <PackageReference Include="Caliburn.Micro.Core" Version="5.0.258" />
     <PackageReference Include="Castle.Windsor" Version="6.0.0" />
@@ -220,7 +219,7 @@
       <DependentUpon>TagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Tag\TagViewModel.cs" />
-    <Compile Include="Plumbing\Installers\MappingInstaller.cs" />
+    <Compile Include="Common\Mapping\ModelMapping.cs" />
     <Compile Include="Components\Navigator\IScreenPage.cs" />
     <Compile Include="Plumbing\IShell.cs" />
     <Compile Include="Components\Clip\ClipModel.cs" />

@@ -8,6 +8,7 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using Castle.Core;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Mapping;
 using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Clip;
@@ -105,7 +106,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
                 tag = value;
 
                 Task.Run(async () => {
-                    TagTypeModel tagType = await dataRepository.FindTagType<TagTypeModel>(Tag);
+                    TagTypeModel tagType = (await dataRepository.FindTagType(Tag)).ToModel();
 
                     if (TagKind != null) {
                         tagKindFactory.Release(TagKind);
@@ -294,7 +295,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagEditor {
 
             // Create new tag or update values if changed
             if (IsCreatingNew) {
-                TagModel newModel = await dataRepository.CreateTag<TagModel>(targetClip.Id, Tag, Value);
+                TagModel newModel = (await dataRepository.CreateTag(targetClip.Id, Tag, Value)).ToModel();
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTagAddedEvent(targetClip.Id, newModel));
 
             } else {

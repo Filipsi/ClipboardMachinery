@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using Castle.Core;
 using Castle.Core.Logging;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Mapping;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.Buttons.ToggleButton;
 using ClipboardMachinery.Components.ContentPresenter;
@@ -336,11 +337,11 @@ namespace ClipboardMachinery.Components.Clip {
 
             return Task.Run(async () => {
                 if (categoryTags.Length == 0) {
-                    TagModel favoriteTag = await dataRepository.CreateTag<TagModel>(
+                    TagModel favoriteTag = (await dataRepository.CreateTag(
                         clipId: Model.Id,
                         tagType: SystemTagTypes.CategoryTagType.Name,
                         value: "favorite"
-                    );
+                    )).ToModel();
 
                     await eventAggregator.PublishOnUIThreadAsync(TagEvent.CreateTagAddedEvent(Model.Id, favoriteTag));
                 } else {

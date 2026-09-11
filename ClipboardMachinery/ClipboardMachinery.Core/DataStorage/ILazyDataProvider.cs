@@ -21,13 +21,16 @@ namespace ClipboardMachinery.Core.DataStorage {
         /// </summary>
         int Offset { get; set; }
 
+    }
+
+    public interface ILazyDataProvider<T> : ILazyDataProvider {
+
         /// <summary>
         /// Query database for a batch of entries with internal offset to retrieve history items.
         /// After successful query moves offset counter by batch size.
         /// </summary>
-        /// <typeparam name="TM">Type of model that the query instance should be mapped to and returned back</typeparam>
-        /// <returns>An enumerable of queried entries mapped to M model</returns>
-        Task<IEnumerable<TM>> GetNextBatchAsync<TM>();
+        /// <returns>An enumerable of queried entries</returns>
+        Task<IEnumerable<T>> GetNextBatchAsync();
 
     }
 

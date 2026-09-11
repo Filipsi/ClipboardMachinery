@@ -7,7 +7,7 @@ using ServiceStack.OrmLite;
 
 namespace ClipboardMachinery.Core.DataStorage.Impl {
 
-    public class ClipLazyProvider : GenericLazyProvider<Clip> {
+    public class ClipLazyProvider : GenericLazyProvider<ClipEntity> {
 
         #region Fields
 
@@ -36,31 +36,31 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #region Lifecycle
 
-        protected override Task OnQueryBuildingStarts(SqlExpression<Clip> query) {
+        protected override Task OnQueryBuildingStarts(SqlExpression<ClipEntity> query) {
             // NOTE: More in-depth implementation will be needed once we start working on search.
             if (!string.IsNullOrEmpty(filteredTagName) && !string.IsNullOrEmpty(filteredTagValue)) {
                 query
-                    .LeftJoin<Tag>()
-                    .Join<Tag, TagType>()
-                    .Where<Tag>(tag => tag.Type.Name == filteredTagName && tag.Value.ToString() == filteredTagValue);
+                    .LeftJoin<TagEntity>()
+                    .Join<TagEntity, TagTypeEntity>()
+                    .Where<TagEntity>(tag => tag.Type.Name == filteredTagName && tag.Value.ToString() == filteredTagValue);
             }
 
             return base.OnQueryBuildingStarts(query);
         }
 
-        protected override Task OnQueryOrdering(SqlExpression<Clip> query) {
+        protected override Task OnQueryOrdering(SqlExpression<ClipEntity> query) {
             // Order clips by ID column
             query.OrderByDescending(clip => clip.Id);
             return Task.CompletedTask;
         }
 
-        protected override async Task OnBatchLoaded(IDbConnection db, List<Clip> batch) {
+        protected override async Task OnBatchLoaded(IDbConnection db, List<ClipEntity> batch) {
             await base.OnBatchLoaded(db, batch);
 
             // Go thought every single clip in the batch
-            foreach (Clip clip in batch.Where(clip => clip.Tags != null)) {
+            foreach (ClipEntity clip in batch.Where(clip => clip.Tags != null)) {
                 // Load nested references for clip tags
-                foreach (Tag tag in clip.Tags) {
+                foreach (TagEntity tag in clip.Tags) {
                     await db.LoadReferencesAsync(tag);
                 }
 

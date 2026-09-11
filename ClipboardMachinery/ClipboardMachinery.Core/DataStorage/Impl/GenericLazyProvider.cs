@@ -6,7 +6,7 @@ using ServiceStack.OrmLite;
 
 namespace ClipboardMachinery.Core.DataStorage.Impl {
 
-    public class GenericLazyProvider<T> : ILazyDataProvider {
+    public class GenericLazyProvider<T> : ILazyDataProvider<T> {
 
         #region Properties
 
@@ -31,7 +31,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #region Logic
 
-        public async Task<IEnumerable<TM>> GetNextBatchAsync<TM>() {
+        public async Task<IEnumerable<T>> GetNextBatchAsync() {
             // Keep reference to database connection
             IDbConnection db = dataRepository.Database.Connection;
 
@@ -57,8 +57,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // Move offset of lazy loader
             Offset += entries.Count;
 
-            // Map T results to desired models
-            return dataRepository.Mapper.Map<TM[]>(entries);
+            return entries;
         }
 
         #endregion

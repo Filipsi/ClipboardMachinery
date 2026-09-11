@@ -10,7 +10,7 @@ using Nito.Mvvm;
 
 namespace ClipboardMachinery.Common.Screen {
 
-    public abstract class LazyPageBase<TVM, TM> : Conductor<TVM>.Collection.AllActive where TVM : class, IScreen where TM : class {
+    public abstract class LazyPageBase<TVM, TE> : Conductor<TVM>.Collection.AllActive where TVM : class, IScreen where TE : class {
 
         #region Properties
 
@@ -55,7 +55,7 @@ namespace ClipboardMachinery.Common.Screen {
             }
         }
 
-        protected ILazyDataProvider DataProvider {
+        protected ILazyDataProvider<TE> DataProvider {
             get;
         }
 
@@ -72,14 +72,14 @@ namespace ClipboardMachinery.Common.Screen {
 
         #endregion
 
-        protected LazyPageBase(ILazyDataProvider dataProvider) {
+        protected LazyPageBase(ILazyDataProvider<TE> dataProvider) {
             Items.CollectionChanged += OnItemsCollectionChanged;
             DataProvider = dataProvider;
         }
 
         #region Exposed logic
 
-        protected abstract TVM CreateItem(TM model);
+        protected abstract TVM CreateItem(TE entity);
 
         protected abstract void ReleaseItem(TVM instance);
 
@@ -95,8 +95,8 @@ namespace ClipboardMachinery.Common.Screen {
         #region Logic
 
         private async Task LoadDataBatch() {
-            foreach (TM model in await DataProvider.GetNextBatchAsync<TM>()) {
-                await ActivateItemAsync(CreateItem(model), CancellationToken.None);
+            foreach (TE entity in await DataProvider.GetNextBatchAsync()) {
+                await ActivateItemAsync(CreateItem(entity), CancellationToken.None);
             }
         }
 

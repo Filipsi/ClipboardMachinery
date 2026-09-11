@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Components.Clip;
+using ClipboardMachinery.Common.Mapping;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.DataStorage.Schema;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Common.Screen {
 
-    public abstract class ClipPageBase : LazyPageBase<ClipViewModel, ClipModel>, IHandle<ClipEvent> {
+    public abstract class ClipPageBase : LazyPageBase<ClipViewModel, ClipEntity>, IHandle<ClipEvent> {
 
         #region Fields
 
@@ -29,8 +31,8 @@ namespace ClipboardMachinery.Common.Screen {
 
         #region Logic
 
-        protected override ClipViewModel CreateItem(ClipModel model) {
-            return vmFactory.CreateClip(model);
+        protected override ClipViewModel CreateItem(ClipEntity entity) {
+            return vmFactory.CreateClip(entity.ToModel());
         }
 
         protected override void ReleaseItem(ClipViewModel instance) {

@@ -6,11 +6,13 @@ using ClipboardMachinery.Common.Events;
 using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.TagType;
 using ClipboardMachinery.Core.DataStorage;
+using ClipboardMachinery.Core.DataStorage.Schema;
+using ClipboardMachinery.Common.Mapping;
 using ClipboardMachinery.Plumbing.Factories;
 
 namespace ClipboardMachinery.Components.TagTypeLister {
 
-    public class TagTypeListerViewModel : LazyPageBase<TagTypeViewModel, TagTypeModel>, IHandle<TagEvent> {
+    public class TagTypeListerViewModel : LazyPageBase<TagTypeViewModel, TagTypeEntity>, IHandle<TagEvent> {
 
         #region Properties
 
@@ -45,8 +47,8 @@ namespace ClipboardMachinery.Components.TagTypeLister {
             return true;
         }
 
-        protected override TagTypeViewModel CreateItem(TagTypeModel model) {
-            TagTypeViewModel vm = vmFactory.CreateTagType(model);
+        protected override TagTypeViewModel CreateItem(TagTypeEntity entity) {
+            TagTypeViewModel vm = vmFactory.CreateTagType(entity.ToModel());
             vm.Selected += OnTagTypeVmSelected;
             return vm;
         }

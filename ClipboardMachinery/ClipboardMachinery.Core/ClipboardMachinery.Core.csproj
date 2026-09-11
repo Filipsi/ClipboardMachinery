@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -63,10 +63,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <!-- ponytail: net472 ceiling. AutoMapper 11+ is netstandard2.1-only; 15+ needs a commercial
-         license. 10.1.1 is the last free net472-compatible build, so the AutoMapper CVE
-         (GHSA-rvv3-g6hj-g44x) can only be cleared by retargeting off net472 or going commercial. -->
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Castle.Windsor" Version="6.0.0" />
     <PackageReference Include="Castle.Core" Version="5.2.1" />
     <PackageReference Include="Castle.LoggingFacility" Version="6.0.0" />
@@ -94,10 +90,10 @@
     <Compile Include="DataStorage\IDataRepository.cs" />
     <Compile Include="DataStorage\ILazyDataProvider.cs" />
     <Compile Include="DataStorage\Impl\GenericLazyProvider.cs" />
-    <Compile Include="DataStorage\Schema\Clip.cs" />
-    <Compile Include="DataStorage\Schema\Color.cs" />
-    <Compile Include="DataStorage\Schema\Tag.cs" />
-    <Compile Include="DataStorage\Schema\TagType.cs" />
+    <Compile Include="DataStorage\Schema\ClipEntity.cs" />
+    <Compile Include="DataStorage\Schema\ColorEntity.cs" />
+    <Compile Include="DataStorage\Schema\TagEntity.cs" />
+    <Compile Include="DataStorage\Schema\TagTypeEntity.cs" />
     <Compile Include="Services\Clipboard\BinaryStructConverter.cs" />
     <Compile Include="Services\Clipboard\ClipboardEventArgs.cs" />
     <Compile Include="Services\Clipboard\ClipboardService.cs" />

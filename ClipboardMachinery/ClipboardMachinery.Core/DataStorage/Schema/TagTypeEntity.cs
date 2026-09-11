@@ -1,9 +1,10 @@
-﻿using ServiceStack.DataAnnotations;
+using ServiceStack.DataAnnotations;
 using System;
 
 namespace ClipboardMachinery.Core.DataStorage.Schema {
 
-    public class TagType {
+    [Alias("TagType")]
+    public class TagTypeEntity {
 
         [PrimaryKey]
         public string Name { get; set; }
@@ -15,7 +16,7 @@ namespace ClipboardMachinery.Core.DataStorage.Schema {
 
         public string Description { get; set; }
 
-        public Color Color { get; set; }
+        public ColorEntity Color { get; set; }
 
     }
 

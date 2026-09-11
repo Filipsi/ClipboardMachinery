@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Mapping;
 using ClipboardMachinery.Common.Screen;
 using ClipboardMachinery.Components.Buttons.ActionButton;
 using ClipboardMachinery.Components.ColorGallery;
@@ -270,7 +271,7 @@ namespace ClipboardMachinery.OverlayDialogs.TagTypeEditor {
             }
 
             if (IsCreatingNew) {
-                Model = await dataRepository.CreateTagType<TagTypeModel>(Name, Description, SelectedTagKind.Kind, Priority, ColorGallery.SelectedColor);
+                Model = (await dataRepository.CreateTagType(Name, Description, SelectedTagKind.Kind, Priority, ColorGallery.SelectedColor)).ToModel();
                 await eventAggregator.PublishOnCurrentThreadAsync(TagEvent.CreateTypeAddedEvent(Model));
 
             } else {

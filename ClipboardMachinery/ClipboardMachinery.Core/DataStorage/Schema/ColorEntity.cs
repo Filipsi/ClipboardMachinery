@@ -1,6 +1,6 @@
-﻿namespace ClipboardMachinery.Core.DataStorage.Schema {
+namespace ClipboardMachinery.Core.DataStorage.Schema {
 
-    public class Color {
+    public class ColorEntity {
 
         public byte A { get; set; }
 

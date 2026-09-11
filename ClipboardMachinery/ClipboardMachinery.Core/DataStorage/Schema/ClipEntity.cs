@@ -1,9 +1,10 @@
-﻿using ServiceStack.DataAnnotations;
+using ServiceStack.DataAnnotations;
 using System.Collections.Generic;
 
 namespace ClipboardMachinery.Core.DataStorage.Schema {
 
-    public class Clip {
+    [Alias("Clip")]
+    public class ClipEntity {
 
         [AutoIncrement]
         public int Id { get; set; }
@@ -15,7 +16,7 @@ namespace ClipboardMachinery.Core.DataStorage.Schema {
         public string Presenter { get; set; }
 
         [Reference]
-        public List<Tag> Tags { get; set; }
+        public List<TagEntity> Tags { get; set; }
 
     }
 

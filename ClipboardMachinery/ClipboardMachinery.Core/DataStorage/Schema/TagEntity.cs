@@ -1,20 +1,21 @@
-﻿using ServiceStack.DataAnnotations;
+using ServiceStack.DataAnnotations;
 
 namespace ClipboardMachinery.Core.DataStorage.Schema {
 
-    public class Tag {
+    [Alias("Tag")]
+    public class TagEntity {
 
         [AutoIncrement]
         public int Id { get; set; }
 
-        [References(typeof(Clip))]
+        [References(typeof(ClipEntity))]
         public int? ClipId { get; set; }
 
-        [References(typeof(TagType))]
+        [References(typeof(TagTypeEntity))]
         public string TypeName { get; set; }
 
         [Reference]
-        public TagType Type { get; set; }
+        public TagTypeEntity Type { get; set; }
 
         [Required]
         public object Value { get; set; }

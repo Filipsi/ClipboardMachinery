@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Castle.Core.Logging;
 using ClipboardMachinery.Core.DataStorage.Schema;
 using ClipboardMachinery.Core.TagKind;
 using ServiceStack.OrmLite;
-using Color = ClipboardMachinery.Core.DataStorage.Schema.Color;
-using MediaColor = System.Windows.Media.Color;
+using System.Windows.Media;
 
 namespace ClipboardMachinery.Core.DataStorage.Impl {
 
@@ -20,10 +18,6 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         public ILogger Logger { get; set; } = NullLogger.Instance;
 
         internal IDatabaseAdapter Database {
-            get;
-        }
-
-        internal IMapper Mapper {
             get;
         }
 
@@ -41,9 +35,8 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         #endregion
 
-        public DataRepository(IDatabaseAdapter databaseAdapter, IMapper mapper, ITagKindManager tagKindManager) {
+        public DataRepository(IDatabaseAdapter databaseAdapter, ITagKindManager tagKindManager) {
             Database = databaseAdapter;
-            Mapper = mapper;
             this.tagKindManager = tagKindManager;
 
             // Create data providers list to tract instances
@@ -51,7 +44,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Load last saved clip
             IDbConnection db = Database.Connection;
-            SqlExpression <Clip> expression = db.From<Clip>().OrderByDescending(clip => clip.Id);
+            SqlExpression <ClipEntity> expression = db.From<ClipEntity>().OrderByDescending(clip => clip.Id);
             LastClipContent = db.Single(expression)?.Content;
         }
 
@@ -63,12 +56,12 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             return clipProvider;
         }
 
-        public async Task<T> CreateClip<T>(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null) {
+        public async Task<ClipEntity> CreateClip(string content, string contentPresenter, KeyValuePair<string, object>[] tags = null) {
             // Create clip entity
-            Clip clip = new Clip {
+            ClipEntity clip = new ClipEntity {
                 Content = content,
                 Presenter = contentPresenter,
-                Tags = new List<Tag>()
+                Tags = new List<TagEntity>()
             };
 
             // Add tags if there are any
@@ -82,7 +75,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                     }
 
                     clip.Tags.Add(
-                        new Tag {
+                        new TagEntity {
                             TypeName = tagData.Key,
                             Value = persistentValue
                         }
@@ -91,11 +84,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             // Handle tag type for every new tag
-            foreach (Tag tag in clip.Tags) {
+            foreach (TagEntity tag in clip.Tags) {
                 // Check if TagType the Tag is specifying exits, if not create it
-                if (!await Database.Connection.ExistsAsync<TagType>(new { Name = tag.TypeName })) {
+                if (!await Database.Connection.ExistsAsync<TagTypeEntity>(new { Name = tag.TypeName })) {
                     await Database.Connection.InsertAsync(
-                        new TagType {
+                        new TagTypeEntity {
                             Name = tag.TypeName,
                             Kind = tag.Value.GetType(),
                             Color = SystemTagTypes.DefaultDBColor
@@ -114,17 +107,16 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             // ReSharper disable once InvertIf
             if (wasSaveSuccessful) {
                 LastClipContent = clip.Content;
-                await UpdateDataProvidersOffset<Clip>(1);
+                await UpdateDataProvidersOffset<ClipEntity>(1);
             } else {
                 Logger.Error($"Unable to save clip: {content}");
             }
 
-            // Map it to the desired model
-            return Mapper.Map<T>(clip);
+            return clip;
         }
 
         public Task UpdateClip(int id, string contentPresenter) {
-            return Database.Connection.UpdateAsync<Clip>(
+            return Database.Connection.UpdateAsync<ClipEntity>(
                 new {
                     Id = id,
                     Presenter = contentPresenter
@@ -134,15 +126,15 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
         public async Task DeleteClip(int id) {
             // Delete all related tags
-            foreach (Tag relatedTag in await Database.Connection.SelectAsync<Tag>(t => t.ClipId == id)) {
+            foreach (TagEntity relatedTag in await Database.Connection.SelectAsync<TagEntity>(t => t.ClipId == id)) {
                 await Database.Connection.DeleteAsync(relatedTag);
             }
 
             // Delete the clip itself
-            await Database.Connection.DeleteByIdAsync<Clip>(id);
+            await Database.Connection.DeleteByIdAsync<ClipEntity>(id);
         }
 
-        public async Task<T> CreateTag<T>(int clipId, string tagType, object value) {
+        public async Task<TagEntity> CreateTag(int clipId, string tagType, object value) {
             string persistentValue = await ResolvePersistentValue(tagType, value);
 
             if (persistentValue == null) {
@@ -151,16 +143,16 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             // Create tag entity
-            Tag tag = new Tag {
+            TagEntity tag = new TagEntity {
                 ClipId = clipId,
                 TypeName = tagType,
                 Value = persistentValue
             };
 
             // Check if TagType exits, if not create it
-            if (!await Database.Connection.ExistsAsync<TagType>(new { Name = tagType })) {
+            if (!await Database.Connection.ExistsAsync<TagTypeEntity>(new { Name = tagType })) {
                 await Database.Connection.InsertAsync(
-                    new TagType {
+                    new TagTypeEntity {
                         Name = tagType,
                         Kind = value.GetType(),
                         Color = SystemTagTypes.DefaultDBColor
@@ -174,18 +166,17 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
 
             // Save newly created tag
             await Database.Connection.SaveAsync(tag, references: true);
-            await UpdateDataProvidersOffset<Tag>(1);
+            await UpdateDataProvidersOffset<TagEntity>(1);
 
-            // Map it to the desired model
-            return Mapper.Map<T>(tag);
+            return tag;
         }
 
-        public async Task<T> FindTag<T>(int tagId) {
-            List<Tag> foundTags = await Database.Connection.SelectAsync<Tag>(
+        public async Task<TagEntity> FindTag(int tagId) {
+            List<TagEntity> foundTags = await Database.Connection.SelectAsync<TagEntity>(
                 tag => tag.Id == tagId
             );
 
-            Tag firstMatch = foundTags.FirstOrDefault();
+            TagEntity firstMatch = foundTags.FirstOrDefault();
 
             if (firstMatch == null) {
                 Logger.Error($"Unable to find tag with id '{tagId}'!");
@@ -193,11 +184,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             await Database.Connection.LoadReferencesAsync(firstMatch);
-            return Mapper.Map<T>(firstMatch);
+            return firstMatch;
         }
 
         public async Task<string> UpdateTag(int id, object value) {
-            Tag tag = await FindTag<Tag>(id);
+            TagEntity tag = await FindTag(id);
 
             if (tag == null) {
                 Logger.Error($"Unable to update tag with id '{id}'!");
@@ -211,7 +202,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                 return string.Empty;
             }
 
-            await Database.Connection.UpdateAsync<Tag>(
+            await Database.Connection.UpdateAsync<TagEntity>(
                 new {
                     Id = id,
                     Value = persistentValue
@@ -222,16 +213,16 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         }
 
         public async Task DeleteTag(int id) {
-            await Database.Connection.DeleteByIdAsync<Tag>(id);
+            await Database.Connection.DeleteByIdAsync<TagEntity>(id);
         }
 
-        public ILazyDataProvider CreateLazyTagTypeProvider(int batchSize) {
-            ILazyDataProvider tagTypeProvider = new GenericLazyProvider<TagType>(this, batchSize);
+        public ILazyDataProvider<TagTypeEntity> CreateLazyTagTypeProvider(int batchSize) {
+            ILazyDataProvider<TagTypeEntity> tagTypeProvider = new GenericLazyProvider<TagTypeEntity>(this, batchSize);
             dataProviders.Add(new WeakReference<ILazyDataProvider>(tagTypeProvider));
             return tagTypeProvider;
         }
 
-        public async Task<T> CreateTagType<T>(string name, string description, Type kind, byte priority = 0, MediaColor? color = null) {
+        public async Task<TagTypeEntity> CreateTagType(string name, string description, Type kind, byte priority = 0, Color? color = null) {
             // Check if there is already tag type with this name
             if (await TagTypeExists(name)) {
                 Logger.Error($"Unable to create tag type with '{name}', tag type with this name already exists!");
@@ -239,36 +230,35 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
             }
 
             // Create new tag type
-            TagType tagType = new TagType {
+            TagTypeEntity tagType = new TagTypeEntity {
                 Name = name,
                 Description = description,
                 Kind = kind,
                 Priority = priority,
                 Color = color.HasValue
-                    ? new Color {A = color.Value.A, R = color.Value.R, G = color.Value.G, B = color.Value.B}
+                    ? new ColorEntity {A = color.Value.A, R = color.Value.R, G = color.Value.G, B = color.Value.B}
                     : SystemTagTypes.DefaultDBColor
             };
 
             // Save newly created tag type
             await Database.Connection.InsertAsync(tagType);
-            await UpdateDataProvidersOffset<TagType>(1);
+            await UpdateDataProvidersOffset<TagTypeEntity>(1);
 
-            // Map it to the desired model
-            return Mapper.Map<T>(tagType);
+            return tagType;
         }
 
         public async Task<bool> TagTypeExists(string name) {
-            return await Database.Connection.ExistsAsync<TagType>(
+            return await Database.Connection.ExistsAsync<TagTypeEntity>(
                 tagType => tagType.Name == name
             );
         }
 
-        public async Task<T> FindTagType<T>(string name) {
-            List<TagType> foundTypes = await Database.Connection.SelectAsync<TagType>(
+        public async Task<TagTypeEntity> FindTagType(string name) {
+            List<TagTypeEntity> foundTypes = await Database.Connection.SelectAsync<TagTypeEntity>(
                 tagType => tagType.Name == name
             );
 
-            TagType firstMatch = foundTypes.FirstOrDefault();
+            TagTypeEntity firstMatch = foundTypes.FirstOrDefault();
 
             // ReSharper disable once InvertIf
             if (firstMatch == null) {
@@ -276,27 +266,27 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                 return default;
             }
 
-            return Mapper.Map<T>(firstMatch);
+            return firstMatch;
         }
 
-        public async Task UpdateTagType(string name, string description, byte? priority, MediaColor? color) {
+        public async Task UpdateTagType(string name, string description, byte? priority, Color? color) {
             Dictionary<string, object> fields = new Dictionary<string, object> {
                 { "Name", name }
             };
 
             if (description != null) {
-                fields.Add(nameof(TagType.Description), description);
+                fields.Add(nameof(TagTypeEntity.Description), description);
             }
 
             if (priority.HasValue) {
-                fields.Add(nameof(TagType.Priority), priority.Value);
+                fields.Add(nameof(TagTypeEntity.Priority), priority.Value);
             }
 
             if (color.HasValue) {
-                fields.Add(nameof(TagType.Color), Mapper.Map<Color>(color.Value));
+                fields.Add(nameof(TagTypeEntity.Color), new ColorEntity { A = color.Value.A, R = color.Value.R, G = color.Value.G, B = color.Value.B });
             }
 
-            await Database.Connection.UpdateOnlyAsync<TagType>(fields);
+            await Database.Connection.UpdateOnlyAsync<TagTypeEntity>(fields);
         }
 
         public async Task DeleteTagType(string name) {
@@ -305,11 +295,11 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
                 return;
             }
 
-            await Database.Connection.DeleteAsync<Tag>(
+            await Database.Connection.DeleteAsync<TagEntity>(
                 tag => tag.TypeName == name
             );
 
-            await Database.Connection.DeleteAsync<TagType>(
+            await Database.Connection.DeleteAsync<TagTypeEntity>(
                 tagType => tagType.Name == name
             );
         }
@@ -319,7 +309,7 @@ namespace ClipboardMachinery.Core.DataStorage.Impl {
         #region Helpers
 
         private async Task<string> ResolvePersistentValue(string tagType, object value) {
-            TagType ttype = await FindTagType<TagType>(tagType);
+            TagTypeEntity ttype = await FindTagType(tagType);
 
             // Skip tag, non-existent tag type
             if (ttype == null) {

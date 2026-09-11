@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using Castle.Core.Logging;
 using ClipboardMachinery.Common.Events;
+using ClipboardMachinery.Common.Mapping;
 using ClipboardMachinery.Components.Clip;
 using ClipboardMachinery.Components.ContentPresenter;
 using ClipboardMachinery.Components.DialogOverlay;
@@ -208,7 +209,7 @@ namespace ClipboardMachinery.Windows.Shell {
             Logger.Info($"Creating new clip from {source} with content presenter {defaultPresenter.Id} ({defaultPresenter.Name})...");
 
             // Save clip
-            ClipModel model = await dataRepository.CreateClip<ClipModel>(
+            ClipModel model = (await dataRepository.CreateClip(
                 content: content,
                 contentPresenter: defaultPresenter.Id,
                 tags: new[] {
@@ -216,7 +217,7 @@ namespace ClipboardMachinery.Windows.Shell {
                     new KeyValuePair<string, object>(SystemTagTypes.SourceTagType.Name, source),
                     new KeyValuePair<string, object>(SystemTagTypes.CreatedTagType.Name, DateTime.Now)
                 }
-            );
+            )).ToModel();
 
             Logger.Info($"Clip entry saved with Id {model.Id}.");
 
