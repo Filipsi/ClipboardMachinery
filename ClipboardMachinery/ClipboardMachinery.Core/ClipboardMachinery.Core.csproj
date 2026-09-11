@@ -69,11 +69,11 @@
     <PackageReference Include="Castle.Core-NLog" Version="5.2.1" />
     <PackageReference Include="FluentMigrator" Version="8.0.1" />
     <PackageReference Include="FluentMigrator.Runner.SQLite" Version="8.0.1" />
-    <PackageReference Include="NLog" Version="6.1.4" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="6.1.4" />
-    <PackageReference Include="ServiceStack.OrmLite" Version="10.0.8" />
-    <PackageReference Include="ServiceStack.OrmLite.Sqlite" Version="10.0.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageReference Include="NLog" Version="6.2.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="6.2.0" />
+    <PackageReference Include="ServiceStack.OrmLite" Version="10.2.0" />
+    <PackageReference Include="ServiceStack.OrmLite.Sqlite" Version="10.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework" Version="1.0.119" />
   </ItemGroup>
   <ItemGroup>
